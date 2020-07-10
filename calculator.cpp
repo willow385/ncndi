@@ -14,6 +14,23 @@ enum class TokenType {
     END_OF_FILE
 };
 
+std::string token_type_to_str(TokenType token_type) {
+    switch (token_type) {
+        case TokenType::NO_TOKEN:
+            return std::string("NO_TOKEN");
+        case TokenType::INTEGER:
+            return std::string("INTEGER");
+        case TokenType::PLUS:
+            return std::string("PLUS");
+        case TokenType::MINUS:
+            return std::string("MINUS");
+        case TokenType::END_OF_FILE:
+            return std::string("END_OF_FILE");
+    }
+
+    return std::string("Undefined");
+}
+
 class Token {
     TokenType token_type;
     std::string value;
@@ -42,6 +59,7 @@ class Interpreter {
     std::string input_text;
     int pos;
     Token current_token;
+    char charbuf[2];
 public:
     Interpreter(std::string& text) {
         text.erase(
@@ -54,48 +72,60 @@ public:
         );
         this->input_text = text;
         this->pos = 0;
+        charbuf[0] = text[0];
+        charbuf[1] = '\0';
     }
 
-    void error(void) {
-        std::cerr << "Unable to parse input" << std::endl;
+    void error(std::string msg) {
+        std::cerr << "Unable to parse input due to error: " << msg << std::endl;
         throw std::exception();
     }
 
+    void advance(void) {
+        this->pos++;
+        if (this->pos > this->input_text.length()) {
+            this->charbuf[0] = '\0';
+        } else {
+            this->charbuf[0] = this->input_text[this->pos];
+        }
+    }
+
+    void skip_whitespace(void) {
+        while (this->charbuf[0] == ' ' || this->charbuf[0] == '\t') {
+            this->advance();
+        }
+    }
+
+    std::string scan_integer(void) {
+        std::string result = "";
+        while (this->charbuf[0] >= '0' && this->charbuf[0] <= '9') {
+            result += this->charbuf;
+            this->advance();
+        }
+        return result;
+    }
+
     Token get_next_token(void) {
-        auto text = this->input_text;
-        if (this->pos > (text.length() - 1)) {
-            Token token(TokenType::END_OF_FILE, std::string("EOF"));
-            return token;
-        }
-
-        char charbuf[] = "x"; // placeholder
-        charbuf[0] = text[this->pos];
-        if (charbuf[0] >= '0' && charbuf[0] <= '9') {
-            std::string int_literal = charbuf;
-            while (text[this->pos + 1] >= '0' && text[this->pos + 1] <= '9') {
-                this->pos++;
-                int_literal += text[this->pos];
+        while (this->charbuf[0] != '\0') {
+            if (this->charbuf[0] == ' ' || this->charbuf[0] == '\t') {
+                this->skip_whitespace();
+                continue;
+            } else if (this->charbuf[0] >= '0' && this->charbuf[0] <= '9') {
+                return Token(TokenType::INTEGER, this->scan_integer());
+            } else if (this->charbuf[0] == '+') {
+                this->advance();
+                return Token(TokenType::PLUS, std::string("+"));
+            } else if (this->charbuf[0] == '-') {
+                this->advance();
+                return Token(TokenType::MINUS, std::string("-"));
+            } else {
+                std::string errmsg = "invalid char '";
+                errmsg += charbuf;
+                errmsg += "' found";
+                this->error(errmsg);
             }
-            this->pos++;
-            Token token(TokenType::INTEGER, int_literal);
-            return token;
         }
 
-        if (charbuf[0] == '+') {
-            Token token(TokenType::PLUS, std::string(charbuf));
-            this->pos++;
-            return token;
-        }
-
-        if (charbuf[0] == '-') {
-            Token token(TokenType::MINUS, std::string(charbuf));
-            this->pos++;
-            return token;
-        }
-
-        this->error();
-
-        // prevent compiler warnings
         Token token;
         return token;
     }
@@ -104,7 +134,11 @@ public:
         if (this->current_token.get_token_type() == token_type) {
             this->current_token = this->get_next_token();
         } else {
-            this->error();
+            std::string errmsg = "Expected ";
+            errmsg += token_type_to_str(token_type);
+            errmsg += ", found ";
+            errmsg += token_type_to_str(this->current_token.get_token_type());
+            this->error(errmsg);
         }
     }
 
