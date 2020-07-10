@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <exception>
 
 enum class TokenType {
     NO_TOKEN,
@@ -27,6 +28,14 @@ public:
         this->value = value;
     }
 
+    TokenType get_token_type(void) {
+        return this->token_type;
+    }
+
+    int get_int_value(void) {
+        return std::stoi(this->value);
+    }
+
 };
 
 class Interpreter {
@@ -48,7 +57,8 @@ public:
     }
 
     void error(void) {
-        throw "Unable to parse input";
+        std::cerr << "Unable to parse input" << std::endl;
+        throw std::exception();
     }
 
     Token get_next_token(void) {
@@ -57,18 +67,81 @@ public:
             Token token(TokenType::END_OF_FILE, std::string("EOF"));
             return token;
         }
-        char current_char = text[this->pos];
-        if (current_char >= '0' && current_char <= '9') {
-            std::string int_literal = current_char;
-            while (text[this->pos] != '\0' && (text[this->pos + 1] >= '0' && text[this->pos + 1] <= '9')) {
+
+        char charbuf[] = "x"; // placeholder
+        charbuf[0] = text[this->pos];
+        if (charbuf[0] >= '0' && charbuf[0] <= '9') {
+            std::string int_literal = charbuf;
+            while (text[this->pos + 1] >= '0' && text[this->pos + 1] <= '9') {
                 this->pos++;
                 int_literal += text[this->pos];
             }
+            this->pos++;
             Token token(TokenType::INTEGER, int_literal);
             return token;
         }
-        if (current_char == '+') {
-            Token token(TokenType::PLUS, std::string(current_char));
+
+        if (charbuf[0] == '+') {
+            Token token(TokenType::PLUS, std::string(charbuf));
+            this->pos++;
+            return token;
+        }
+
+        if (charbuf[0] == '-') {
+            Token token(TokenType::MINUS, std::string(charbuf));
+            this->pos++;
+            return token;
+        }
+
+        this->error();
+
+        // prevent compiler warnings
+        Token token;
+        return token;
+    }
+
+    void eat(TokenType token_type) {
+        if (this->current_token.get_token_type() == token_type) {
+            this->current_token = this->get_next_token();
+        } else {
+            this->error();
         }
     }
+
+    int expr(void) {
+        this->current_token = this->get_next_token();
+        auto left = this->current_token;
+        this->eat(TokenType::INTEGER);
+        auto op = this->current_token;
+        switch (op.get_token_type()) {
+            case TokenType::PLUS:
+                this->eat(TokenType::PLUS); break;
+            case TokenType::MINUS:
+                this->eat(TokenType::MINUS); break;
+        }
+        auto right = this->current_token;
+        this->eat(TokenType::INTEGER);
+        int result = 69420;
+        switch (op.get_token_type()) {
+            case TokenType::PLUS:
+                result = left.get_int_value() + right.get_int_value(); break;
+            case TokenType::MINUS:
+                result = left.get_int_value() - right.get_int_value(); break;
+        }
+        return result;
+    }
 };
+
+int main(void) {
+    while (!std::cin.eof()) {
+        std::string input;
+        std::cout << "Dante's Calculator Repl > ";
+        std::getline(std::cin, input);
+        if (input == "") {
+            continue;
+        }
+        Interpreter interpreter(input);
+        std::cout << interpreter.expr() << std::endl;
+    }
+    return 0;
+}
