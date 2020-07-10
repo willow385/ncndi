@@ -121,7 +121,7 @@ public:
         }
         auto right = this->current_token;
         this->eat(TokenType::INTEGER);
-        int result = 69420;
+        int result;
         switch (op.get_token_type()) {
             case TokenType::PLUS:
                 result = left.get_int_value() + right.get_int_value(); break;
