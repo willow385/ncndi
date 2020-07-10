@@ -171,11 +171,18 @@ int main(void) {
         std::string input;
         std::cout << "Dante's Calculator Repl > ";
         std::getline(std::cin, input);
+
         if (input == "") {
             continue;
         }
-        Interpreter interpreter(input);
-        std::cout << interpreter.expr() << std::endl;
+
+        try {
+            Interpreter interpreter(input);
+            std::cout << interpreter.expr() << std::endl;
+        } catch (std::exception& e) {
+            continue;
+        }
     }
+
     return 0;
 }
