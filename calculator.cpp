@@ -61,7 +61,7 @@ public:
         return this->token_type;
     }
 
-    int get_int_value(void) {
+    long long get_int_value(void) {
         return std::stoi(this->value);
     }
 
@@ -183,13 +183,13 @@ public:
         }
     }
 
-    int factor(void) {
+    long long factor(void) {
         auto token = this->current_token;
         this->eat(TokenType::INTEGER);
         return token.get_int_value();
     }
 
-    int term(void) {
+    long long term(void) {
         auto result = this->factor();
 
         while (
@@ -203,7 +203,7 @@ public:
                 result *= this->factor();
             } else if (token.get_token_type() == TokenType::DIVIDE) {
                 this->eat(TokenType::DIVIDE);
-                int denominator = this->factor();
+                long long denominator = this->factor();
                 if (denominator == 0) {
                     this->error(std::string("divide by 0"));
                 } else {
@@ -215,7 +215,7 @@ public:
         return result;
     }
 
-    int expr(void) {
+    long long expr(void) {
         this->current_token = this->get_next_token();
         auto result = this->term();
         while (
