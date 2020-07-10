@@ -113,7 +113,7 @@ public:
         return result;
     }
 
-    Token get_next_token(void) {
+    Token get_next_token() {
         while (this->charbuf[0] != '\0') {
             if (this->charbuf[0] == ' ' || this->charbuf[0] == '\t') {
                 this->skip_whitespace();
@@ -122,7 +122,17 @@ public:
                 this->charbuf[0] == '-' &&
                     (this->input_text[this->pos + 1] >= '0' && this->input_text[this->pos + 1] <= '9')
             ) {
-                return Token(TokenType::INTEGER, this->scan_integer());
+                // disambiguate minus signs from negative literals
+                if (this->pos > 0) {
+                    if (this->input_text[this->pos - 1] == '+' || this->input_text[this->pos - 1] == '-') {
+                        return Token(TokenType::INTEGER, this->scan_integer());
+                    } else {
+                        this->advance();
+                        return Token(TokenType::MINUS, std::string("-"));
+                    }
+                } else {
+                    return Token(TokenType::INTEGER, this->scan_integer());
+                }
             } else if (this->charbuf[0] >= '0' && this->charbuf[0] <= '9') {
                 return Token(TokenType::INTEGER, this->scan_integer());
             } else if (this->charbuf[0] == '+') {
@@ -174,6 +184,24 @@ public:
                 result = left.get_int_value() + right.get_int_value(); break;
             case TokenType::MINUS:
                 result = left.get_int_value() - right.get_int_value(); break;
+        }
+        auto next_token = this->current_token;
+        while (next_token.get_token_type() != TokenType::NO_TOKEN) {
+            switch (next_token.get_token_type()) {
+                case TokenType::PLUS:
+                    this->eat(TokenType::PLUS); break;
+                case TokenType::MINUS:
+                    this->eat(TokenType::MINUS); break;
+            }
+            auto next_operand = this->current_token;
+            this->eat(TokenType::INTEGER);
+            switch (next_token.get_token_type()) {
+                case TokenType::PLUS:
+                    result += next_operand.get_int_value(); break;
+                case TokenType::MINUS:
+                    result -= next_operand.get_int_value(); break;
+            }
+            next_token = this->current_token;
         }
         return result;
     }
