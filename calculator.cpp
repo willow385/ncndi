@@ -13,6 +13,8 @@ enum class TokenType {
     MINUS,
     MULTIPLY,
     DIVIDE,
+    OPEN_PAREN,
+    CLOSE_PAREN,
     END_OF_FILE
 };
 
@@ -30,6 +32,10 @@ std::string token_type_to_str(TokenType token_type) {
             return std::string("MULTIPLY");
         case TokenType::DIVIDE:
             return std::string("DIVIDE");
+        case TokenType::OPEN_PAREN:
+            return std::string("OPEN_PAREN");
+        case TokenType::CLOSE_PAREN:
+            return std::string("CLOSE_PAREN");
         case TokenType::END_OF_FILE:
             return std::string("END_OF_FILE");
     }
@@ -177,10 +183,31 @@ public:
         }
     }
 
-    int term(void) {
+    int factor(void) {
         auto token = this->current_token;
         this->eat(TokenType::INTEGER);
         return token.get_int_value();
+    }
+
+    int term(void) {
+        auto result = this->factor();
+
+        while (
+            this->current_token.get_token_type() == TokenType::MULTIPLY
+        ||
+            this->current_token.get_token_type() == TokenType::DIVIDE
+        ) {
+            auto token = this->current_token;
+            if (token.get_token_type() == TokenType::MULTIPLY) {
+                this->eat(TokenType::MULTIPLY);
+                result *= this->factor();
+            } else if (token.get_token_type() == TokenType::DIVIDE) {
+                this->eat(TokenType::DIVIDE);
+                result /= this->factor();
+            }
+        }
+
+        return result;
     }
 
     int expr(void) {
