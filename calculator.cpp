@@ -203,7 +203,12 @@ public:
                 result *= this->factor();
             } else if (token.get_token_type() == TokenType::DIVIDE) {
                 this->eat(TokenType::DIVIDE);
-                result /= this->factor();
+                int denominator = this->factor();
+                if (denominator == 0) {
+                    this->error(std::string("divide by 0"));
+                } else {
+                    result /= denominator;
+                }
             }
         }
 
