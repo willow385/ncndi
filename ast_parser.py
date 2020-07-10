@@ -7,7 +7,7 @@ class Parser:
         self.current_token = self.lexer.get_next_token()
 
     def error(self, message):
-        raise Exception("Error: " + message)
+        raise Exception("Error while parsing: " + message)
 
     def eat(self, token_type):
         if self.current_token.token_type == token_type:
