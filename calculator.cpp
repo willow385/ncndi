@@ -11,6 +11,8 @@ enum class TokenType {
     INTEGER,
     PLUS,
     MINUS,
+    MULTIPLY,
+    DIVIDE,
     END_OF_FILE
 };
 
@@ -24,6 +26,10 @@ std::string token_type_to_str(TokenType token_type) {
             return std::string("PLUS");
         case TokenType::MINUS:
             return std::string("MINUS");
+        case TokenType::MULTIPLY:
+            return std::string("MULTIPLY");
+        case TokenType::DIVIDE:
+            return std::string("DIVIDE");
         case TokenType::END_OF_FILE:
             return std::string("END_OF_FILE");
     }
@@ -141,6 +147,12 @@ public:
             } else if (this->charbuf[0] == '-') {
                 this->advance();
                 return Token(TokenType::MINUS, std::string("-"));
+            } else if (this->charbuf[0] == '*') {
+                this->advance();
+                return Token(TokenType::MULTIPLY, std::string("*"));
+            } else if (this->charbuf[0] == '/') {
+                this->advance();
+                return Token(TokenType::DIVIDE, std::string("/"));
             } else {
                 std::string errmsg = "invalid char '";
                 errmsg += charbuf;
@@ -165,46 +177,37 @@ public:
         }
     }
 
+    int term(void) {
+        auto token = this->current_token;
+        this->eat(TokenType::INTEGER);
+        return token.get_int_value();
+    }
+
     int expr(void) {
         this->current_token = this->get_next_token();
-        auto left = this->current_token;
-        this->eat(TokenType::INTEGER);
-        auto op = this->current_token;
-        switch (op.get_token_type()) {
-            case TokenType::PLUS:
-                this->eat(TokenType::PLUS); break;
-            case TokenType::MINUS:
-                this->eat(TokenType::MINUS); break;
-        }
-        auto right = this->current_token;
-        this->eat(TokenType::INTEGER);
-        int result;
-        switch (op.get_token_type()) {
-            case TokenType::PLUS:
-                result = left.get_int_value() + right.get_int_value(); break;
-            case TokenType::MINUS:
-                result = left.get_int_value() - right.get_int_value(); break;
-        }
-        auto next_token = this->current_token;
-        while (next_token.get_token_type() != TokenType::NO_TOKEN) {
-            switch (next_token.get_token_type()) {
+        auto result = this->term();
+        while (
+            this->current_token.get_token_type() == TokenType::PLUS
+        ||
+            this->current_token.get_token_type() == TokenType::MINUS
+        ) {
+            auto token = this->current_token;
+            switch (token.get_token_type()) {
                 case TokenType::PLUS:
-                    this->eat(TokenType::PLUS); break;
+                    this->eat(TokenType::PLUS);
+                    result += this->term();
+                    break;
                 case TokenType::MINUS:
-                    this->eat(TokenType::MINUS); break;
+                    this->eat(TokenType::MINUS);
+                    result -= this->term();
+                    break;
             }
-            auto next_operand = this->current_token;
-            this->eat(TokenType::INTEGER);
-            switch (next_token.get_token_type()) {
-                case TokenType::PLUS:
-                    result += next_operand.get_int_value(); break;
-                case TokenType::MINUS:
-                    result -= next_operand.get_int_value(); break;
-            }
-            next_token = this->current_token;
+
         }
+
         return result;
     }
+
 };
 
 int main(void) {
