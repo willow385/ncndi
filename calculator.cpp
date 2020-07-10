@@ -98,10 +98,18 @@ public:
 
     std::string scan_integer(void) {
         std::string result = "";
+
+        // Handle negative numbers
+        if (this->charbuf[0] == '-') {
+            result += this->charbuf;
+            this->advance();
+        }
+
         while (this->charbuf[0] >= '0' && this->charbuf[0] <= '9') {
             result += this->charbuf;
             this->advance();
         }
+
         return result;
     }
 
@@ -110,6 +118,11 @@ public:
             if (this->charbuf[0] == ' ' || this->charbuf[0] == '\t') {
                 this->skip_whitespace();
                 continue;
+            } else if (
+                this->charbuf[0] == '-' &&
+                    (this->input_text[this->pos + 1] >= '0' && this->input_text[this->pos + 1] <= '9')
+            ) {
+                return Token(TokenType::INTEGER, this->scan_integer());
             } else if (this->charbuf[0] >= '0' && this->charbuf[0] <= '9') {
                 return Token(TokenType::INTEGER, this->scan_integer());
             } else if (this->charbuf[0] == '+') {
