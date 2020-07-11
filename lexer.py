@@ -66,6 +66,6 @@ class Lexer:
                 self.advance()
                 return Token(TokenType.CLOSE_PAREN, ')')
 
-            self.error()
+            self.error(f"Syntax error at unexpected character '{self.current_char}'")
 
         return Token(TokenType.EOF, None)
