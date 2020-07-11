@@ -22,10 +22,16 @@ class Lexer:
 
     def parse_integer(self):
         result = ""
-        while self.current_char is not None and self.current_char.isdigit() or self.current_char == '-':
+        if self.current_char == '-': # handle negative numbers
             result += self.current_char
             self.advance()
-        return int(result)
+        while self.current_char is not None and self.current_char.isdigit():
+            result += self.current_char
+            self.advance()
+        if result == "-":
+            self.error("Expected integer literal, got '-' instead")
+        else:
+            return int(result)
 
     def get_next_token(self):
         while self.current_char is not None:
