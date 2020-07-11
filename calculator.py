@@ -9,6 +9,7 @@ def main():
         try:
             text = input("Dante's Calculator Repl > ")
         except EOFError:
+            print("")
             break
         if not text:
             continue
