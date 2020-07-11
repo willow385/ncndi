@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from ast_utils import *
 from token import *
 from lexer import *
