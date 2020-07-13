@@ -3,6 +3,10 @@ https://ruslanspivak.com/lsbasi-part1/
 
 Try running `python3 maple_interpreter.py foo.mpl`.
 
+The language is called "Maple". "ncndi" is the name of this
+implementation of the interpreter. I haven't decided what
+that stands for yet.
+
 File contents:
     ast_parser.py: Contains the Parser class which constructs
                    an abstract syntax tree out of tokens obtained
