@@ -1,3 +1,23 @@
-expr   : term ((PLUS | MINUS) term)*
-term   : factor ((MUL | DIV) factor)*
-factor : INTEGER | LPAREN expr RPAREN
+program : 'start' (whitespace)* OPEN_BRACE statement_list CLOSE_BRACE (whitespace)* 'end'
+
+statement_list : statement | statement SEMICOLON statement_list
+
+statement: assignment_statement | empty
+
+assignment_statement: variable ASSIGN expression
+
+empty:
+
+expression: term ((PLUS | SUBTRACT) term)*
+
+term: factor ((MULTIPLY | DIVIDE) factor)*
+
+factor: PLUS factor
+      | SUBTRACT factor
+      | INTEGER
+      | OPEN_PAREN expression CLOSE_PAREN
+      | variable
+
+variable: IDENTIFIER
+
+whitespace : ' ' | '\n' | '\r' | '\t'

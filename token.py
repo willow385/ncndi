@@ -9,6 +9,13 @@ class TokenType(Enum):
     DIVIDE = 5
     SUBTRACT = 6
     EOF = 7
+    OPEN_BRACE = 8
+    CLOSE_BRACE = 9
+    SEMICOLON = 10
+    ASSIGN = 11
+    IDENTIFIER = 12
+    START = 13
+    END = 14
 
 class Token:
     def __init__(self, token_type, value):
