@@ -31,6 +31,8 @@ File contents:
 
     grammar.bnf: The grammar of Maple, expressed in a form of ABNF.
 
+    hello.mpl: Hello world program in Maple.
+
     foo.mpl: A Maple program demoing many of Maple's features.
 
     test.mpl: A Maple program which demonstrates type coercion
