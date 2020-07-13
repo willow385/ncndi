@@ -143,7 +143,7 @@ class Nop(ASTNode):
 def eval_expression(expression, parser):
     if type(expression) is BinaryOp:
         return eval_bin_op(expression, parser)
-    elif type(expression) in (Integer, Float):
+    elif type(expression) in (Integer, Float, String):
         return expression.value
     elif type(expression) is Variable:
         return parser.global_scope[expression.value]["value"]
@@ -186,55 +186,72 @@ def eval_reassignment(reassgn: Reassignment, parser):
         raise Exception(f"Error: variable ``{reassgn.identifier.value}'' referenced before assignment")
 
 def eval_print_statement(print_stat: PrintStatement, parser):
-    if type(print_stat.arg) in (Integer, Float):
-        print(f"{print_stat.arg.value}")
+    if type(print_stat.arg) in (Integer, Float, String):
+        print(f"{print_stat.arg.value}", end="")
     elif type(print_stat.arg) is Variable:
-        print(f"{parser.global_scope[print_stat.arg.value]['value']}")
+        print(f"{parser.global_scope[print_stat.arg.value]['value']}", end="")
     elif type(print_stat.arg) is BinaryOp:
-        print(f"{eval_bin_op(print_stat.arg, parser)}")
+        print(f"{eval_bin_op(print_stat.arg, parser)}", end="")
     elif type(print_stat.arg) is Assignment:
-        print(f"{eval_assignment(print_stat.arg, parser)}")
+        print(f"{eval_assignment(print_stat.arg, parser)}", end="")
     elif type(print_stat.arg) is Reassignment:
-        print(f"{eval_reassignment(print_stat.arg, parser)}")
+        print(f"{eval_reassignment(print_stat.arg, parser)}", end="")
     elif type(print_stat.arg) is VariableDecl:
-        print(f"{eval_variable_decl(print_stat.arg, parser)}")
+        print(f"{eval_variable_decl(print_stat.arg, parser)}", end="")
 
 def eval_bin_op(bin_op: BinaryOp, parser):
     # Get the left operand
     left = None
-    if type(bin_op.left) in (Integer, Float):
+    if type(bin_op.left) in (Integer, Float, String):
         left = bin_op.left.value
     elif type(bin_op.left) is Variable:
         if parser.global_scope[bin_op.left.value]["type"] == "int":
             left = int(parser.global_scope[bin_op.left.value]["value"])
         elif parser.global_scope[bin_op.left.value]["type"] == "float":
             left = float(parser.global_scope[bin_op.left.value]["value"])
+        elif parser.global_scope[bin_op.left.value]["type"] == "string":
+            left = str(parser.global_scope[bin_op.left.value]["value"])
     else:
         left = eval_bin_op(bin_op.left, parser)
 
     # Get the right operand
     right = None
-    if type(bin_op.right) in (Integer, Float):
+    if type(bin_op.right) in (Integer, Float, String):
         right = bin_op.right.value
     elif type(bin_op.right) is Variable:
         if parser.global_scope[bin_op.right.value]["type"] == "int":
             right = int(parser.global_scope[bin_op.right.value]["value"])
         elif parser.global_scope[bin_op.right.value]["type"] == "float":
             right = float(parser.global_scope[bin_op.right.value]["value"])
+        elif parser.global_scope[bin_op.right.value]["type"] == "string":
+            right = str(parser.global_scope[bin_op.right.value]["value"])
     else:
         right = eval_bin_op(bin_op.right, parser)
 
+    if type(left) is Token:
+        left = left.value
+    if type(right) is Token:
+        right = right.value
+
     # Do an operation
     if bin_op.op.token_type == TokenType.MULT:
+        if type(left) is str or type(left) is str:
+            raise Exception("Error: operator '*' not supported for string type")
         return left * right
     elif bin_op.op.token_type == TokenType.PLUS:
+        if type(left) is str or type(right) is str:
+            return str(left) + str(right) # support string concatenation
         return left + right
     elif bin_op.op.token_type == TokenType.DIVIDE:
+        if type(left) is str or type(left) is str:
+            raise Exception("Error: operator '/' not supported for string type")
         if right == 0:
             return float("inf")
         else:
             return left / right
     elif bin_op.op.token_type == TokenType.SUBTRACT:
+        if type(left) is str or type(left) is str:
+            raise Exception("Error: operator '-' not supported for string type")
         return left - right
 
 def eval_assignment(assgn: Assignment, parser):

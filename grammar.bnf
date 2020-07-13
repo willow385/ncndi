@@ -1,6 +1,12 @@
-'program : 'start' (whitespace)* OPEN_BRACE statement_list CLOSE_BRACE (whitespace)* 'end'
+program : 'start' OPEN_BRACE statement_list CLOSE_BRACE 'end'
 
 statement_list : statement | statement SEMICOLON statement_list
+
+# TODO
+procedure_list : procedure_declaration | procedure_declaration procedure_list
+
+# TODO
+procedure_declaration : 'proc' IDENTIFIER OPEN_BRACE statement_list CLOSE_BRACE
 
 statement: assignment_statement
          | variable_declaration
@@ -29,7 +35,5 @@ factor: PLUS factor
       | variable
 
 variable: IDENTIFIER
-
-whitespace : ' ' | '\n' | '\r' | '\t'
 
 TYPE : 'float' | 'int' | 'string'

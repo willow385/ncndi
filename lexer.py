@@ -68,6 +68,20 @@ class Lexer:
         else:
             return Token(TokenType.IDENTIFIER, result)
 
+    def parse_string_literal(self):
+        result = ""
+        if self.current_char == '"':
+            self.advance()
+        else:
+            self.error("String literals must begin with '" '"' "'")
+        escapes = ('\\', 'n', 'r', 't')
+        while self.current_char is not None and (self.current_char != '"' or (self.current_char == '\\' and self.peek() in escapes)):
+            result += self.current_char
+            self.advance()
+        self.advance()
+        result = result.replace('\\n', '\n').replace('\\r', '\r').replace('\\t', '\t').replace('\\\\', '\\')
+        return Token(TokenType.STRING, result)
+
     def peek(self):
         if self.pos + 1 >= len(self.text):
             return None
@@ -93,6 +107,9 @@ class Lexer:
 
             if self.current_char.isdigit():
                 return self.get_number_token()
+
+            if self.current_char == '"':
+                return self.parse_string_literal()
 
             if self.current_char == '#':
                 self.skip_comment()

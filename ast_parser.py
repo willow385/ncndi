@@ -100,6 +100,9 @@ class Parser:
             node = Variable(var_token)
             self.eat(TokenType.IDENTIFIER)
             return node
+        elif token.token_type == TokenType.STRING:
+            self.eat(TokenType.STRING)
+            return String(token)
 
     def term(self):
         node = self.factor()
