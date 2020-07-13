@@ -3,7 +3,8 @@ from token import Token, TokenType
 
 RESERVED_WORDS = {
     "start": Token(TokenType.START, "start"),
-    "end": Token(TokenType.END, "end")
+    "end": Token(TokenType.END, "end"),
+    "print": Token(TokenType.PRINT, "print")
 }
 
 class Lexer:

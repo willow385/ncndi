@@ -2,7 +2,9 @@ program : 'start' (whitespace)* OPEN_BRACE statement_list CLOSE_BRACE (whitespac
 
 statement_list : statement | statement SEMICOLON statement_list
 
-statement: assignment_statement | empty
+statement: assignment_statement | print_statement | empty
+
+print_statement: PRINT expression
 
 assignment_statement: variable ASSIGN expression
 

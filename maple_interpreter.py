@@ -18,7 +18,6 @@ def main():
     lexer = Lexer(text)
     parser = Parser(lexer)
     eval_program(parser.parse(), parser)
-    print(parser.global_scope)
 
 if __name__ == "__main__":
     main()

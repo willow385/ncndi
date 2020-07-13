@@ -41,6 +41,8 @@ class Parser:
         node = None
         if self.current_token.token_type == TokenType.IDENTIFIER:
             node = self.assignment_statement()
+        elif self.current_token.token_type == TokenType.PRINT:
+            node = self.print_statement()
         else:
             node = self.empty()
         return node
@@ -51,6 +53,12 @@ class Parser:
         self.eat(TokenType.ASSIGN)
         value = self.expr()
         node = Assignment(var_ident, token, value)
+        return node
+
+    def print_statement(self):
+        self.eat(TokenType.PRINT)
+        value = self.expr()
+        node = PrintStatement(value)
         return node
 
     def variable(self):

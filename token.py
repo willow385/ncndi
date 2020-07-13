@@ -16,6 +16,7 @@ class TokenType(Enum):
     IDENTIFIER = 12
     START = 13
     END = 14
+    PRINT = 15
 
 class Token:
     def __init__(self, token_type, value):
