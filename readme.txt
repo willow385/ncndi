@@ -35,5 +35,7 @@ File contents:
 
     foo.mpl: A Maple program demoing many of Maple's features.
 
-    test.mpl: A Maple program which demonstrates type coercion
-              in accordance with Maple's strict type-checking.
+    string_test.mpl: A Maple program that tests the interpreter's
+                     ability to parse string literals.
+
+    type_safety.mpl: a Maple program demonstrating type coercion.
