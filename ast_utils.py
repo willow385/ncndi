@@ -93,6 +93,18 @@ class Assignment(ASTNode):
         return self.__str__()
 
 
+class VariableDecl(ASTNode):
+    def __init__(self, var_type, identifier):
+        self.var_type = var_type
+        self.identifier = identifier
+
+    def __str__(self):
+        return f"({self.var_type} {self.identifier})"
+
+    def __repr__(self):
+        return self.__str__()
+
+
 class Reassignment(ASTNode):
     def __init__(self, identifier, op, value):
         self.identifier = identifier
@@ -139,6 +151,8 @@ def eval_expression(expression, parser):
         return eval_assignment(expression, parser)
     elif type(expression) is Reassignment:
         return eval_reassignment(expression, parser)
+    elif type(expression) is VariableDecl:
+        return eval_variable_decl(expression, parser)
 
 def get_var_type(variable_name, parser):
     type_str = parser.global_scope[variable_name]["type"]
@@ -148,6 +162,21 @@ def get_var_type(variable_name, parser):
         return float
     elif type_str == "string":
         return str
+
+def eval_variable_decl(vardec: VariableDecl, parser):
+    type_string = str(vardec.var_type)
+    val = None
+    if type_string == "int":
+        val = 0
+    elif type_string == "float":
+        val = 0.0
+    elif type_string == "string":
+        val = ""
+    parser.global_scope[vardec.identifier.value] = {
+        "value" : val,
+        "type" : type_string
+    }
+    return parser.global_scope[vardec.identifier.value]
 
 def eval_reassignment(reassgn: Reassignment, parser):
     if reassgn.identifier.value in parser.global_scope.keys():
@@ -165,6 +194,10 @@ def eval_print_statement(print_stat: PrintStatement, parser):
         print(f"{eval_bin_op(print_stat.arg)}")
     elif type(print_stat.arg) is Assignment:
         print(f"{eval_assignment(print_stat.arg, parser)}")
+    elif type(print_stat.arg) is Reassignment:
+        print(f"{eval_reassignment(print_stat.arg, parser)}")
+    elif type(print_stat.arg) is VariableDecl:
+        print(f"{eval_variable_decl(print_stat.arg, parser)}")
 
 def eval_bin_op(bin_op: BinaryOp, parser):
     # Get the left operand
@@ -226,5 +259,7 @@ def eval_program(program: Program, parser):
             eval_print_statement(node, parser)
         elif type(node) is Reassignment:
             eval_reassignment(node, parser)
+        elif type(node) is VariableDecl:
+            eval_variable_decl(node, parser)
         elif type(node) is Nop:
             pass

@@ -55,10 +55,14 @@ class Parser:
         var_ident = self.current_token
         self.eat(TokenType.IDENTIFIER)
         token = self.current_token
-        self.eat(TokenType.ASSIGN)
-        value = self.expr()
-        node = Assignment(var_type, var_ident, token, value)
-        return node
+        if token.token_type == TokenType.SEMICOLON:
+            node = VariableDecl(var_type, var_ident)
+            return VariableDecl(var_type, var_ident)
+        elif token.token_type == TokenType.ASSIGN:
+            self.eat(TokenType.ASSIGN)
+            value = self.expr()
+            return Assignment(var_type, var_ident, token, value)
+        self.error(f"Expected semicolon or assignment, got {token} instead")
 
     def reassignment_statement(self):
         var_ident = self.current_token

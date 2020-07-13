@@ -2,7 +2,8 @@
 # Example program written in Maple
 
 start {
-    int a = 1;
+    int a;
+    a = 1;
     float b = 2.0;
     int sum_a_b = a + b; # my phantastic comment!
 

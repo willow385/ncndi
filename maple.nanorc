@@ -5,6 +5,6 @@ comment "#"
 
 color brightgreen "\<(start|end|print|int|float|string)\>"
 color magenta "[(){}]"
+color yellow "[;+*=/-]"
 color brightblue "#.*"
 color ,green "[[:space:]]+$"
-color yellow "[;+*=/-]"

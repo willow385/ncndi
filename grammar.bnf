@@ -3,6 +3,7 @@
 statement_list : statement | statement SEMICOLON statement_list
 
 statement: assignment_statement
+         | variable_declaration
          | reassignment_statement
          | print_statement
          | empty
@@ -12,6 +13,8 @@ print_statement: PRINT expression
 assignment_statement: TYPE variable ASSIGN expression
 
 reassignment_statement: variable ASSIGN expression
+
+variable_declaration: TYPE variable
 
 empty:
 
@@ -29,4 +32,4 @@ variable: IDENTIFIER
 
 whitespace : ' ' | '\n' | '\r' | '\t'
 
-type : 'float' | 'int' | 'string'
+TYPE : 'float' | 'int' | 'string'
