@@ -1,4 +1,4 @@
-#!python3 ~/ncndi/maple_interpreter.py
+#!/usr/bin/python3.8 /home/claire/ncndi/maple_interpreter.py
 # Example program written in Maple
 
 start {
