@@ -184,7 +184,7 @@ class Parser:
             identifier = token
             node = None
             self.eat(TokenType.IDENTIFIER)
-            if self.current_token == TokenType.OPEN_PAREN:
+            if self.current_token.token_type == TokenType.OPEN_PAREN:
                 self.eat(TokenType.OPEN_PAREN)
                 args = self.argument_list()
                 self.eat(TokenType.CLOSE_PAREN)

@@ -166,6 +166,29 @@ class Function(ASTNode):
         return self.__str__()
 
 
+class FunctionCall(ASTNode):
+    def __init__(self, function_id, args: list):
+        self.func_id = function_id
+        self.args = args
+
+    def __str__(self):
+        result = f"(call to {self.func_id}("
+        if len(self.args) == 0:
+            result += ")"
+        elif len(self.args) == 1:
+            result += f"{self.args[0]})"
+        else:
+            result += f"{self.args[0]}"
+            for i in range(1, len(self.args)):
+                result += f", {self.args[i]}"
+            result += ")"
+        result += ")"
+        return result
+
+    def __repr__(self):
+        return self.__str__()
+
+
 class Nop(ASTNode):
     def __str__(self):
         return ""
