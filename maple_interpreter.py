@@ -26,18 +26,19 @@ def main():
 
     lexer = Lexer(text)
     parser = Parser(lexer)
-    try:
-        syntax_tree = parser.parse()
-        print(syntax_tree)
-        exit(0)
+#    try:
+    syntax_tree = parser.parse()
+    print(syntax_tree)
+    exit(0)
         # TODO finish implementing functions
+    if 0:
         eval_program(syntax_tree, parser)
         if "--dump" in sys.argv:
             print(parser.global_scope)
         if "--tree" in sys.argv:
             print(syntax_tree)
-    except Exception as e:
-        print(e)
+#    except Exception as e:
+#        print(e)
 
 if __name__ == "__main__":
     main()

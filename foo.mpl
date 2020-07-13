@@ -13,7 +13,8 @@ start {
     a = 1;
     string message = "a equals ";
     print message + a + "\n";
-    int b = triple(a);
+#    int b = triple(a);
+    int b = a;
     print "3 times a equals " + b  +"\n";
 
 } end

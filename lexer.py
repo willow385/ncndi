@@ -8,7 +8,7 @@ RESERVED_WORDS = {
     "int": Token(TokenType.TYPE_IDENTIFIER, "int"),
     "float": Token(TokenType.TYPE_IDENTIFIER, "float"),
     "string": Token(TokenType.TYPE_IDENTIFIER, "string"),
-    "funct": Token(TokenType.FUNCTION_DECL, "funct")
+    "funct": Token(TokenType.FUNCTION_DECL, "funct"),
     "return": Token(TokenType.RETURN, "return")
 }
 

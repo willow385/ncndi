@@ -58,7 +58,27 @@ class Parser:
             return_type = Token(TokenType.TYPE_IDENTIFIER, "void")
         self.eat(TokenType.OPEN_BRACE)
         function_body = self.statement_list()
+        self.eat(TokenType.CLOSE_BRACE)
         return Function(function_name, function_params, return_type, function_body)
+
+
+    def parameter_list(self):
+        node = []
+        if self.current_token.token_type == TokenType.CLOSE_PAREN:
+            return node
+        first_param_type = self.current_token
+        self.eat(TokenType.TYPE_IDENTIFIER)
+        first_param_ident = self.current_token
+        self.eat(TokenType.IDENTIFIER)
+        node.append(VariableDecl(first_param_type, first_param_ident))
+        while self.current_token.token_type != TokenType.CLOSE_PAREN:
+            self.eat(TokenType.COMMA)
+            param_type = self.current_token
+            self.eat(TokenType.TYPE_IDENTIFIER)
+            param_ident = self.current_token
+            self.eat(TokenType.IDENTIFIER)
+            node.append(VariableDecl(param_type, param_ident))
+        return node
 
 
     def statement_list(self):
