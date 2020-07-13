@@ -2,18 +2,22 @@ program : 'start' OPEN_BRACE statement_list CLOSE_BRACE 'end'
 
 statement_list : statement | statement SEMICOLON statement_list
 
-# TODO
 function_list: function_declaration | function_declaration function_list
 
-# TODO
 parameter_list: empty | variable_declaration(COMMA (variable_declaration|parameter_list))
+
 function_declaration: 'funct' IDENTIFIER OPEN_PAREN parameter_list CLOSE_PAREN (TYPE) OPEN_BRACE statement_list CLOSE_BRACE
+
+function_call: IDENTIFIER OPEN_PAREN argument_list CLOSE_PAREN
+
+argument_list: empty | expression(COMMA (expression|argument_list))
 
 statement: assignment_statement
          | variable_declaration
          | reassignment_statement
          | print_statement
          | empty
+         | function_call
 
 print_statement: PRINT expression
 
@@ -34,6 +38,7 @@ factor: PLUS factor
       | INTEGER
       | OPEN_PAREN expression CLOSE_PAREN
       | variable
+      | function_call
 
 variable: IDENTIFIER
 

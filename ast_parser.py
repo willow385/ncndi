@@ -6,6 +6,7 @@ class Parser:
     def __init__(self, lexer):
         self.lexer = lexer
         self.global_scope = {}
+        self.functions = []
         self.current_token = self.lexer.get_next_token()
 
 
@@ -81,6 +82,19 @@ class Parser:
         return node
 
 
+    def argument_list(self):
+        node = []
+        if self.current_token.token_type == TokenType.CLOSE_PAREN:
+            return node
+        first_arg = self.expr()
+        node.append(first_arg)
+        while self.current_token.token_type != TokenType.CLOSE_PAREN:
+            self.eat(TokenType.COMMA)
+            arg = self.expr()
+            node.append(arg)
+        return node
+
+
     def statement_list(self):
         result = []
         result.append(self.statement())
@@ -97,7 +111,12 @@ class Parser:
         if self.current_token.token_type == TokenType.TYPE_IDENTIFIER:
            node = self.assignment_statement()
         elif self.current_token.token_type == TokenType.IDENTIFIER:
-            node = self.reassignment_statement()
+            token_id = self.current_token
+            self.eat(TokenType.IDENTIFIER)
+            if self.current_token.token_type == TokenType.ASSIGN:
+                node = self.reassignment_statement(token_id)
+            elif self.current_token.token_type == TokenType.OPEN_PAREN:
+                node = self.function_call(token_id)
         elif self.current_token.token_type == TokenType.PRINT:
             node = self.print_statement()
         elif self.current_token.token_type == TokenType.RETURN:
@@ -121,7 +140,7 @@ class Parser:
         token = self.current_token
         if token.token_type == TokenType.SEMICOLON:
             node = VariableDecl(var_type, var_ident)
-            return VariableDecl(var_type, var_ident)
+            return node
         elif token.token_type == TokenType.ASSIGN:
             self.eat(TokenType.ASSIGN)
             value = self.expr()
@@ -129,13 +148,11 @@ class Parser:
         self.error(f"Expected semicolon or assignment, got {token} instead")
 
 
-    def reassignment_statement(self):
-        var_ident = self.current_token
-        self.eat(TokenType.IDENTIFIER)
+    def reassignment_statement(self, id_token):
         token = self.current_token
         self.eat(TokenType.ASSIGN)
         value = self.expr()
-        node = Reassignment(var_ident, token, value)
+        node = Reassignment(id_token, token, value)
         return node
 
 
@@ -164,9 +181,16 @@ class Parser:
             self.eat(TokenType.CLOSE_PAREN)
             return node
         elif token.token_type == TokenType.IDENTIFIER:
-            var_token = token
-            node = Variable(var_token)
+            identifier = token
+            node = None
             self.eat(TokenType.IDENTIFIER)
+            if self.current_token == TokenType.OPEN_PAREN:
+                self.eat(TokenType.OPEN_PAREN)
+                args = self.argument_list()
+                self.eat(TokenType.CLOSE_PAREN)
+                node = FunctionCall(identifier, args)
+            else:
+                node = Variable(identifier)
             return node
         elif token.token_type == TokenType.STRING:
             self.eat(TokenType.STRING)
