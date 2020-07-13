@@ -146,7 +146,7 @@ def eval_expression(expression, parser):
     elif type(expression) in (Integer, Float):
         return expression.value
     elif type(expression) is Variable:
-        return parser.global_scope[expression.value]
+        return parser.global_scope[expression.value]["value"]
     elif type(expression) is Assignment:
         return eval_assignment(expression, parser)
     elif type(expression) is Reassignment:
@@ -179,6 +179,7 @@ def eval_variable_decl(vardec: VariableDecl, parser):
     return parser.global_scope[vardec.identifier.value]
 
 def eval_reassignment(reassgn: Reassignment, parser):
+    print("calling reassignment function")
     if reassgn.identifier.value in parser.global_scope.keys():
         parser.global_scope[reassgn.identifier.value]["value"] = get_var_type(reassgn.identifier.value, parser)(eval_expression(reassgn.value, parser))
         return parser.global_scope[reassgn.identifier.value]["value"]
