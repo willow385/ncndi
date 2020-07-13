@@ -4,7 +4,10 @@ from token import Token, TokenType
 RESERVED_WORDS = {
     "start": Token(TokenType.START, "start"),
     "end": Token(TokenType.END, "end"),
-    "print": Token(TokenType.PRINT, "print")
+    "print": Token(TokenType.PRINT, "print"),
+    "int": Token(TokenType.TYPE_IDENTIFIER, "int"),
+    "float": Token(TokenType.TYPE_IDENTIFIER, "float"),
+    "string": Token(TokenType.TYPE_IDENTIFIER, "string")
 }
 
 class Lexer:
@@ -27,18 +30,21 @@ class Lexer:
         while self.current_char is not None and self.current_char.isspace():
             self.advance()
 
-    def parse_integer(self):
+    def parse_number(self):
         result = ""
         if self.current_char == '-': # handle negative numbers
             result += self.current_char
             self.advance()
-        while self.current_char is not None and self.current_char.isdigit():
+        while self.current_char is not None and (self.current_char.isdigit() or self.current_char == '.'):
             result += self.current_char
             self.advance()
         if result == "-":
             self.error("Expected integer literal, got '-' instead")
         else:
-            return int(result)
+            if '.' in result:
+                return float(result)
+            else:
+                return int(result)
 
     def skip_comment(self):
         if self.current_char == '#':
@@ -68,6 +74,13 @@ class Lexer:
         else:
             return self.text[self.pos + 1]
 
+    def get_number_token(self):
+        value = self.parse_number()
+        if type(value) is float:
+            return Token(TokenType.FLOAT, value)
+        else:
+            return Token(TokenType.INTEGER, value)
+
     def get_next_token(self):
         while self.current_char is not None:
 
@@ -79,7 +92,7 @@ class Lexer:
                 continue
 
             if self.current_char.isdigit():
-                return Token(TokenType.INTEGER, self.parse_integer())
+                return self.get_number_token()
 
             if self.current_char == '#':
                 self.skip_comment()
@@ -91,9 +104,9 @@ class Lexer:
 
             if self.current_char == '-':
                 if self.pos == 0:
-                    return Token(TokenType.INTEGER, self.parse_integer())
+                    return self.get_number_token()
                 elif self.text[self.pos - 1] in ('-', '+', '*', '/', '('):
-                    return Token(TokenType.INTEGER, self.parse_integer())
+                    return self.get_number_token()
                 else:
                     self.advance()
                     return Token(TokenType.SUBTRACT, '-')

@@ -1,12 +1,17 @@
-program : 'start' (whitespace)* OPEN_BRACE statement_list CLOSE_BRACE (whitespace)* 'end'
+'program : 'start' (whitespace)* OPEN_BRACE statement_list CLOSE_BRACE (whitespace)* 'end'
 
 statement_list : statement | statement SEMICOLON statement_list
 
-statement: assignment_statement | print_statement | empty
+statement: assignment_statement
+         | reassignment_statement
+         | print_statement
+         | empty
 
 print_statement: PRINT expression
 
-assignment_statement: variable ASSIGN expression
+assignment_statement: TYPE variable ASSIGN expression
+
+reassignment_statement: variable ASSIGN expression
 
 empty:
 
@@ -23,3 +28,5 @@ factor: PLUS factor
 variable: IDENTIFIER
 
 whitespace : ' ' | '\n' | '\r' | '\t'
+
+type : 'float' | 'int' | 'string'

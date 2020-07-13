@@ -6,8 +6,16 @@ import sys
 
 def main():
     text = ""
+
     if len(sys.argv) > 1:
-        text = open(sys.argv[1]).read()
+        # best code ever written /s
+        # obviously this is just a prototype lmao
+        try:
+            text = open(sys.argv[1]).read()
+        except FileNotFoundError:
+            text = open(sys.argv[2]).read()
+        except FileNotFoundError:
+            text = open(sys.argv[3]).read()
     else:
         while True:
             try:
@@ -18,7 +26,12 @@ def main():
     lexer = Lexer(text)
     parser = Parser(lexer)
     try:
-        eval_program(parser.parse(), parser)
+        syntax_tree = parser.parse()
+        eval_program(syntax_tree, parser)
+        if "--dump" in sys.argv:
+            print(parser.global_scope)
+        if "--tree" in sys.argv:
+            print(syntax_tree)
     except Exception as e:
         print(e)
 

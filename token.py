@@ -17,8 +17,16 @@ class TokenType(Enum):
     START = 13
     END = 14
     PRINT = 15
+    FLOAT = 16
+    TYPE_IDENTIFIER = 17
 
 class Token:
     def __init__(self, token_type, value):
         self.token_type = token_type
         self.value = value
+
+    def __str__(self):
+        return f"{self.value}"
+
+    def __repr__(self):
+        return self.__str__()

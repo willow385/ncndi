@@ -39,8 +39,10 @@ class Parser:
 
     def statement(self):
         node = None
-        if self.current_token.token_type == TokenType.IDENTIFIER:
-            node = self.assignment_statement()
+        if self.current_token.token_type == TokenType.TYPE_IDENTIFIER:
+           node = self.assignment_statement()
+        elif self.current_token.token_type == TokenType.IDENTIFIER:
+            node = self.reassignment_statement()
         elif self.current_token.token_type == TokenType.PRINT:
             node = self.print_statement()
         else:
@@ -48,22 +50,29 @@ class Parser:
         return node
 
     def assignment_statement(self):
-        var_ident = self.variable()
+        var_type = self.current_token
+        self.eat(TokenType.TYPE_IDENTIFIER)
+        var_ident = self.current_token
+        self.eat(TokenType.IDENTIFIER)
         token = self.current_token
         self.eat(TokenType.ASSIGN)
         value = self.expr()
-        node = Assignment(var_ident, token, value)
+        node = Assignment(var_type, var_ident, token, value)
+        return node
+
+    def reassignment_statement(self):
+        var_ident = self.current_token
+        self.eat(TokenType.IDENTIFIER)
+        token = self.current_token
+        self.eat(TokenType.ASSIGN)
+        value = self.expr()
+        node = Reassignment(var_ident, token, value)
         return node
 
     def print_statement(self):
         self.eat(TokenType.PRINT)
         value = self.expr()
         node = PrintStatement(value)
-        return node
-
-    def variable(self):
-        node = Variable(self.current_token)
-        self.eat(TokenType.IDENTIFIER)
         return node
 
     def empty(self):
@@ -74,13 +83,18 @@ class Parser:
         if token.token_type == TokenType.INTEGER:
             self.eat(TokenType.INTEGER)
             return Integer(token)
+        elif token.token_type == TokenType.FLOAT:
+            self.eat(TokenType.FLOAT)
+            return Float(token)
         elif token.token_type == TokenType.OPEN_PAREN:
             self.eat(TokenType.OPEN_PAREN)
             node = self.expr()
             self.eat(TokenType.CLOSE_PAREN)
             return node
         elif token.token_type == TokenType.IDENTIFIER:
-            node = self.variable()
+            var_token = token
+            node = Variable(var_token)
+            self.eat(TokenType.IDENTIFIER)
             return node
 
     def term(self):
