@@ -20,6 +20,8 @@ class TokenType(Enum):
     FLOAT = 16
     TYPE_IDENTIFIER = 17
     STRING = 18
+    FUNCTION_DECL = 19
+    COMMA = 20
 
 class Token:
     def __init__(self, token_type, value):

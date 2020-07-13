@@ -3,10 +3,11 @@ program : 'start' OPEN_BRACE statement_list CLOSE_BRACE 'end'
 statement_list : statement | statement SEMICOLON statement_list
 
 # TODO
-procedure_list : procedure_declaration | procedure_declaration procedure_list
+function_list: function_declaration | function_declaration function_list
 
 # TODO
-procedure_declaration : 'proc' IDENTIFIER OPEN_BRACE statement_list CLOSE_BRACE
+parameter_list: empty | variable_declaration(COMMA (variable_declaration|parameter_list))
+function_declaration: 'funct' IDENTIFIER OPEN_PAREN parameter_list CLOSE_PAREN (TYPE) OPEN_BRACE statement_list CLOSE_BRACE
 
 statement: assignment_statement
          | variable_declaration

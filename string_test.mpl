@@ -1,4 +1,4 @@
-# program to test the parsing of stirng literals
+# program to test the parsing of string literals
 
 start {
     string foo = "foo\"bar\"\\\n\\";

@@ -17,9 +17,13 @@ class Parser:
             self.error(f"Expected {token_type}, got {self.current_token.token_type}")
 
     def program(self):
+        nodes = []
+        # TODO
+        #if self.current_token.token_type == TokenType.FUNCTION_DECL:
+        #    nodes += self.function_list()
         self.eat(TokenType.START)
         self.eat(TokenType.OPEN_BRACE)
-        nodes = self.statement_list()
+        nodes += self.statement_list()
         self.eat(TokenType.CLOSE_BRACE)
         self.eat(TokenType.END)
         root = Program()

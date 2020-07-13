@@ -7,7 +7,8 @@ RESERVED_WORDS = {
     "print": Token(TokenType.PRINT, "print"),
     "int": Token(TokenType.TYPE_IDENTIFIER, "int"),
     "float": Token(TokenType.TYPE_IDENTIFIER, "float"),
-    "string": Token(TokenType.TYPE_IDENTIFIER, "string")
+    "string": Token(TokenType.TYPE_IDENTIFIER, "string"),
+    "funct": Token(TokenType.FUNCTION_DECL, "funct")
 }
 
 class Lexer:
@@ -107,6 +108,10 @@ class Lexer:
 
             if self.current_char.isdigit():
                 return self.get_number_token()
+
+            if self.current_char == ',':
+                self.advance()
+                return Token(TokenType.COMMA, ',')
 
             if self.current_char == '"':
                 return self.parse_string_literal()
