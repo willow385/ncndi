@@ -17,7 +17,10 @@ def main():
 
     lexer = Lexer(text)
     parser = Parser(lexer)
-    eval_program(parser.parse(), parser)
+    try:
+        eval_program(parser.parse(), parser)
+    except Exception as e:
+        print(e)
 
 if __name__ == "__main__":
     main()
