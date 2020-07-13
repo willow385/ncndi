@@ -78,11 +78,21 @@ class Nop(ASTNode):
         return self.__str__()
 
 
-def eval_bin_op(bin_op: BinaryOp):
+def eval_expression(expression, parser):
+    if type(expression) is BinaryOp:
+        return eval_bin_op(expression, parser)
+    elif type(expression) is Integer:
+        return expression.value
+    elif type(expression) is Variable:
+        return parser.global_scope[expression.value]
+
+def eval_bin_op(bin_op: BinaryOp, parser):
     # Get the left operand
     left = int()
     if type(bin_op.left) is Integer:
         left = bin_op.left.value
+    elif type(bin_op.left) is Variable:
+        left = parser.global_scope[bin_op.left.value]
     else:
         left = eval_bin_op(bin_op.left)
 
@@ -90,6 +100,8 @@ def eval_bin_op(bin_op: BinaryOp):
     right = int()
     if type(bin_op.right) is Integer:
         right = bin_op.right.value
+    elif type(bin_op.right) is Variable:
+        right = parser.global_scope[bin_op.right.value]
     else:
         right = eval_bin_op(bin_op.right)
 
@@ -107,5 +119,9 @@ def eval_bin_op(bin_op: BinaryOp):
         return left - right
 
 def eval_program(program: Program, parser):
-    # TODO
-    pass
+    for node in program.children:
+        if type(node) is Assignment:
+            parser.global_scope[node.identifier.value] = eval_expression(node.value, parser)
+
+    for var in parser.global_scope.keys():
+        print(f"{var}: {parser.global_scope[var]}")
