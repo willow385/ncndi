@@ -191,7 +191,7 @@ def eval_print_statement(print_stat: PrintStatement, parser):
     elif type(print_stat.arg) is Variable:
         print(f"{parser.global_scope[print_stat.arg.value]['value']}")
     elif type(print_stat.arg) is BinaryOp:
-        print(f"{eval_bin_op(print_stat.arg)}")
+        print(f"{eval_bin_op(print_stat.arg, parser)}")
     elif type(print_stat.arg) is Assignment:
         print(f"{eval_assignment(print_stat.arg, parser)}")
     elif type(print_stat.arg) is Reassignment:
