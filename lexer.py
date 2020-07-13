@@ -74,8 +74,8 @@ class Lexer:
             self.advance()
         else:
             self.error("String literals must begin with '" '"' "'")
-        escapes = ('\\', 'n', 'r', 't')
-        while self.current_char is not None and (self.current_char != '"' or (self.current_char == '\\' and self.peek() in escapes)):
+
+        while self.current_char != '"' or (self.current_char == '"' and self.text[self.pos-1] == '\\' and self.text[self.pos-2] != '\\'):
             result += self.current_char
             self.advance()
         self.advance()
