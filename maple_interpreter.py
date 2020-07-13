@@ -25,15 +25,15 @@ def main():
 
     lexer = Lexer(text)
     parser = Parser(lexer)
-#    try:
-    syntax_tree = parser.parse()
-    eval_program(syntax_tree, parser)
-    if "--dump" in sys.argv:
-        print(parser.global_scope)
-    if "--tree" in sys.argv:
-        print(syntax_tree)
-#    except Exception as e:
-#        print(e)
+    try:
+        syntax_tree = parser.parse()
+        eval_program(syntax_tree, parser)
+        if "--dump" in sys.argv:
+            print(parser.global_scope)
+        if "--tree" in sys.argv:
+            print(syntax_tree)
+    except Exception as e:
+        print(e)
 
 if __name__ == "__main__":
     main()
