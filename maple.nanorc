@@ -1,0 +1,10 @@
+## Maple syntax highlighting
+
+syntax "maple" "\.mpl$"
+comment "#"
+
+color brightgreen "\<(start|end|print)\>"
+color magenta "[(){}]"
+color brightblue "#.*"
+color ,green "[[:space:]]+$"
+color yellow "[;+*=/-]"

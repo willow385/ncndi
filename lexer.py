@@ -40,6 +40,12 @@ class Lexer:
         else:
             return int(result)
 
+    def skip_comment(self):
+        if self.current_char == '#':
+            while self.current_char not in ('\r', '\n'):
+                self.advance()
+        while self.current_char in ('\r', '\n'):
+            self.advance()
 
     def parse_identifier(self):
         result = ""
@@ -74,6 +80,10 @@ class Lexer:
 
             if self.current_char.isdigit():
                 return Token(TokenType.INTEGER, self.parse_integer())
+
+            if self.current_char == '#':
+                self.skip_comment()
+                return self.get_next_token()
 
             if self.current_char == '+':
                 self.advance()
