@@ -3,7 +3,7 @@
 syntax "maple" "\.mpl$"
 comment "#"
 
-color brightgreen "\<(start|end|print|int|float|string)\>"
+color brightgreen "\<(start|end|print|int|float|string|funct|return)\>"
 color magenta "[(){}]"
 color yellow "[;+*=/-]"
 color brightred "<[^=    ]*>" ""(\\.|[^"])*""

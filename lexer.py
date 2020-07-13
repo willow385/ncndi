@@ -9,6 +9,7 @@ RESERVED_WORDS = {
     "float": Token(TokenType.TYPE_IDENTIFIER, "float"),
     "string": Token(TokenType.TYPE_IDENTIFIER, "string"),
     "funct": Token(TokenType.FUNCTION_DECL, "funct")
+    "return": Token(TokenType.RETURN, "return")
 }
 
 class Lexer:

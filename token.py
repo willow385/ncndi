@@ -22,6 +22,7 @@ class TokenType(Enum):
     STRING = 18
     FUNCTION_DECL = 19
     COMMA = 20
+    RETURN = 21
 
 class Token:
     def __init__(self, token_type, value):

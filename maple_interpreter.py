@@ -28,6 +28,9 @@ def main():
     parser = Parser(lexer)
     try:
         syntax_tree = parser.parse()
+        print(syntax_tree)
+        exit(0)
+        # TODO finish implementing functions
         eval_program(syntax_tree, parser)
         if "--dump" in sys.argv:
             print(parser.global_scope)

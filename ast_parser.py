@@ -2,13 +2,16 @@ from ast_utils import *
 from lexer import Lexer
 
 class Parser:
+
     def __init__(self, lexer):
         self.lexer = lexer
         self.global_scope = {}
         self.current_token = self.lexer.get_next_token()
 
+
     def error(self, message):
         raise Exception("Error while parsing: " + message)
+
 
     def eat(self, token_type):
         if self.current_token.token_type == token_type:
@@ -16,11 +19,11 @@ class Parser:
         else:
             self.error(f"Expected {token_type}, got {self.current_token.token_type}")
 
+
     def program(self):
         nodes = []
-        # TODO
-        #if self.current_token.token_type == TokenType.FUNCTION_DECL:
-        #    nodes += self.function_list()
+        if self.current_token.token_type == TokenType.FUNCTION_DECL:
+            nodes += self.function_list()
         self.eat(TokenType.START)
         self.eat(TokenType.OPEN_BRACE)
         nodes += self.statement_list()
@@ -30,6 +33,33 @@ class Parser:
         for node in nodes:
             root.children.append(node)
         return root
+
+
+    def function_list(self):
+        result = []
+        while self.current_token.token_type != TokenType.START:
+            result.append(self.function_declaration())
+        return result
+
+
+    def function_declaration(self):
+        node = None
+        self.eat(TokenType.FUNCTION_DECL)
+        function_name = self.current_token
+        self.eat(TokenType.IDENTIFIER)
+        self.eat(TokenType.OPEN_PAREN)
+        function_params = self.parameter_list()
+        self.eat(TokenType.CLOSE_PAREN)
+        return_type = None
+        if self.current_token.token_type == TokenType.TYPE_IDENTIFIER:
+            return_type = self.current_token
+            self.eat(TokenType.TYPE_IDENTIFIER)
+        else:
+            return_type = Token(TokenType.TYPE_IDENTIFIER, "void")
+        self.eat(TokenType.OPEN_BRACE)
+        function_body = self.statement_list()
+        return Function(function_name, function_params, return_type, function_body)
+
 
     def statement_list(self):
         result = []
@@ -41,6 +71,7 @@ class Parser:
             self.error(f"Syntax error at unexpected token ``{self.current_token.value}''")
         return result
 
+
     def statement(self):
         node = None
         if self.current_token.token_type == TokenType.TYPE_IDENTIFIER:
@@ -49,9 +80,18 @@ class Parser:
             node = self.reassignment_statement()
         elif self.current_token.token_type == TokenType.PRINT:
             node = self.print_statement()
+        elif self.current_token.token_type == TokenType.RETURN:
+            node = self.return_statement()
         else:
             node = self.empty()
         return node
+
+
+    def return_statement(self):
+        self.eat(TokenType.RETURN)
+        return_val = self.expr()
+        return ReturnStatement(return_val)
+
 
     def assignment_statement(self):
         var_type = self.current_token
@@ -68,6 +108,7 @@ class Parser:
             return Assignment(var_type, var_ident, token, value)
         self.error(f"Expected semicolon or assignment, got {token} instead")
 
+
     def reassignment_statement(self):
         var_ident = self.current_token
         self.eat(TokenType.IDENTIFIER)
@@ -77,14 +118,17 @@ class Parser:
         node = Reassignment(var_ident, token, value)
         return node
 
+
     def print_statement(self):
         self.eat(TokenType.PRINT)
         value = self.expr()
         node = PrintStatement(value)
         return node
 
+
     def empty(self):
         return Nop()
+
 
     def factor(self):
         token = self.current_token
@@ -108,6 +152,7 @@ class Parser:
             self.eat(TokenType.STRING)
             return String(token)
 
+
     def term(self):
         node = self.factor()
 
@@ -120,6 +165,7 @@ class Parser:
             node = BinaryOp(left=node, op=token, right=self.factor())
 
         return node
+
 
     def expr(self):
         node = self.term()
@@ -134,6 +180,7 @@ class Parser:
             node = BinaryOp(left=node, op=token, right=self.term())
 
         return node
+
 
     def parse(self):
         node = self.program()

@@ -130,6 +130,42 @@ class Variable(ASTNode):
         return self.__str__()
 
 
+class ReturnStatement(ASTNode):
+    def __init__(self, return_value):
+        self.value = return_value
+
+    def __str__(self):
+        return f"(return {self.value})"
+
+    def __repr__(self):
+        return self.__str__()
+
+
+class Function(ASTNode):
+    def __init__(self, function_name, function_params, return_type, function_body):
+        self.function_name = function_name
+        self.params = function_params
+        self.return_type = return_type
+        self.body = function_body
+
+    def __str__(self):
+        result = f"(function {self.function_name}("
+        if len(self.params) == 0:
+            result += ")"
+        elif len(self.params) == 1:
+            result += f"{self.params[0]})"
+        else:
+            result += f"{self.params[0]}"
+            for i in range(1, len(self.params)):
+                result += f", {self.params[i]}"
+            result += ")"
+        result += f": {self.return_type} = ({self.body})"
+        return result
+
+    def __repr__(self):
+        return self.__str__()
+
+
 class Nop(ASTNode):
     def __str__(self):
         return ""
