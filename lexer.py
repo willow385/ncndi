@@ -50,7 +50,7 @@ class Lexer:
             if self.current_char == '-':
                 if self.pos == 0:
                     return Token(TokenType.INTEGER, self.parse_integer())
-                elif self.text[self.pos - 1] in ('-', '+', '*', '/'):
+                elif self.text[self.pos - 1] in ('-', '+', '*', '/', '('):
                     return Token(TokenType.INTEGER, self.parse_integer())
                 else:
                     self.advance()
