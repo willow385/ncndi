@@ -162,3 +162,5 @@ def eval_program(program: Program, parser):
             parser.global_scope[node.identifier.value] = eval_expression(node.value, parser)
         elif type(node) is PrintStatement:
             eval_print_statement(node, parser)
+        elif type(node) is Nop:
+            pass
