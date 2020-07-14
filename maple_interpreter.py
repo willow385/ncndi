@@ -29,11 +29,13 @@ def main():
 #    try:
     syntax_tree = parser.parse()
     # TODO finish implementing functions
-#    eval_program(syntax_tree, parser)
+    eval_program(syntax_tree, parser)
 #    if "--dump" in sys.argv:
 #        print(parser.global_scope)
 #    if "--tree" in sys.argv:
     print(syntax_tree)
+    print("*** Functions: ***")
+    print(parser.functions)
 #    except Exception as e:
 #        print(e)
 

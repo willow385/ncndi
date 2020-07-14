@@ -146,7 +146,8 @@ class Function(ASTNode):
         self.function_name = function_name
         self.params = function_params
         self.return_type = return_type
-        self.body = function_body
+        self.body = Program()
+        self.body.children = function_body
 
     def __str__(self):
         result = f"(function {self.function_name}("
@@ -170,6 +171,7 @@ class FunctionCall(ASTNode):
     def __init__(self, function_id, args: list):
         self.func_id = function_id
         self.args = args
+        self.local_scope = args
 
     def __str__(self):
         result = f"(call to {self.func_id}("
@@ -212,6 +214,20 @@ def eval_expression(expression, parser):
         return eval_reassignment(expression, parser)
     elif type(expression) is VariableDecl:
         return eval_variable_decl(expression, parser)
+    elif type(expression) is Function:
+        eval_function(expression, parser)
+    elif type(expression) is FunctionCall:
+        return eval_function_call(expression, parser)
+
+# evaluate function declarations
+def eval_function(function: Function, parser):
+    parser.functions[function.function_name.value] = function
+
+def eval_function_call(funccall: FunctionCall, parser):
+    result = None
+    print(parser.functions)
+    function_decl = parser.functions[funccall.func_id.value]
+    return 1 # TODO
 
 def get_var_type(variable_name, parser):
     type_str = parser.global_scope[variable_name]["type"]
@@ -337,5 +353,9 @@ def eval_program(program: Program, parser):
             eval_reassignment(node, parser)
         elif type(node) is VariableDecl:
             eval_variable_decl(node, parser)
+        elif type(node) is Function:
+            eval_function(node, parser)
+        elif type(node) is FunctionCall:
+            eval_function_call(node, parser)
         elif type(node) is Nop:
             pass
