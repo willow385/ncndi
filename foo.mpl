@@ -28,7 +28,7 @@ start {
     string message = "a equals ";
     print message + a + "\n";
     int b = triple(a);
-    print "3 times a equals " + b  +"\n";
+    print "3 times a equals " + b + "\n";
     string new_message = print_message(
         "Hello, world!",
         "This string was returned from print_message()!\n"
