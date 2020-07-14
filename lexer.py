@@ -9,7 +9,9 @@ RESERVED_WORDS = {
     "float": Token(TokenType.TYPE_IDENTIFIER, "float"),
     "string": Token(TokenType.TYPE_IDENTIFIER, "string"),
     "funct": Token(TokenType.FUNCTION_DECL, "funct"),
-    "return": Token(TokenType.RETURN, "return")
+    "return": Token(TokenType.RETURN, "return"),
+    "if": Token(TokenType.IF, "if"),
+    "else": Token(TokenType.ELSE, "else")
 }
 
 class Lexer:
@@ -164,7 +166,18 @@ class Lexer:
 
             if self.current_char == '=':
                 self.advance()
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.EQUALS, "==")
                 return Token(TokenType.ASSIGN, '=')
+
+            if self.current_char == '>':
+                self.advance()
+                return Token(TokenType.GREATER_THAN, '>')
+
+            if self.current_char == '<':
+                self.advance()
+                return Token(TokenType.LESS_THAN, '<')
 
             self.error(f"Syntax error at unexpected character '{self.current_char}'")
 

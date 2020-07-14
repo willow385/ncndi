@@ -23,6 +23,11 @@ class TokenType(Enum):
     FUNCTION_DECL = 19
     COMMA = 20
     RETURN = 21
+    IF = 22
+    ELSE = 23
+    GREATER_THAN = 24
+    LESS_THAN = 25
+    EQUALS = 26
 
 class Token:
     def __init__(self, token_type, value):

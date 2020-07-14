@@ -84,11 +84,11 @@ class Parser:
         node = []
         if self.current_token.token_type == TokenType.CLOSE_PAREN:
             return node
-        first_arg = self.expr()
+        first_arg = self.expression()
         node.append(first_arg)
         while self.current_token.token_type != TokenType.CLOSE_PAREN:
             self.eat(TokenType.COMMA)
-            arg = self.expr()
+            arg = self.expression()
             node.append(arg)
         return node
 
@@ -133,7 +133,7 @@ class Parser:
 
     def return_statement(self):
         self.eat(TokenType.RETURN)
-        return_val = self.expr()
+        return_val = self.expression()
         return ReturnStatement(return_val)
 
 
@@ -148,7 +148,7 @@ class Parser:
             return node
         elif token.token_type == TokenType.ASSIGN:
             self.eat(TokenType.ASSIGN)
-            value = self.expr()
+            value = self.expression()
             return Assignment(var_type, var_ident, token, value)
         self.error(f"Expected semicolon or assignment, got {token} instead")
 
@@ -156,14 +156,14 @@ class Parser:
     def reassignment_statement(self, id_token):
         token = self.current_token
         self.eat(TokenType.ASSIGN)
-        value = self.expr()
+        value = self.expression()
         node = Reassignment(id_token, token, value)
         return node
 
 
     def print_statement(self):
         self.eat(TokenType.PRINT)
-        value = self.expr()
+        value = self.expression()
         node = PrintStatement(value)
         return node
 
@@ -182,7 +182,7 @@ class Parser:
             return Float(token)
         elif token.token_type == TokenType.OPEN_PAREN:
             self.eat(TokenType.OPEN_PAREN)
-            node = self.expr()
+            node = self.expression()
             self.eat(TokenType.CLOSE_PAREN)
             return node
         elif token.token_type == TokenType.IDENTIFIER:
@@ -216,7 +216,7 @@ class Parser:
         return node
 
 
-    def expr(self):
+    def math_expression(self):
         node = self.term()
 
         while self.current_token.token_type in (TokenType.PLUS, TokenType.SUBTRACT):
@@ -230,6 +230,22 @@ class Parser:
 
         return node
 
+    def expression(self):
+        node = self.math_expression()
+
+        bool_exprs = (TokenType.LESS_THAN, TokenType.EQUALS, TokenType.GREATER_THAN)
+        while self.current_token.token_type in bool_exprs:
+            token = self.current_token
+            if token.token_type == TokenType.LESS_THAN:
+                self.eat(TokenType.LESS_THAN)
+            elif token.token_type == TokenType.EQUALS:
+                self.eat(TokenType.EQUALS)
+            elif token.token_type == TokenType.GREATER_THAN:
+                self.eat(TokenType.GREATER_THAN)
+
+            node = BinaryOp(left=node, op=token, right=self.math_expression())
+
+        return node
 
     def parse(self):
         node = self.program()

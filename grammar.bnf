@@ -39,7 +39,9 @@ variable_declaration: TYPE variable
 
 empty:
 
-expression: term ((PLUS | SUBTRACT) term)*
+expression: math_expression ((LESS_THAN | EQUALS | GREATER_THAN) math_expression)*
+
+math_expression: term ((PLUS | SUBTRACT) term)*
 
 term: factor ((MULTIPLY | DIVIDE) factor)*
 

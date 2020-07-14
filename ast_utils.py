@@ -17,7 +17,7 @@ class ASTNode:
         raise NotImplementedError(f"Class {type(self).__name__} has not implemented the eval() method")
 
 
-# Class representing binary operations (+, -, *, /).
+# Class representing binary operations (+, -, *, /, >, <, ==).
 class BinaryOp(ASTNode):
     def __init__(self, left, op, right):
         self.left = left
@@ -62,6 +62,18 @@ class BinaryOp(ASTNode):
             if type(left) is str or type(left) is str:
                 raise Exception("Error: operator '-' not supported for string type")
             return left - right
+        elif self.op.token_type == TokenType.EQUALS:
+            if (type(left) is not type(right)) and (str in [type(left), type(right)]):
+                return 0 # don't compare strings with other types
+            return 1 if left == right else 0
+        elif self.op.token_type == TokenType.GREATER_THAN:
+            if (type(left) is not type(right)) and (str in [type(left), type(right)]):
+                return 0
+            return 1 if left > right else 0
+        elif self.op.token_type == TokenType.LESS_THAN:
+            if (type(left) is not type(right)) and (str in [type(left), type(right)]):
+                return 0
+            return 1 if left < right else 0
 
 
 # Class representing atomic values of the int type.
