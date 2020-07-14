@@ -2,7 +2,8 @@ from token import Token, TokenType
 
 
 class ASTNode:
-    pass
+    def eval(self, variable_scope: dict, function_scope: dict):
+        raise NotImplementedError(f"Class {type(self).__name__} has not implemented the eval() method")
 
 
 class BinaryOp(ASTNode):
@@ -17,6 +18,35 @@ class BinaryOp(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    def eval(self, variable_scope: dict, function_scope: dict):
+        # Get the left operand
+        left = self.left.eval(variable_scope, function_scope)
+
+        # Get the right operand
+        right = self.right.eval(variable_scope, function_scope)
+
+        # Do an operation
+        if self.op.token_type == TokenType.MULT:
+            if type(left) is str or type(left) is str:
+                raise Exception("Error: operator '*' not supported for string type")
+            return left * right
+        elif self.op.token_type == TokenType.PLUS:
+            if type(left) is str or type(right) is str:
+                return str(left) + str(right) # support string concatenation
+            return left + right
+        elif self.op.token_type == TokenType.DIVIDE:
+            if type(left) is str or type(left) is str:
+                raise Exception("Error: operator '/' not supported for string type")
+            if right == 0:
+                return float("inf")
+            else:
+                return left / right
+        elif self.op.token_type == TokenType.SUBTRACT:
+            if type(left) is str or type(left) is str:
+                raise Exception("Error: operator '-' not supported for string type")
+            return left - right
+
+
 
 class Integer(ASTNode):
     def __init__(self, token):
@@ -28,6 +58,9 @@ class Integer(ASTNode):
 
     def __repr__(self):
         return self.__str__()
+
+    def eval(self, variable_scope: dict, function_scope: dict):
+        return int(self.value)
 
 
 class Float(ASTNode):
@@ -41,6 +74,9 @@ class Float(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    def eval(self, variable_scope: dict, function_scope: dict):
+        return float(self.value)
+
 
 class String(ASTNode):
     def __init__(self, value):
@@ -52,6 +88,9 @@ class String(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    def eval(self, variable_scope: dict, function_scope: dict):
+        return str(self.value)
+
 
 class PrintStatement(ASTNode):
     def __init__(self, arg):
@@ -62,6 +101,9 @@ class PrintStatement(ASTNode):
 
     def __repr__(self):
         return self.__str__()
+
+    def eval(self, variable_scope: dict, function_scope: dict):
+        print(f"{self.arg.eval(variable_scope, function_scope)}", end="")
 
 
 class Program(ASTNode):
@@ -78,6 +120,12 @@ class Program(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    def eval(self, variable_scope: dict, function_scope: dict):
+        for node in self.children:
+            result = node.eval(variable_scope, function_scope)
+            if type(node) is ReturnStatement:
+                return result
+
 
 class Assignment(ASTNode):
     def __init__(self, var_type, identifier, op, value):
@@ -92,6 +140,20 @@ class Assignment(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    def eval(self, variable_scope: dict, function_scope: dict):
+        if self.identifier.value in {**variable_scope, **function_scope}.keys():
+            raise Exception(f"Error: {self.identifier.value} has multiple definitions")
+        var_type = {
+            "int" : int,
+            "float" : float,
+            "string" : str
+        }[self.var_type.value]
+        variable_scope[self.identifier.value] = {
+            "value" : var_type(self.value.eval(variable_scope, function_scope)),
+            "type" : self.var_type.value
+        }
+        return variable_scope[self.identifier.value]["value"]
+
 
 class VariableDecl(ASTNode):
     def __init__(self, var_type, identifier):
@@ -103,6 +165,22 @@ class VariableDecl(ASTNode):
 
     def __repr__(self):
         return self.__str__()
+
+    def eval(self, variable_scope: dict, function_scope: dict):
+        if self.identifier.value in {**variable_scope, **function_scope}.keys():
+            raise Exception(f"Error: {self.identifier.value} has multiple definitions")
+        value = None
+        if self.var_type.value == "int":
+            value = 0
+        elif self.var_type.value == "float":
+            value = 0.0
+        elif self.var_type.value == "string":
+            value = ""
+        variable_scope[self.identifier.value] = {
+            "value" : value,
+            "type" : self.var_type.value
+        }
+        return variable_scope[self.identifier.value]["value"]
 
 
 class Reassignment(ASTNode):
@@ -117,6 +195,16 @@ class Reassignment(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    def eval(self, variable_scope: dict, function_scope: dict):
+        var_type = None
+        if variable_scope[self.identifier.value]["type"] == "int":
+            var_type = int
+        elif variable_scope[self.identifier.value]["type"] == "float":
+            var_type = float
+        elif variable_scope[self.identifier.value]["type"] == "string":
+            var_type = str
+        variable_scope[self.identifier.value]["value"] = var_type(self.value.eval(variable_scope, function_scope))
+
 
 class Variable(ASTNode):
     def __init__(self, token):
@@ -129,6 +217,9 @@ class Variable(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    def eval(self, variable_scope: dict, function_scope: dict):
+        return variable_scope[self.value]["value"]
+
 
 class ReturnStatement(ASTNode):
     def __init__(self, return_value):
@@ -139,6 +230,10 @@ class ReturnStatement(ASTNode):
 
     def __repr__(self):
         return self.__str__()
+
+    def eval(self, variable_scope: dict, function_scope: dict):
+        value = self.value.eval(variable_scope, function_scope)
+        return value
 
 
 class Function(ASTNode):
@@ -166,6 +261,11 @@ class Function(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    def eval(self, variable_scope: dict, function_scope: dict):
+        if self.function_name.value in {**variable_scope, **function_scope}.keys():
+            raise Exception(f"Error: {self.function_name.value} has multiple definitions")
+        function_scope[self.function_name.value] = self
+
 
 class FunctionCall(ASTNode):
     def __init__(self, function_id, args: list):
@@ -190,6 +290,35 @@ class FunctionCall(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    def eval(self, variable_scope: dict, function_scope: dict):
+        params = function_scope[self.func_id.value].params
+        args = self.args
+
+        named_args = {}
+        if len(params) != len(args):
+            raise Exception(f"Error: incorrect number of arguments passed to {self.func_id.value}")
+
+        for i in range(len(params)):
+            arg_type = {
+                "int" : int,
+                "float" : float,
+                "string" : str
+            }[params[i].var_type.value]
+
+            named_args[params[i].identifier.value] = {
+                "value" : arg_type(args[i].eval(variable_scope, function_scope)),
+                "type" : params[i].var_type.value
+            }
+
+        ret_type = None
+        if function_scope[self.func_id.value].return_type.value == "int":
+            ret_type = int
+        elif function_scope[self.func_id.value].return_type.value == "float":
+            ret_type = float
+        elif function_scope[self.func_id.value].return_type.value == "string":
+            ret_type = str
+        return ret_type(function_scope[self.func_id.value].body.eval(named_args, function_scope))
+
 
 class Nop(ASTNode):
     def __str__(self):
@@ -198,164 +327,5 @@ class Nop(ASTNode):
     def __repr__(self):
         return self.__str__()
 
-
-# this is obviously bad code; I'll fix it once the prototype
-# is finished and the work on the real interpreter begins
-def eval_expression(expression, parser):
-    if type(expression) is BinaryOp:
-        return eval_bin_op(expression, parser)
-    elif type(expression) in (Integer, Float, String):
-        return expression.value
-    elif type(expression) is Variable:
-        return parser.global_scope[expression.value]["value"]
-    elif type(expression) is Assignment:
-        return eval_assignment(expression, parser)
-    elif type(expression) is Reassignment:
-        return eval_reassignment(expression, parser)
-    elif type(expression) is VariableDecl:
-        return eval_variable_decl(expression, parser)
-    elif type(expression) is Function:
-        eval_function(expression, parser)
-    elif type(expression) is FunctionCall:
-        return eval_function_call(expression, parser)
-
-# evaluate function declarations
-def eval_function(function: Function, parser):
-    parser.functions[function.function_name.value] = function
-
-def eval_function_call(funccall: FunctionCall, parser):
-    result = None
-    print(parser.functions)
-    function_decl = parser.functions[funccall.func_id.value]
-    return 1 # TODO
-
-def get_var_type(variable_name, parser):
-    type_str = parser.global_scope[variable_name]["type"]
-    if type_str == "int":
-        return int
-    elif type_str == "float":
-        return float
-    elif type_str == "string":
-        return str
-
-def eval_variable_decl(vardec: VariableDecl, parser):
-    type_string = str(vardec.var_type)
-    val = None
-    if type_string == "int":
-        val = 0
-    elif type_string == "float":
-        val = 0.0
-    elif type_string == "string":
-        val = ""
-    parser.global_scope[vardec.identifier.value] = {
-        "value" : val,
-        "type" : type_string
-    }
-    return parser.global_scope[vardec.identifier.value]
-
-def eval_reassignment(reassgn: Reassignment, parser):
-    if reassgn.identifier.value in parser.global_scope.keys():
-        parser.global_scope[reassgn.identifier.value]["value"] = get_var_type(reassgn.identifier.value, parser)(eval_expression(reassgn.value, parser))
-        return parser.global_scope[reassgn.identifier.value]["value"]
-    else:
-        raise Exception(f"Error: variable ``{reassgn.identifier.value}'' referenced before assignment")
-
-def eval_print_statement(print_stat: PrintStatement, parser):
-    if type(print_stat.arg) in (Integer, Float, String):
-        print(f"{print_stat.arg.value}", end="")
-    elif type(print_stat.arg) is Variable:
-        print(f"{parser.global_scope[print_stat.arg.value]['value']}", end="")
-    elif type(print_stat.arg) is BinaryOp:
-        print(f"{eval_bin_op(print_stat.arg, parser)}", end="")
-    elif type(print_stat.arg) is Assignment:
-        print(f"{eval_assignment(print_stat.arg, parser)}", end="")
-    elif type(print_stat.arg) is Reassignment:
-        print(f"{eval_reassignment(print_stat.arg, parser)}", end="")
-    elif type(print_stat.arg) is VariableDecl:
-        print(f"{eval_variable_decl(print_stat.arg, parser)}", end="")
-
-def eval_bin_op(bin_op: BinaryOp, parser):
-    # Get the left operand
-    left = None
-    if type(bin_op.left) in (Integer, Float, String):
-        left = bin_op.left.value
-    elif type(bin_op.left) is Variable:
-        if parser.global_scope[bin_op.left.value]["type"] == "int":
-            left = int(parser.global_scope[bin_op.left.value]["value"])
-        elif parser.global_scope[bin_op.left.value]["type"] == "float":
-            left = float(parser.global_scope[bin_op.left.value]["value"])
-        elif parser.global_scope[bin_op.left.value]["type"] == "string":
-            left = str(parser.global_scope[bin_op.left.value]["value"])
-    else:
-        left = eval_bin_op(bin_op.left, parser)
-
-    # Get the right operand
-    right = None
-    if type(bin_op.right) in (Integer, Float, String):
-        right = bin_op.right.value
-    elif type(bin_op.right) is Variable:
-        if parser.global_scope[bin_op.right.value]["type"] == "int":
-            right = int(parser.global_scope[bin_op.right.value]["value"])
-        elif parser.global_scope[bin_op.right.value]["type"] == "float":
-            right = float(parser.global_scope[bin_op.right.value]["value"])
-        elif parser.global_scope[bin_op.right.value]["type"] == "string":
-            right = str(parser.global_scope[bin_op.right.value]["value"])
-    else:
-        right = eval_bin_op(bin_op.right, parser)
-
-    if type(left) is Token:
-        left = left.value
-    if type(right) is Token:
-        right = right.value
-
-    # Do an operation
-    if bin_op.op.token_type == TokenType.MULT:
-        if type(left) is str or type(left) is str:
-            raise Exception("Error: operator '*' not supported for string type")
-        return left * right
-    elif bin_op.op.token_type == TokenType.PLUS:
-        if type(left) is str or type(right) is str:
-            return str(left) + str(right) # support string concatenation
-        return left + right
-    elif bin_op.op.token_type == TokenType.DIVIDE:
-        if type(left) is str or type(left) is str:
-            raise Exception("Error: operator '/' not supported for string type")
-        if right == 0:
-            return float("inf")
-        else:
-            return left / right
-    elif bin_op.op.token_type == TokenType.SUBTRACT:
-        if type(left) is str or type(left) is str:
-            raise Exception("Error: operator '-' not supported for string type")
-        return left - right
-
-def eval_assignment(assgn: Assignment, parser):
-    variable_type = None
-    if str(assgn.var_type) == "int":
-        variable_type = int
-    elif str(assgn.var_type) == "float":
-        variable_type = float
-    elif str(assgn.var_type) == "string":
-        variable_type = str
-    parser.global_scope[assgn.identifier.value] = {
-        "value" : variable_type(eval_expression(assgn.value, parser)),
-        "type" : str(assgn.var_type)
-    }
-    return parser.global_scope[assgn.identifier.value]
-
-def eval_program(program: Program, parser):
-    for node in program.children:
-        if type(node) is Assignment:
-            eval_assignment(node, parser)
-        elif type(node) is PrintStatement:
-            eval_print_statement(node, parser)
-        elif type(node) is Reassignment:
-            eval_reassignment(node, parser)
-        elif type(node) is VariableDecl:
-            eval_variable_decl(node, parser)
-        elif type(node) is Function:
-            eval_function(node, parser)
-        elif type(node) is FunctionCall:
-            eval_function_call(node, parser)
-        elif type(node) is Nop:
-            pass
+    def eval(self, variable_scope: dict, function_scope: dict):
+        pass

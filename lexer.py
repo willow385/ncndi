@@ -81,7 +81,7 @@ class Lexer:
             result += self.current_char
             self.advance()
         self.advance()
-        result = result.replace('\\n', '\n').replace('\\r', '\r').replace('\\t', '\t').replace('\\\\', '\\')
+        result = result.replace('\\n', '\n').replace('\\r', '\r').replace('\\t', '\t').replace('\\\\', '\\').replace("\\\"", "\"")
         return Token(TokenType.STRING, result)
 
     def peek(self):
