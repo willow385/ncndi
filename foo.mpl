@@ -15,6 +15,12 @@ funct print_message(string message, string return_val) string {
     return return_val;
 }
 
+# Functions with no return type are implicitly typed as "void"
+# under the hood. They can't return anything.
+funct print_other_message() {
+    print "print_other_message() was called.\n";
+}
+
 start {
 
     int a;
@@ -28,5 +34,6 @@ start {
         "This string was returned from print_message()!\n"
     );
     print new_message;
+    print_other_message();
 
 } end

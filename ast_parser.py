@@ -124,6 +124,13 @@ class Parser:
         return node
 
 
+    def function_call(self, func_id):
+        self.eat(TokenType.OPEN_PAREN)
+        arguments = self.argument_list()
+        self.eat(TokenType.CLOSE_PAREN)
+        node = FunctionCall(func_id, arguments)
+        return node
+
     def return_statement(self):
         self.eat(TokenType.RETURN)
         return_val = self.expr()

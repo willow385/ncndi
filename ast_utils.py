@@ -317,7 +317,9 @@ class FunctionCall(ASTNode):
             ret_type = float
         elif function_scope[self.func_id.value].return_type.value == "string":
             ret_type = str
-        return ret_type(function_scope[self.func_id.value].body.eval(named_args, function_scope))
+        result = function_scope[self.func_id.value].body.eval(named_args, function_scope)
+        if ret_type is not None:
+            return ret_type(result)
 
 
 class Nop(ASTNode):
