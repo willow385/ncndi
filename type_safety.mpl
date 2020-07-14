@@ -8,5 +8,6 @@ start {
 
     print foo; # 3
     print bar; # 3.0
+    print "\n";
 
 } end
