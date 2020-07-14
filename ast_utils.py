@@ -39,7 +39,7 @@ class BinaryOp(ASTNode):
 
         # Identify which operation to perform. If the requested
         # operation is not implemented for the types of the
-        # operands, throw an exception; Maple is a fairly strictly-
+        # operands, throw an exception; MPL is a fairly strictly-
         # typed language.
         if self.op.token_type == TokenType.MULT:
             if type(left) is str or type(left) is str:
@@ -390,7 +390,7 @@ class FunctionCall(ASTNode):
             return ret_type(result)
 
 
-# Class that represents not doing anything. If you wrote a Maple
+# Class that represents not doing anything. If you wrote a MPL
 # program like "start{;;;;;;;}end", the interpreter would construct
 # an AST filled with these.
 class Nop(ASTNode):

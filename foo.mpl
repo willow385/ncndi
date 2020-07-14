@@ -1,5 +1,5 @@
-#!/usr/bin/python3.8 /home/claire/ncndi/maple_interpreter.py
-# Example program written in Maple
+#!/usr/bin/python3.8 /home/claire/ncndi/mpl_interpreter.py
+# Example program written in MPL
 
 # The following shows the syntax for declaring functions.
 funct triple(int number) int {

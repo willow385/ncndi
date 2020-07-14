@@ -1,6 +1,6 @@
-## Maple syntax highlighting
+## MPL syntax highlighting
 
-syntax "maple" "\.mpl$"
+syntax "MPL" "\.mpl$"
 comment "#"
 
 color green "\<(start|end|print|int|float|string|funct|return)\>"

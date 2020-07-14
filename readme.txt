@@ -1,11 +1,12 @@
 I'm (more or less) following this course:
 https://ruslanspivak.com/lsbasi-part1/
 
-Try running `python3 maple_interpreter.py foo.mpl`.
+Try running `python3 mpl_interpreter.py foo.mpl`.
 
-The language is called "Maple". "ncndi" is the name of this
-implementation of the interpreter. I haven't decided what
-that stands for yet.
+The language is called "MPL". "MPL" is a recursive
+acronym for "MPL Programming Language". "ncndi" is
+the name of this implementation of the interpreter.
+I haven't decided what that stands for yet.
 
 File contents:
     ast_parser.py: Contains the Parser class which constructs
@@ -25,17 +26,17 @@ File contents:
 
     token.py: Contains the Token class and the TokenType enum.
 
-    maple_interpreter.py: Program which ties the rest of the code
-                          together into an interpreter which has
-                          both an interactive mode and a batch mode.
+    mpl_interpreter.py: Program which ties the rest of the code
+                        together into an interpreter which has
+                        both an interactive mode and a batch mode.
 
-    grammar.bnf: The grammar of Maple, expressed in a form of ABNF.
+    grammar.bnf: The grammar of MPL, expressed in a form of ABNF.
 
-    hello.mpl: Hello world program in Maple.
+    hello.mpl: Hello world program in MPL.
 
-    foo.mpl: A Maple program demoing many of Maple's features.
+    foo.mpl: An MPL program demoing many of MPL's features.
 
-    string_test.mpl: A Maple program that tests the interpreter's
+    string_test.mpl: An MPL program that tests the interpreter's
                      ability to parse string literals.
 
-    type_safety.mpl: a Maple program demonstrating type coercion.
+    type_safety.mpl: an MPL program demonstrating type coercion.
