@@ -1,11 +1,23 @@
 from token import Token, TokenType
 
 
+# Base class representing abstract syntax tree nodes.
+# Objects inheriting from ASTNode are intended to
+# implement the eval() method. AST nodes which have
+# children call eval() on their children whenever
+# their own eval() method is called; thus, the calls
+# to eval() methods *recursively descend* down the
+# tree to evaluate the overall semantic meaning of
+# the program.
+# The parameters variable_scope and function_scope
+# represent the variables and functions visible to
+# the currently-evaluating AST node's scope.
 class ASTNode:
     def eval(self, variable_scope: dict, function_scope: dict):
         raise NotImplementedError(f"Class {type(self).__name__} has not implemented the eval() method")
 
 
+# Class representing binary operations (+, -, *, /).
 class BinaryOp(ASTNode):
     def __init__(self, left, op, right):
         self.left = left
@@ -19,26 +31,31 @@ class BinaryOp(ASTNode):
         return self.__str__()
 
     def eval(self, variable_scope: dict, function_scope: dict):
-        # Get the left operand
+        # Evaluate the AST node on the left.
         left = self.left.eval(variable_scope, function_scope)
 
-        # Get the right operand
+        # Evaluate the AST node on the right.
         right = self.right.eval(variable_scope, function_scope)
 
-        # Do an operation
+        # Identify which operation to perform. If the requested
+        # operation is not implemented for the types of the
+        # operands, throw an exception; Maple is a fairly strictly-
+        # typed language.
         if self.op.token_type == TokenType.MULT:
             if type(left) is str or type(left) is str:
                 raise Exception("Error: operator '*' not supported for string type")
             return left * right
         elif self.op.token_type == TokenType.PLUS:
             if type(left) is str or type(right) is str:
-                return str(left) + str(right) # support string concatenation
+                # No type exception here. The '+' operator is
+                # overloaded to perform string concatenation.
+                return str(left) + str(right)
             return left + right
         elif self.op.token_type == TokenType.DIVIDE:
             if type(left) is str or type(left) is str:
                 raise Exception("Error: operator '/' not supported for string type")
             if right == 0:
-                return float("inf")
+                raise Exception("Error: attempted to divide by zero")
             else:
                 return left / right
         elif self.op.token_type == TokenType.SUBTRACT:
@@ -47,7 +64,7 @@ class BinaryOp(ASTNode):
             return left - right
 
 
-
+# Class representing atomic values of the int type.
 class Integer(ASTNode):
     def __init__(self, token):
         self.token = token
@@ -63,6 +80,7 @@ class Integer(ASTNode):
         return int(self.value)
 
 
+# Class representing atomic values of the float type.
 class Float(ASTNode):
     def __init__(self, token):
         self.token = token
@@ -78,6 +96,7 @@ class Float(ASTNode):
         return float(self.value)
 
 
+# Class representing atomic values of the string type.
 class String(ASTNode):
     def __init__(self, value):
         self.value = value
@@ -102,6 +121,7 @@ class String(ASTNode):
         return str(self.value)
 
 
+# Class representing print statements.
 class PrintStatement(ASTNode):
     def __init__(self, arg):
         self.arg = arg
@@ -116,6 +136,9 @@ class PrintStatement(ASTNode):
         print(f"{self.arg.eval(variable_scope, function_scope)}", end="")
 
 
+# The name of this class is slightly misleading.
+# It represents any list of statements; for example,
+# the body of a function or of a conditional statement.
 class Program(ASTNode):
     def __init__(self):
         self.children = []
@@ -137,6 +160,9 @@ class Program(ASTNode):
                 return result
 
 
+# Class represnting variable assignments, consisting
+# of declaring and assigning a variable in the same
+# statement (for example, "int foo = 3;").
 class Assignment(ASTNode):
     def __init__(self, var_type, identifier, op, value):
         self.var_type = var_type
@@ -153,18 +179,28 @@ class Assignment(ASTNode):
     def eval(self, variable_scope: dict, function_scope: dict):
         if self.identifier.value in {**variable_scope, **function_scope}.keys():
             raise Exception(f"Error: {self.identifier.value} has multiple definitions")
+
+        # Idk if anyone else uses this idiom but I find it
+        # to be much more elegant and less verbose than a
+        # chain of conditional statements.
         var_type = {
             "int" : int,
             "float" : float,
             "string" : str
         }[self.var_type.value]
+
         variable_scope[self.identifier.value] = {
             "value" : var_type(self.value.eval(variable_scope, function_scope)),
             "type" : self.var_type.value
         }
+
         return variable_scope[self.identifier.value]["value"]
 
 
+# Class represnting variable declarations which don't
+# specify an explicit value, for example "int foo;".
+# By default, ints are initialized to 0, floats to 0.0,
+# and strings to "".
 class VariableDecl(ASTNode):
     def __init__(self, var_type, identifier):
         self.var_type = var_type
@@ -193,6 +229,11 @@ class VariableDecl(ASTNode):
         return variable_scope[self.identifier.value]["value"]
 
 
+# Class representing reassignments; i.e. assigning a new
+# value to an existing variable. Variables are statically
+# typed, so if you try to assign a variable a value of a
+# different type, it will be coerced to the type of the
+# variable.
 class Reassignment(ASTNode):
     def __init__(self, identifier, op, value):
         self.identifier = identifier
@@ -206,16 +247,18 @@ class Reassignment(ASTNode):
         return self.__str__()
 
     def eval(self, variable_scope: dict, function_scope: dict):
-        var_type = None
-        if variable_scope[self.identifier.value]["type"] == "int":
-            var_type = int
-        elif variable_scope[self.identifier.value]["type"] == "float":
-            var_type = float
-        elif variable_scope[self.identifier.value]["type"] == "string":
-            var_type = str
-        variable_scope[self.identifier.value]["value"] = var_type(self.value.eval(variable_scope, function_scope))
+        var_id = self.identifier.value
+        var_type = {
+            "int" : int,
+            "float" : float,
+            "string" : str
+        }[variable_scope[var_id]["type"]]
+
+        variable_scope[var_id]["value"] = var_type(self.value.eval(variable_scope, function_scope))
+        return variable_scope[var_id]["value"]
 
 
+# Class representing variables.
 class Variable(ASTNode):
     def __init__(self, token):
         self.token = token
@@ -231,6 +274,7 @@ class Variable(ASTNode):
         return variable_scope[self.value]["value"]
 
 
+# Class representing return statements.
 class ReturnStatement(ASTNode):
     def __init__(self, return_value):
         self.value = return_value
@@ -246,6 +290,9 @@ class ReturnStatement(ASTNode):
         return value
 
 
+# Class representing function declarations. Note that
+# the body of the function is an instance of the Program
+# class.
 class Function(ASTNode):
     def __init__(self, function_name, function_params, return_type, function_body):
         self.function_name = function_name
@@ -273,10 +320,13 @@ class Function(ASTNode):
 
     def eval(self, variable_scope: dict, function_scope: dict):
         if self.function_name.value in {**variable_scope, **function_scope}.keys():
+            # We don't allow multiple functions or variables with the same name
+            # to reside in the same scope, ever.
             raise Exception(f"Error: {self.function_name.value} has multiple definitions")
         function_scope[self.function_name.value] = self
 
 
+# Class represnting a function call.
 class FunctionCall(ASTNode):
     def __init__(self, function_id, args: list):
         self.func_id = function_id
@@ -301,13 +351,19 @@ class FunctionCall(ASTNode):
         return self.__str__()
 
     def eval(self, variable_scope: dict, function_scope: dict):
+        # We look up the function by its name to find out what
+        # its parameters are supposed to be.
         params = function_scope[self.func_id.value].params
         args = self.args
 
         named_args = {}
+        # Check to make sure that the number of args passed
+        # matches the actual length of the parameter list.
         if len(params) != len(args):
             raise Exception(f"Error: incorrect number of arguments passed to {self.func_id.value}")
 
+        # Populate our dict named_args with pairs mapping
+        # the parameter names to their passed values.
         for i in range(len(params)):
             arg_type = {
                 "int" : int,
@@ -320,6 +376,8 @@ class FunctionCall(ASTNode):
                 "type" : params[i].var_type.value
             }
 
+        # Find the function's return type and obtain a result
+        # if possible.
         ret_type = None
         if function_scope[self.func_id.value].return_type.value == "int":
             ret_type = int
@@ -332,6 +390,9 @@ class FunctionCall(ASTNode):
             return ret_type(result)
 
 
+# Class that represents not doing anything. If you wrote a Maple
+# program like "start{;;;;;;;}end", the interpreter would construct
+# an AST filled with these.
 class Nop(ASTNode):
     def __str__(self):
         return ""
