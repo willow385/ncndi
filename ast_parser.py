@@ -5,8 +5,6 @@ class Parser:
 
     def __init__(self, lexer):
         self.lexer = lexer
-        self.global_scope = {}
-        self.functions = {}
         self.current_token = self.lexer.get_next_token()
 
 
