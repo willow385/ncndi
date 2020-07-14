@@ -83,7 +83,17 @@ class String(ASTNode):
         self.value = value
 
     def __str__(self):
-        return f'string("{self.value}")'
+        return f'string("{self.value}")'.replace(
+            '\\', '\\\\'
+        ).replace(
+            '\n', '\\n'
+        ).replace(
+            '"', '\\"'
+        ).replace(
+            '\r', '\\r'
+        ).replace(
+            '\t', '\\t'
+        )
 
     def __repr__(self):
         return self.__str__()

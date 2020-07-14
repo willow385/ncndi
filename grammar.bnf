@@ -18,6 +18,16 @@ statement: assignment_statement
          | print_statement
          | empty
          | function_call
+         | if_statement
+         | return_statement
+
+return_statment: RETURN expression
+
+# TODO implement
+if_statement: IF expression OPEN_BRACE statement_list CLOSE_BRACE (else_statement)
+
+# TODO implement
+else_statement: else (if_statement | OPEN_BRACE statement_list CLOSE_BRACE)
 
 print_statement: PRINT expression
 
@@ -39,6 +49,7 @@ factor: PLUS factor
       | OPEN_PAREN expression CLOSE_PAREN
       | variable
       | function_call
+      | if_statement
 
 variable: IDENTIFIER
 

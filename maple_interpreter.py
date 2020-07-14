@@ -32,7 +32,8 @@ def main():
         funcs = {}
         syntax_tree.eval(scope, funcs)
         if "--dump" in sys.argv:
-            print(parser.global_scope)
+            print(f"Variables: {scope}")
+            print(f"Functions: {funcs}")
         if "--tree" in sys.argv:
             print(syntax_tree)
     except Exception as e:
