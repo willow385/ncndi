@@ -58,6 +58,8 @@ class Parser:
         self.eat(TokenType.OPEN_BRACE)
         function_body = self.statement_list()
         self.eat(TokenType.CLOSE_BRACE)
+        # No need to eat a closing brace here.
+        # self.statement_list() will eat it for us
         return Function(function_name, function_params, return_type, function_body)
 
 
@@ -99,6 +101,9 @@ class Parser:
         while self.current_token.token_type == TokenType.SEMICOLON:
             self.eat(TokenType.SEMICOLON)
             result.append(self.statement())
+            if self.current_token.token_type == TokenType.CLOSE_BRACE:
+                print("close brace found by statement_list()!")
+                print(result)
         if self.current_token.token_type == TokenType.IDENTIFIER:
             self.error(f"Syntax error at unexpected token ``{self.current_token.value}''")
         return result
@@ -119,8 +124,40 @@ class Parser:
             node = self.print_statement()
         elif self.current_token.token_type == TokenType.RETURN:
             node = self.return_statement()
+        elif self.current_token.token_type == TokenType.IF:
+            node = self.if_statement()
         else:
             node = self.empty()
+        return node
+
+
+    def if_statement(self):
+        self.eat(TokenType.IF)
+        condition = self.expression()
+        self.eat(TokenType.OPEN_BRACE)
+        body = self.statement_list()
+        self.eat(TokenType.CLOSE_BRACE)
+        else_clause = None
+        if self.current_token.token_type == TokenType.ELSE:
+            else_clause = self.else_statement()
+        node = IfStatement(body, condition, else_clause)
+        return node
+
+
+    def else_statement(self):
+        self.eat(TokenType.ELSE)
+        condition = None
+        body = None
+        else_clause = None
+        if self.current_token.token_type == TokenType.IF:
+            self.eat(TokenType.IF)
+            condition = self.expression()
+        self.eat(TokenType.OPEN_BRACE)
+        body = self.statement_list()
+        self.eat(TokenType.CLOSE_BRACE)
+        if self.current_token.token_type == TokenType.ELSE:
+            else_clause = self.else_statement()
+        node = ElseStatement(body, condition, else_clause)
         return node
 
 

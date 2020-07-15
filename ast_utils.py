@@ -1,4 +1,5 @@
 from token import Token, TokenType
+import copy
 
 
 # Base class representing abstract syntax tree nodes.
@@ -37,41 +38,46 @@ class BinaryOp(ASTNode):
         # Evaluate the AST node on the right.
         right = self.right.eval(variable_scope, function_scope)
 
+        # Check to see if they're both strings, if one of them is a string, or neither is a string.
+        both_are_string = (type(left) is str and type(right) is str)
+        one_is_a_string = (type(left) is not type(right)) and (str in [type(left), type(right)])
+        none_are_string = (type(left) is not str and type(right) is not str)
+
         # Identify which operation to perform. If the requested
         # operation is not implemented for the types of the
         # operands, throw an exception; MPL is a fairly strictly-
         # typed language.
         if self.op.token_type == TokenType.MULT:
-            if type(left) is str or type(left) is str:
+            if one_is_a_string or both_are_string:
                 raise Exception("Error: operator '*' not supported for string type")
             return left * right
         elif self.op.token_type == TokenType.PLUS:
-            if type(left) is str or type(right) is str:
+            if one_is_a_string or both_are_string:
                 # No type exception here. The '+' operator is
                 # overloaded to perform string concatenation.
                 return str(left) + str(right)
             return left + right
         elif self.op.token_type == TokenType.DIVIDE:
-            if type(left) is str or type(left) is str:
+            if one_is_a_string or both_are_string:
                 raise Exception("Error: operator '/' not supported for string type")
             if right == 0:
                 raise Exception("Error: attempted to divide by zero")
             else:
                 return left / right
         elif self.op.token_type == TokenType.SUBTRACT:
-            if type(left) is str or type(left) is str:
+            if one_is_a_string or both_are_string:
                 raise Exception("Error: operator '-' not supported for string type")
             return left - right
         elif self.op.token_type == TokenType.EQUALS:
-            if (type(left) is not type(right)) and (str in [type(left), type(right)]):
+            if one_is_a_string:
                 return 0 # don't compare strings with other types
             return 1 if left == right else 0
         elif self.op.token_type == TokenType.GREATER_THAN:
-            if (type(left) is not type(right)) and (str in [type(left), type(right)]):
+            if one_is_a_string:
                 return 0
             return 1 if left > right else 0
         elif self.op.token_type == TokenType.LESS_THAN:
-            if (type(left) is not type(right)) and (str in [type(left), type(right)]):
+            if one_is_a_string:
                 return 0
             return 1 if left < right else 0
 
@@ -402,7 +408,80 @@ class FunctionCall(ASTNode):
             return ret_type(result)
 
 
-# Class that represents not doing anything. If you wrote a MPL
+class IfStatement(ASTNode):
+    def __init__(self, body, condition, else_statement=None):
+        self.body = Program()
+        self.body.children = body
+        self.condition = condition
+        self.else_statement = else_statement
+
+    def __str__(self):
+        if self.else_statement is not None:
+            return f"(if {self.condition} ({self.body}) else ({self.else_statement}))"
+        else:
+            return f"(if {self.condition} ({self.body})"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def eval(self, variable_scope: dict, function_scope: dict):
+        local_var_scope = copy.deepcopy(variable_scope)
+        return_val = None
+        if self.condition.eval(variable_scope, function_scope) != 0:
+            return_val = self.body.eval(local_var_scope, function_scope)
+        elif self.else_statement is not None:
+            return_val = self.else_statement.eval(local_var_scope, function_scope)
+
+        local_scope_var_ids = local_var_scope.keys()
+        wider_scope_var_ids = variable_scope.keys()
+        for var_id in local_scope_var_ids:
+            if var_id in wider_scope_var_ids:
+                variable_scope[var_id]["value"] = local_var_scope[var_id]["value"]
+
+        return return_val
+
+
+class ElseStatement(ASTNode):
+    def __init__(self, body, condition=None, else_statement=None):
+        self.body = Program()
+        self.body.children = body
+        self.condition = condition
+        self.else_statement = else_statement
+
+    def __str__(self):
+        result = ""
+        if self.condition is not None:
+            result += f"(if {self.condition} ({self.body})"
+            if self.else_statement is not None:
+                result += f" else {self.else_statement}"
+            result += ")"
+        else:
+            result = f"{self.body}"
+        return result
+
+    def __repr__(self):
+        return self.__str__()
+
+    def eval(self, variable_scope: dict, function_scope: dict):
+        local_var_scope = copy.deepcopy(variable_scope)
+        return_val = None
+        if self.condition is None:
+            return_val = self.body.eval(local_var_scope, function_scope)
+        elif self.condition.eval(variable_scope, function_scope) != 0:
+            return_val = self.body.eval(local_var_scope, function_scope)
+        elif self.else_statement is not None:
+            return_val = self.else_statement.eval(variable_scope, function_scope)
+
+        local_scope_var_ids = local_var_scope.keys()
+        wider_scope_var_ids = variable_scope.keys()
+        for var_id in local_scope_var_ids:
+            if var_id in wider_scope_var_ids:
+                variable_scope[var_id]["value"] = local_var_scope[var_id]["value"]
+
+        return return_val
+
+
+# Class that represents not doing anything. If you wrote an MPL
 # program like "start{;;;;;;;}end", the interpreter would construct
 # an AST filled with these.
 class Nop(ASTNode):

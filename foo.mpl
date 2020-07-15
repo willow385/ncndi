@@ -27,20 +27,31 @@ start {
         "Hello, world!",
         "This string was returned from print_message()!\n"
     );
+
     print new_message;
     print_other_message();
 
-    # Now to test conditional expressions.
-    # Hey, I *like* using ints as conditionals.
-    # It's my language and I make the rules.
+    # Now to test conditionals.
+    # Change these to whatever you like to see how the
+    # comparison operator works in MPL.
     int a = 1;
-    int b = 2;
-    int a_gt_b = a > b;  # 1 is not greater than 2
-    int a_lt_b = a < b;  # 1 is less than 2
-    int a_eq_b = a == b; # 1 does not equal 2
+    float b = 1.0;
 
-    print a_gt_b + "\n"; # should print 0
-    print a_lt_b + "\n"; # should print 1
-    print a_eq_b + "\n"; # should print 0
+    if 1 == 1 {
+        int c = 69420;
+    }
+
+    if b > a {
+        print "b is greater than a!\n";
+    } else if b == a {
+        print "b equals a!\n";
+    } else if b < a {
+        print "b is less than a!\n";
+    } else {
+        # Control flow will come here if you try to
+        # compare a string with a number.
+        print "b and a are not comparable!\n";
+    }
+
 
 } end
