@@ -127,6 +127,8 @@ class Parser:
             node = self.return_statement()
         elif self.current_token.token_type == TokenType.IF:
             node = self.if_statement()
+        elif self.current_token.token_type == TokenType.WHILE:
+            node = self.while_loop()
         else:
             node = self.empty()
         return node
@@ -160,6 +162,17 @@ class Parser:
         if self.current_token.token_type == TokenType.ELSE:
             else_clause = self.else_statement()
         node = ElseStatement(body, condition, else_clause)
+        return node
+
+
+    def while_loop(self):
+        self.eat(TokenType.WHILE)
+        condition = self.expression()
+        self.eat(TokenType.OPEN_BRACE)
+        body = self.statement_list()
+        self.eat(TokenType.CLOSE_BRACE)
+        node = WhileLoop(body, condition)
+        self.has_just_parsed_block_statement = True
         return node
 
 

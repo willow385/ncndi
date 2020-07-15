@@ -36,6 +36,8 @@ def main():
             print(f"Functions: {funcs}")
         if "--tree" in sys.argv:
             print(syntax_tree)
+    except KeyError as k:
+        print(f"Error: Nonexistent variable {k} referenced")
     except Exception as e:
         print(e)
 

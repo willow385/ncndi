@@ -206,12 +206,12 @@ class Program(ASTNode):
             result = node.eval(variable_scope, function_scope)
             if type(node) is ReturnStatement:
                 return result
-            elif type(node) is IfStatement:
+            elif type(node) in (IfStatement, WhileLoop):
                 if result is not None:
                     return result
 
 
-# Class represnting variable assignments, consisting
+# Class representing variable assignments, consisting
 # of declaring and assigning a variable in the same
 # statement (for example, "int foo = 3;").
 class Assignment(ASTNode):
@@ -534,6 +534,36 @@ class ElseStatement(ASTNode):
                 variable_scope[var_id]["value"] = local_var_scope[var_id]["value"]
 
         return return_val
+
+
+# Class for representing while-loops.
+class WhileLoop(ASTNode):
+    def __init__(self, body, condition):
+        self.body = Program()
+        self.body.children = body
+        self.condition = condition
+
+    def __str__(self):
+        return f"(while ({self.condition}) ({self.body}))"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def eval(self, variable_scope: dict, function_scope: dict):
+        # See comments in IfStatement.eval() for explanation
+        local_var_scope = copy.deepcopy(variable_scope)
+        return_val = None
+        while self.condition.eval(local_var_scope, function_scope) != 0:
+            return_val = self.body.eval(local_var_scope, function_scope)
+
+        local_scope_var_ids = local_var_scope.keys()
+        wider_scope_var_ids = variable_scope.keys()
+        for var_id in local_scope_var_ids:
+            if var_id in wider_scope_var_ids:
+                variable_scope[var_id]["value"] = local_var_scope[var_id]["value"]
+
+        if return_val is not None:
+            return return_val
 
 
 # Class representing logical negation (the '!' operator).

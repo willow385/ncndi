@@ -26,7 +26,6 @@ statement: assignment_statement
 
 return_statment: RETURN expression
 
-# TODO
 while_loop: WHILE expression OPEN_BRACE statement_list CLOSE_BRACE
 
 if_statement: IF expression OPEN_BRACE statement_list CLOSE_BRACE (else_statement)
