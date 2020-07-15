@@ -40,3 +40,12 @@ File contents:
                      ability to parse string literals.
 
     type_safety.mpl: an MPL program demonstrating type coercion.
+
+    beer.mpl: Implementation of "99 Bottles of Beer on the Wall"
+              in MPL.
+
+    comparisons.mpl: An MPL program demonstrating various comparison
+                     operators.
+
+    conditionals.mpl: An MPL program demonstrating various logical
+                      operators.
