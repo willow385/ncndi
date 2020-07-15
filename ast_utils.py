@@ -569,6 +569,41 @@ class WhileLoop(ASTNode):
             return return_val
 
 
+# Class for representing for-loops.
+# TODO implement
+#class ForLoop(ASTNode):
+#    def __init__(self, body, condition):
+#        self.body = Program()
+#        self.body.children = body
+#        self.condition = condition
+#
+#    def __str__(self):
+#        return f"(while ({self.condition}) ({self.body}))"
+#
+#    def __repr__(self):
+#        return self.__str__()
+#
+#    def eval(self, variable_scope: dict, function_scope: dict):
+#        # See comments in IfStatement.eval() for explanation
+#        local_var_scope = copy.deepcopy(variable_scope)
+#        return_val = None
+#        time_to_stop = False
+#        while self.condition.eval(local_var_scope, function_scope) != 0 and not time_to_stop:
+#            local_var_scope = copy.deepcopy(variable_scope)
+#            return_val = self.body.eval(local_var_scope, function_scope)
+#            if return_val is not None:
+#                time_to_stop = True
+#            local_scope_var_ids = local_var_scope.keys()
+#            wider_scope_var_ids = variable_scope.keys()
+#            for var_id in local_scope_var_ids:
+#                if var_id in wider_scope_var_ids:
+#                    variable_scope[var_id]["value"] = local_var_scope[var_id]["value"]
+#
+#        if return_val is not None:
+#            return return_val
+
+
+
 # Class representing logical negation (the '!' operator).
 class Negation(ASTNode):
     def __init__(self, operand):
