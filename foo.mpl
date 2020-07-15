@@ -2,6 +2,9 @@
 # Example program written in MPL
 
 # The following shows the syntax for declaring functions.
+# First the keyword "funct", then the name, then the parameters,
+# then the return type (if the function returns anything),
+# and then the body.
 funct triple(int number) int {
     int a;
     a = 3 * number;
@@ -33,13 +36,9 @@ start {
 
     # Now to test conditionals.
     # Change these to whatever you like to see how the
-    # comparison operator works in MPL.
+    # comparison operators work in MPL.
     int a = 1;
     float b = 1.0;
-
-    if 1 == 1 {
-        int c = 69420;
-    }
 
     if b > a {
         print "b is greater than a!\n";
@@ -53,5 +52,16 @@ start {
         print "b and a are not comparable!\n";
     }
 
+    # You can use conditional statements as expressions!
+    # I personally recommend terminating them with semicolons
+    # if you do this, purely for aesthetic reasons. But the
+    # interpreter will handle things just fine if you don't.
+    string foo = if 2 + 2 == 5 {
+        return "Long live Big Brother!";
+    } else {
+        return "This proglang is doubleplusunpartythinkwise.";
+    };
+
+    print foo + "\n";
 
 } end

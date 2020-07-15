@@ -1,3 +1,11 @@
+# TODO: implement modulo operator, bitwise operators,
+# and of course FUCKING LOOPS like seriously why did I
+# implement *functions* before I implemented loops wtf
+
+# oh and maybe something like a switch or match statement?
+
+# and also +=, -=, /=, and *=, for good measure
+
 import string
 from token import Token, TokenType
 
@@ -173,11 +181,39 @@ class Lexer:
 
             if self.current_char == '>':
                 self.advance()
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.GREATER_EQ, ">=")
                 return Token(TokenType.GREATER_THAN, '>')
 
             if self.current_char == '<':
                 self.advance()
+                if self.current_char == '>':
+                    self.advance()
+                    return Token(TokenType.XOR, "<>")
+                elif self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.LESS_EQ, "<=")
                 return Token(TokenType.LESS_THAN, '<')
+
+            if self.current_char == '&':
+                self.advance()
+                if self.current_char == '&':
+                    self.advance()
+                    return Token(TokenType.AND, "&&")
+
+            if self.current_char == '|':
+                self.advance()
+                if self.current_char == '|':
+                    self.advance()
+                    return Token(TokenType.OR, "||")
+
+            if self.current_char == '!':
+                self.advance()
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.NOT_EQ, "!=")
+                return Token(TokenType.NOT, '!')
 
             self.error(f"Syntax error at unexpected character '{self.current_char}'")
 

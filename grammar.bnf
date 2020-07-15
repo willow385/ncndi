@@ -23,10 +23,8 @@ statement: assignment_statement
 
 return_statment: RETURN expression
 
-# TODO implement
 if_statement: IF expression OPEN_BRACE statement_list CLOSE_BRACE (else_statement)
 
-# TODO implement
 else_statement: else (if_statement | OPEN_BRACE statement_list CLOSE_BRACE)
 
 print_statement: PRINT expression
@@ -39,7 +37,11 @@ variable_declaration: TYPE variable
 
 empty:
 
-expression: math_expression ((LESS_THAN | EQUALS | GREATER_THAN) math_expression)*
+comparator: GREATER_THAN | EQUALS | LESS_THAN | LESS_EQ | GREATER_EQ | NOT_EQ
+
+expression: comparison ((AND | OR | XOR) comparison)*
+
+comparison: (NOT) math_expression ((comparator) math_expression)*
 
 math_expression: term ((PLUS | SUBTRACT) term)*
 
@@ -47,6 +49,7 @@ term: factor ((MULTIPLY | DIVIDE) factor)*
 
 factor: PLUS factor
       | SUBTRACT factor
+      | NOT expression
       | INTEGER
       | OPEN_PAREN expression CLOSE_PAREN
       | variable

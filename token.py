@@ -28,6 +28,13 @@ class TokenType(Enum):
     GREATER_THAN = 24
     LESS_THAN = 25
     EQUALS = 26
+    AND = 27
+    OR = 28
+    XOR = 29
+    NOT = 30
+    NOT_EQ = 31
+    GREATER_EQ = 32
+    LESS_EQ = 33
 
 class Token:
     def __init__(self, token_type, value):

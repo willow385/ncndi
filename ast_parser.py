@@ -6,6 +6,7 @@ class Parser:
     def __init__(self, lexer):
         self.lexer = lexer
         self.current_token = self.lexer.get_next_token()
+        self.has_just_parsed_block_statement = False
 
 
     def error(self, message):
@@ -98,12 +99,12 @@ class Parser:
     def statement_list(self):
         result = []
         result.append(self.statement())
-        while self.current_token.token_type == TokenType.SEMICOLON:
-            self.eat(TokenType.SEMICOLON)
+        while self.current_token.token_type == TokenType.SEMICOLON or self.has_just_parsed_block_statement:
+            if self.current_token.token_type == TokenType.SEMICOLON:
+                self.eat(TokenType.SEMICOLON)
+            elif self.has_just_parsed_block_statement:
+                self.has_just_parsed_block_statement = False
             result.append(self.statement())
-            if self.current_token.token_type == TokenType.CLOSE_BRACE:
-                print("close brace found by statement_list()!")
-                print(result)
         if self.current_token.token_type == TokenType.IDENTIFIER:
             self.error(f"Syntax error at unexpected token ``{self.current_token.value}''")
         return result
@@ -141,6 +142,7 @@ class Parser:
         if self.current_token.token_type == TokenType.ELSE:
             else_clause = self.else_statement()
         node = IfStatement(body, condition, else_clause)
+        self.has_just_parsed_block_statement = True
         return node
 
 
@@ -237,6 +239,13 @@ class Parser:
         elif token.token_type == TokenType.STRING:
             self.eat(TokenType.STRING)
             return String(token)
+        elif token.token_type == TokenType.IF:
+            node = self.if_statement()
+            return node
+        elif token.token_type == TokenType.NOT:
+            self.eat(TokenType.NOT)
+            operand = self.expression()
+            return Negation(operand)
 
 
     def term(self):
@@ -267,19 +276,40 @@ class Parser:
 
         return node
 
+
     def expression(self):
+        node = self.comparison()
+
+        ops = (TokenType.AND, TokenType.OR, TokenType.XOR)
+        while self.current_token.token_type in ops:
+            token = self.current_token
+            if token.token_type == TokenType.AND:
+                self.eat(TokenType.AND)
+            elif token.token_type == TokenType.OR:
+                self.eat(TokenType.OR)
+            elif token.token_type == TokenType.XOR:
+                self.eat(TokenType.XOR)
+
+            node = BinaryOp(left=node, op=token, right=self.comparison())
+
+        return node
+
+
+    def comparison(self):
         node = self.math_expression()
 
-        bool_exprs = (TokenType.LESS_THAN, TokenType.EQUALS, TokenType.GREATER_THAN)
+        bool_exprs = (
+            TokenType.LESS_THAN,
+            TokenType.EQUALS,
+            TokenType.GREATER_THAN,
+            TokenType.NOT_EQ,
+            TokenType.LESS_EQ,
+            TokenType.GREATER_EQ
+        )
+
         while self.current_token.token_type in bool_exprs:
             token = self.current_token
-            if token.token_type == TokenType.LESS_THAN:
-                self.eat(TokenType.LESS_THAN)
-            elif token.token_type == TokenType.EQUALS:
-                self.eat(TokenType.EQUALS)
-            elif token.token_type == TokenType.GREATER_THAN:
-                self.eat(TokenType.GREATER_THAN)
-
+            self.eat(token.token_type)
             node = BinaryOp(left=node, op=token, right=self.math_expression())
 
         return node

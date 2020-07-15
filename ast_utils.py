@@ -1,6 +1,9 @@
 from token import Token, TokenType
 import copy
 
+# TODO improve string representation of AST (low priority)
+# TODO This file is pretty long. Would it make sense to
+# break it up into smaller files? (Probably not, tbh.)
 
 # Base class representing abstract syntax tree nodes.
 # Objects inheriting from ASTNode are intended to
@@ -18,7 +21,9 @@ class ASTNode:
         raise NotImplementedError(f"Class {type(self).__name__} has not implemented the eval() method")
 
 
-# Class representing binary operations (+, -, *, /, >, <, ==).
+# Class representing binary operations.
+# This includes aritmetic operations (*, /, +, -) and
+# logical operations (==, <, >, &&, ||, <>).
 class BinaryOp(ASTNode):
     def __init__(self, left, op, right):
         self.left = left
@@ -80,6 +85,31 @@ class BinaryOp(ASTNode):
             if one_is_a_string:
                 return 0
             return 1 if left < right else 0
+        elif self.op.token_type == TokenType.NOT_EQ:
+            if one_is_a_string:
+                return 0
+            return 1 if left != right else 0
+        elif self.op.token_type == TokenType.GREATER_EQ:
+            if one_is_a_string:
+                return 0
+            return 1 if left >= right else 0
+        elif self.op.token_type == TokenType.LESS_EQ:
+            if one_is_a_string:
+                return 0
+            return 1 if left <= right else 0
+        elif self.op.token_type == TokenType.AND:
+            if one_is_a_string:
+                return 0
+            return 1 if (bool(left) and bool(right)) else 0
+        elif self.op.token_type == TokenType.OR:
+            if one_is_a_string:
+                return 0
+            return 1 if (bool(left) or bool(right)) else 0
+        elif self.op.token_type == TokenType.XOR:
+            if one_is_a_string:
+                return 0
+            # Why doesn't Python have logical xor?
+            return 1 if bool(left) != bool(right) else 0
 
 
 # Class representing atomic values of the int type.
@@ -162,10 +192,10 @@ class Program(ASTNode):
         self.children = []
 
     def __str__(self):
-        result = "("
+        result = "(\n"
         for node in self.children:
-            result += str(node)
-        result += ")"
+            result += "  " + str(node) + "\n"
+        result += ")\n"
         return result
 
     def __repr__(self):
@@ -368,6 +398,12 @@ class FunctionCall(ASTNode):
     def __repr__(self):
         return self.__str__()
 
+    # TODO: Presently, you can't return from inside a conditional
+    # statement. I need to make it so that if an if-statement isn't
+    # being used as an expression, return statements cause functions
+    # to exit. Perhaps I can do this by calling eval() on if-statements
+    # in the top of the function's syntax tree, and returning if
+    # a result which is not None is thereby obtained?
     def eval(self, variable_scope: dict, function_scope: dict):
         # We look up the function by its name to find out what
         # its parameters are supposed to be.
@@ -408,6 +444,7 @@ class FunctionCall(ASTNode):
             return ret_type(result)
 
 
+# Class representing an if-statement.
 class IfStatement(ASTNode):
     def __init__(self, body, condition, else_statement=None):
         self.body = Program()
@@ -425,13 +462,28 @@ class IfStatement(ASTNode):
         return self.__str__()
 
     def eval(self, variable_scope: dict, function_scope: dict):
+        # We want the body of the if-statement to be able to use local
+        # variables that aren't visible to the scope outside the if-
+        # statement. A better way to achieve this might be to have
+        # the scope in which a variable is created be part of the
+        # variable's metadata in variable_scope, but a quick-and-dirty
+        # way to achieve it here is to copy the outer scope's variables,
+        # let the new scope modify the copied dict, and then merge
+        # the changed variables with the outer scope.
         local_var_scope = copy.deepcopy(variable_scope)
+
+        # if-statements can be used as expressions in MPL, so we're
+        # going to return a value
         return_val = None
         if self.condition.eval(variable_scope, function_scope) != 0:
             return_val = self.body.eval(local_var_scope, function_scope)
+        # If the condition failed, and we have a following else-statement, then
+        # execute that
         elif self.else_statement is not None:
             return_val = self.else_statement.eval(local_var_scope, function_scope)
 
+        # Any outer-scope variables mutated? Copy the changes to the
+        # outer scope's variables
         local_scope_var_ids = local_var_scope.keys()
         wider_scope_var_ids = variable_scope.keys()
         for var_id in local_scope_var_ids:
@@ -441,7 +493,10 @@ class IfStatement(ASTNode):
         return return_val
 
 
+# Class representing an else-statement.
 class ElseStatement(ASTNode):
+    # If condition or else_statement is not None, then this else-
+    # statement is actually an else-if-statement.
     def __init__(self, body, condition=None, else_statement=None):
         self.body = Program()
         self.body.children = body
@@ -463,12 +518,15 @@ class ElseStatement(ASTNode):
         return self.__str__()
 
     def eval(self, variable_scope: dict, function_scope: dict):
+        # See comments in IfStatement.eval() for explanation
         local_var_scope = copy.deepcopy(variable_scope)
         return_val = None
         if self.condition is None:
             return_val = self.body.eval(local_var_scope, function_scope)
         elif self.condition.eval(variable_scope, function_scope) != 0:
             return_val = self.body.eval(local_var_scope, function_scope)
+        # If we're in an else-if chain, pass control flow to the
+        # next link in the chain
         elif self.else_statement is not None:
             return_val = self.else_statement.eval(variable_scope, function_scope)
 
@@ -479,6 +537,24 @@ class ElseStatement(ASTNode):
                 variable_scope[var_id]["value"] = local_var_scope[var_id]["value"]
 
         return return_val
+
+
+# Class representing logical negation (the '!' operator).
+class Negation(ASTNode):
+    def __init__(self, operand):
+        self.operand = operand
+
+    def __str__(self):
+        return f"!{self.operand}"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def eval(self, variable_scope: dict, function_scope: dict):
+        result = self.operand.eval(variable_scope, function_scope)
+        if type(result) is str:
+            return 0
+        return int(not bool(result))
 
 
 # Class that represents not doing anything. If you wrote an MPL
