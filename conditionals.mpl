@@ -1,4 +1,4 @@
-# Program to demonstrate the logical operators
+# Program to demonstrate logical operators
 
 start {
 

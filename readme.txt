@@ -32,20 +32,19 @@ File contents:
 
     grammar.bnf: The grammar of MPL, expressed in a form of ABNF.
 
+    beer.mpl: MPL implementation of "99 Bottles of Beer on the Wall".
+
+    comparisons.mpl: MPL program showing the use of relational operators.
+
+    conditionals.mpl: MPL program showing the use of logical operators.
+
+    fibbonacci.mpl: MPL program that calculates and prints the first
+                    twelve numbers of the Fibbonacci sequence using
+                    recursion.
+
     hello.mpl: Hello world program in MPL.
 
-    foo.mpl: An MPL program demoing many of MPL's features.
+    string_test.mpl: Program to test the limits of the MPL lexer's
+                     ability to correctly parse string literals.
 
-    string_test.mpl: An MPL program that tests the interpreter's
-                     ability to parse string literals.
-
-    type_safety.mpl: an MPL program demonstrating type coercion.
-
-    beer.mpl: Implementation of "99 Bottles of Beer on the Wall"
-              in MPL.
-
-    comparisons.mpl: An MPL program demonstrating various comparison
-                     operators.
-
-    conditionals.mpl: An MPL program demonstrating various logical
-                      operators.
+    type_safety.mpl: Program demonstrating type coercion in MPL.

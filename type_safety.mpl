@@ -7,6 +7,7 @@ start {
     float bar = foo; # coerced to float
 
     print foo; # 3
+    print "\n";
     print bar; # 3.0
     print "\n";
 

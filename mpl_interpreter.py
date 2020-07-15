@@ -26,8 +26,7 @@ def main():
 
     lexer = Lexer(text)
     parser = Parser(lexer)
-#    try:
-    if 1:
+    try:
         syntax_tree = parser.parse()
         scope = {}
         funcs = {}
@@ -37,8 +36,8 @@ def main():
             print(f"Functions: {funcs}")
         if "--tree" in sys.argv:
             print(syntax_tree)
-#    except Exception as e:
-#        print(e)
+    except Exception as e:
+        print(e)
 
 if __name__ == "__main__":
     main()

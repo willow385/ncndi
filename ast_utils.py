@@ -206,6 +206,9 @@ class Program(ASTNode):
             result = node.eval(variable_scope, function_scope)
             if type(node) is ReturnStatement:
                 return result
+            elif type(node) is IfStatement:
+                if result is not None:
+                    return result
 
 
 # Class represnting variable assignments, consisting
@@ -398,12 +401,6 @@ class FunctionCall(ASTNode):
     def __repr__(self):
         return self.__str__()
 
-    # TODO: Presently, you can't return from inside a conditional
-    # statement. I need to make it so that if an if-statement isn't
-    # being used as an expression, return statements cause functions
-    # to exit. Perhaps I can do this by calling eval() on if-statements
-    # in the top of the function's syntax tree, and returning if
-    # a result which is not None is thereby obtained?
     def eval(self, variable_scope: dict, function_scope: dict):
         # We look up the function by its name to find out what
         # its parameters are supposed to be.

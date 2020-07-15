@@ -39,11 +39,11 @@ variable_declaration: TYPE variable
 
 empty:
 
-comparator: GREATER_THAN | EQUALS | LESS_THAN | LESS_EQ | GREATER_EQ | NOT_EQ
+relational: GREATER_THAN | EQUALS | LESS_THAN | LESS_EQ | GREATER_EQ | NOT_EQ
 
 expression: comparison ((AND | OR | XOR) comparison)*
 
-comparison: (NOT) math_expression ((comparator) math_expression)*
+comparison: (NOT) math_expression ((relational) math_expression)*
 
 math_expression: term ((PLUS | SUBTRACT) term)*
 
