@@ -26,20 +26,24 @@ def main():
 
     lexer = Lexer(text)
     parser = Parser(lexer)
-    try:
+#    try:
+    if 1:
         syntax_tree = parser.parse()
         scope = {}
         funcs = {}
+#        try:
         syntax_tree.eval(scope, funcs)
+        #except:
+        #    pass
         if "--dump" in sys.argv:
             print(f"Variables: {scope}")
             print(f"Functions: {funcs}")
         if "--tree" in sys.argv:
             print(syntax_tree)
-    except KeyError as k:
-        print(f"Error: Nonexistent variable {k} referenced")
-    except Exception as e:
-        print(e)
+#    except KeyError as k:
+#        print(f"Error: Nonexistent variable {k} referenced")
+#    except Exception as e:
+#        print(e)
 
 if __name__ == "__main__":
     main()

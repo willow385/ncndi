@@ -1,5 +1,5 @@
 # Implementation of "99 Bottles of Beer on the Wall" in MPL, using recursive
-# function calls ~~because I haven't implemented loops yet~~.
+# function calls.
 funct beer(int n) {
     if n > 0 && n != 1 {
 
