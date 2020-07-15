@@ -1,4 +1,6 @@
-program : 'start' OPEN_BRACE statement_list CLOSE_BRACE 'end'
+# TODO: rewrite this so it's in _ACTUAL_ Backus-Naur Form
+
+program : (function_list) 'start' OPEN_BRACE statement_list CLOSE_BRACE 'end'
 
 statement_list : statement | statement SEMICOLON statement_list
 
