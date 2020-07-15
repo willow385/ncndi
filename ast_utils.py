@@ -229,7 +229,6 @@ class Assignment(ASTNode):
 
     def eval(self, variable_scope: dict, function_scope: dict):
         if self.identifier.value in {**variable_scope, **function_scope}.keys():
-            print(f"Error encountered with symbol table looking like " + str({**variable_scope, **function_scope}))
             raise Exception(f"Error: {self.identifier.value} has multiple definitions")
 
         # Idk if anyone else uses this idiom but I find it
@@ -554,9 +553,12 @@ class WhileLoop(ASTNode):
         # See comments in IfStatement.eval() for explanation
         local_var_scope = copy.deepcopy(variable_scope)
         return_val = None
-        while self.condition.eval(local_var_scope, function_scope) != 0:
+        time_to_stop = False
+        while self.condition.eval(local_var_scope, function_scope) != 0 and not time_to_stop:
             local_var_scope = copy.deepcopy(variable_scope)
             return_val = self.body.eval(local_var_scope, function_scope)
+            if return_val is not None:
+                time_to_stop = True
             local_scope_var_ids = local_var_scope.keys()
             wider_scope_var_ids = variable_scope.keys()
             for var_id in local_scope_var_ids:
