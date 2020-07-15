@@ -1,12 +1,12 @@
 I'm (more or less) following this course:
 https://ruslanspivak.com/lsbasi-part1/
 
-Try running `python3 mpl_interpreter.py foo.mpl`.
-
 The language is called "MPL". "MPL" is a recursive
 acronym for "MPL Programming Language". "ncndi" is
 the name of this implementation of the interpreter.
 I haven't decided what that stands for yet.
+
+To invoke the interpreter run `python mpl_interpreter.py [file]`.
 
 File contents:
     ast_parser.py: Contains the Parser class which constructs
@@ -32,21 +32,23 @@ File contents:
 
     grammar.bnf: The grammar of MPL, expressed in a form of ABNF.
 
-    beer.mpl: MPL implementation of "99 Bottles of Beer on the Wall".
+    examples/: Directory containing MPL programs.
 
-    comparisons.mpl: MPL program showing the use of relational operators.
+        beer.mpl: MPL implementation of "99 Bottles of Beer on the Wall".
 
-    conditionals.mpl: MPL program showing the use of logical operators.
+        comparisons.mpl: MPL program showing the use of relational operators.
 
-    fibbonacci.mpl: MPL program that calculates and prints the first
-                    twelve numbers of the Fibbonacci sequence using
-                    recursion.
+        conditionals.mpl: MPL program showing the use of logical operators.
 
-    hello.mpl: Hello world program in MPL.
+        fibbonacci.mpl: MPL program that calculates and prints the first
+                        twelve numbers of the Fibbonacci sequence using
+                        recursion.
 
-    string_test.mpl: Program to test the limits of the MPL lexer's
-                     ability to correctly parse string literals.
+        hello.mpl: Hello world program in MPL.
 
-    type_safety.mpl: Program demonstrating type coercion in MPL.
+        string_test.mpl: Program to test the limits of the MPL lexer's
+                         ability to correctly parse string literals.
 
-    fizzbuzz.mpl: Implmentation of fizzBuzz in MPL using a while loop.
+        type_safety.mpl: Program demonstrating type coercion in MPL.
+
+        fizzbuzz.mpl: Implmentation of fizzBuzz in MPL using a while loop.
