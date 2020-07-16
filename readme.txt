@@ -51,4 +51,4 @@ File contents:
 
         type_safety.mpl: Program demonstrating type coercion in MPL.
 
-        fizzbuzz.mpl: Implmentation of fizzBuzz in MPL using a while loop.
+        fizzbuzz.mpl: Implmentation of fizzBuzz in MPL using a for loop.
