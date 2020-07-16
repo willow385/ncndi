@@ -206,7 +206,7 @@ class Program(ASTNode):
             result = node.eval(variable_scope, function_scope)
             if type(node) is ReturnStatement:
                 return result
-            elif type(node) in (IfStatement, WhileLoop):
+            elif type(node) in (IfStatement, WhileLoop, ForLoop):
                 if result is not None:
                     return result
 
@@ -570,38 +570,46 @@ class WhileLoop(ASTNode):
 
 
 # Class for representing for-loops.
-# TODO implement
-#class ForLoop(ASTNode):
-#    def __init__(self, body, condition):
-#        self.body = Program()
-#        self.body.children = body
-#        self.condition = condition
-#
-#    def __str__(self):
-#        return f"(while ({self.condition}) ({self.body}))"
-#
-#    def __repr__(self):
-#        return self.__str__()
-#
-#    def eval(self, variable_scope: dict, function_scope: dict):
-#        # See comments in IfStatement.eval() for explanation
-#        local_var_scope = copy.deepcopy(variable_scope)
-#        return_val = None
-#        time_to_stop = False
-#        while self.condition.eval(local_var_scope, function_scope) != 0 and not time_to_stop:
-#            local_var_scope = copy.deepcopy(variable_scope)
-#            return_val = self.body.eval(local_var_scope, function_scope)
-#            if return_val is not None:
-#                time_to_stop = True
-#            local_scope_var_ids = local_var_scope.keys()
-#            wider_scope_var_ids = variable_scope.keys()
-#            for var_id in local_scope_var_ids:
-#                if var_id in wider_scope_var_ids:
-#                    variable_scope[var_id]["value"] = local_var_scope[var_id]["value"]
-#
-#        if return_val is not None:
-#            return return_val
+class ForLoop(ASTNode):
+    def __init__(self, body, initialization, condition, iteration):
+        self.body = Program()
+        self.body.children = body
+        self.initialization = initialization
+        self.condition = condition
+        self.iteration = iteration
 
+    def __str__(self):
+        return f"(for ({self.initialization}; {self.condition}; {self.iteration}) ({self.body}))"
+
+    def __repr__(self):
+        return self.__str__()
+
+    def eval(self, variable_scope: dict, function_scope: dict):
+        # See comments in IfStatement.eval() for explanation
+        local_var_scope = copy.deepcopy(variable_scope)
+        return_val = None
+        time_to_stop = False
+
+        # First evaluate the initialization
+        self.initialization.eval(local_var_scope, function_scope)
+
+        # Then start looping
+        while self.condition.eval(local_var_scope, function_scope) != 0 and not time_to_stop:
+            return_val = self.body.eval(local_var_scope, function_scope)
+            if return_val is not None:
+                time_to_stop = True
+
+            # Run the iteration statement each loop
+            self.iteration.eval(local_var_scope, function_scope)
+
+            local_scope_var_ids = local_var_scope.keys()
+            wider_scope_var_ids = variable_scope.keys()
+            for var_id in local_scope_var_ids:
+                if var_id in wider_scope_var_ids:
+                    variable_scope[var_id]["value"] = local_var_scope[var_id]["value"]
+
+        if return_val is not None:
+            return return_val
 
 
 # Class representing logical negation (the '!' operator).

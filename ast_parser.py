@@ -129,6 +129,8 @@ class Parser:
             node = self.if_statement()
         elif self.current_token.token_type == TokenType.WHILE:
             node = self.while_loop()
+        elif self.current_token.token_type == TokenType.FOR:
+            node = self.for_loop()
         else:
             node = self.empty()
         return node
@@ -172,6 +174,33 @@ class Parser:
         body = self.statement_list()
         self.eat(TokenType.CLOSE_BRACE)
         node = WhileLoop(body, condition)
+        self.has_just_parsed_block_statement = True
+        return node
+
+
+    def for_loop(self):
+        self.eat(TokenType.FOR)
+        initialization = None
+        if self.current_token.token_type == TokenType.SEMICOLON:
+            initialization = Nop()
+        else:
+            initialization = self.statement()
+        self.eat(TokenType.SEMICOLON)
+        condition = None
+        if self.current_token.token_type == TokenType.SEMICOLON:
+            condition = Integer(Token(TokenType.INTEGER, 1))
+        else:
+            condition = self.expression()
+        self.eat(TokenType.SEMICOLON)
+        iteration = None
+        if self.current_token.token_type == TokenType.OPEN_BRACE:
+            iteration = Nop()
+        else:
+            iteration = self.statement()
+        self.eat(TokenType.OPEN_BRACE)
+        body = self.statement_list()
+        self.eat(TokenType.CLOSE_BRACE)
+        node = ForLoop(body, initialization, condition, iteration)
         self.has_just_parsed_block_statement = True
         return node
 

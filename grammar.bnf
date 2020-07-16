@@ -22,13 +22,14 @@ statement: assignment_statement
          | function_call
          | if_statement
          | while_loop
+         | for_loop
          | return_statement
 
 return_statment: RETURN expression
 
 while_loop: WHILE expression OPEN_BRACE statement_list CLOSE_BRACE
 
-for_loop: FOR statement SEMICOLON statement SEMICOLON statement OPEN_BRACE statement_list CLOSE_BRACE
+for_loop: FOR statement SEMICOLON expression SEMICOLON statement OPEN_BRACE statement_list CLOSE_BRACE
 
 if_statement: IF expression OPEN_BRACE statement_list CLOSE_BRACE (else_statement)
 

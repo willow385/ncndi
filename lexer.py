@@ -20,7 +20,8 @@ RESERVED_WORDS = {
     "return": Token(TokenType.RETURN, "return"),
     "if": Token(TokenType.IF, "if"),
     "else": Token(TokenType.ELSE, "else"),
-    "while": Token(TokenType.WHILE, "while")
+    "while": Token(TokenType.WHILE, "while"),
+    "for": Token(TokenType.FOR, "for")
 }
 
 class Lexer:

@@ -8,10 +8,7 @@ funct mod(int n, int divisor) int {
 }
 
 start {
-
-    int i = 0;
-
-    while i <= 100 {
+    for int i = 0; i <= 100; i = i + 1 {
         if mod(i, 15) {
             print "FizzBuzz\n";
         } else if mod(i, 5) {
@@ -21,8 +18,5 @@ start {
         } else {
             print i + "\n";
         }
-
-        i = i + 1;
     }
-
 } end
