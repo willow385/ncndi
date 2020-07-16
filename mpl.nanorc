@@ -3,7 +3,8 @@
 syntax "MPL" "\.mpl$"
 comment "#"
 
-color green "\<(start|end|print|int|float|string|funct|return|if|else|while|for)\>"
+color green "\<(start|end|print|int|float|string|funct|if|else|while|for)\>"
+color brightmagenta "\<(return)\>"
 color magenta "[(){}]"
 color yellow "[.:;,+*|=!<>&]"
 color brightred ""(\\.|[^"])*""
