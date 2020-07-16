@@ -16,10 +16,7 @@ File contents:
 
     ast_utils.py: Contains classes representing various subtypes
                   of the ASTNode class (which in turn models nodes
-                  of the abstract syntax tree). Also contains
-                  various "eval_" functions for evaluating the
-                  meaning of different language constructs
-                  expressed as abstract syntax tree nodes.
+                  of the abstract syntax tree).
 
     lexer.py: Contains the Lexer class, which scans through text
               to produce tokens.
