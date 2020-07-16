@@ -6,7 +6,7 @@ start {
 
     # Output should look like this:
     # foo"bar"\
-    #\
+    # \
     #
 
 } end
