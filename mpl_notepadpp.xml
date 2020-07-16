@@ -24,7 +24,7 @@
             <Keywords name="Folders in comment, open"></Keywords>
             <Keywords name="Folders in comment, middle"></Keywords>
             <Keywords name="Folders in comment, close"></Keywords>
-            <Keywords name="Keywords1">start&#x000D;&#x000A;end&#x000D;&#x000A;funct&#x000D;&#x000A;if&#x000D;&#x000A;else&#x000D;&#x000A;print&#x000D;&#x000A;return</Keywords>
+            <Keywords name="Keywords1">start&#x000D;&#x000A;end&#x000D;&#x000A;funct&#x000D;&#x000A;if&#x000D;&#x000A;else&#x000D;&#x000A;print&#x000D;&#x000A;return&#x000D;&#x000A;while&#x000D;&#x000A;for</Keywords>
             <Keywords name="Keywords2">int&#x000D;&#x000A;string&#x000D;&#x000A;float</Keywords>
             <Keywords name="Keywords3"></Keywords>
             <Keywords name="Keywords4"></Keywords>
