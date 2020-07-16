@@ -43,7 +43,6 @@ class Parser:
 
 
     def function_declaration(self):
-        node = None
         self.eat(TokenType.FUNCTION_DECL)
         function_name = self.current_token
         self.eat(TokenType.IDENTIFIER)
@@ -59,8 +58,6 @@ class Parser:
         self.eat(TokenType.OPEN_BRACE)
         function_body = self.statement_list()
         self.eat(TokenType.CLOSE_BRACE)
-        # No need to eat a closing brace here.
-        # self.statement_list() will eat it for us
         return Function(function_name, function_params, return_type, function_body)
 
 
