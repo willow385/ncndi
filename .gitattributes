@@ -1,2 +1,2 @@
 *.mpl linguist-language=text
-*.bnf linguist-language=EBNF
+*.bnf linguist-language=ebnf
