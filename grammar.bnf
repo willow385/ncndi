@@ -1,69 +1,77 @@
-# TODO: rewrite this so it's in _ACTUAL_ Backus-Naur Form
+<ws> ::= " " <opt-ws> | "\n" <opt-ws> | "\r" <opt-ws> | "\t" <opt-ws>
 
-program : (function_list) 'start' OPEN_BRACE statement_list CLOSE_BRACE 'end'
+<opt-ws> ::= <ws> | ""
 
-statement_list : statement | statement SEMICOLON statement_list
+<program> ::= <function-list> <program> | "start" <opt-ws> "{" <statement-list> "}" <opt-ws> "end"
 
-function_list: function_declaration | function_declaration function_list
+<statement-list> ::= <statement> | <statement> <statement-list>
 
-parameter_list: empty | variable_declaration(COMMA (variable_declaration|parameter_list))
+<function-list> ::= <function-decl> | <function-decl> <function-list>
 
-function_declaration: 'funct' IDENTIFIER OPEN_PAREN parameter_list CLOSE_PAREN (TYPE) OPEN_BRACE statement_list CLOSE_BRACE
+<parameter-list> ::= <opt-ws> | <variable-decl> | <variable-decl> "," <opt-ws> <parameter-list>
 
-function_call: IDENTIFIER OPEN_PAREN argument_list CLOSE_PAREN
+<function-decl> ::= "funct" <ws> <identifier> <opt-ws> "(" <parameter-list> ")"
+                    <opt-ws> [<type-identifier>] <opt-ws> "{" <statement-list> "}"
 
-argument_list: empty | expression(COMMA (expression|argument_list))
+<function-call> ::= <identifier> <opt-ws> "(" <argument-list> ")"
 
-statement: assignment_statement
-         | variable_declaration
-         | reassignment_statement
-         | print_statement
-         | empty
-         | function_call
-         | if_statement
-         | while_loop
-         | for_loop
-         | return_statement
+<argument-list> ::= <opt-ws> | <expression> | <expression> "," <opt-ws> <argument-list>
 
-return_statment: RETURN expression
+<statement> ::= <assignment-statement> ";"
+              | <variable-decl> ";"
+              | <reassignment-statement> ";"
+              | <print-statement> ";"
+              | <function-call> ";"
+              | <if-statement>
+              | <while-loop>
+              | <for-loop>
+              | <return-statement> ";"
+              | <opt-ws>
+              | <statement> ";"
+              | <ws> <statement>
+              | <statement> <ws>
 
-while_loop: WHILE expression OPEN_BRACE statement_list CLOSE_BRACE
+<return-statement> ::= "return" <ws> <expression>
 
-for_loop: FOR statement SEMICOLON expression SEMICOLON statement OPEN_BRACE statement_list CLOSE_BRACE
+<while-loop> ::= "while" <ws> <expression> <opt-ws> "{" <statement-list> "}" 
 
-if_statement: IF expression OPEN_BRACE statement_list CLOSE_BRACE (else_statement)
+<for-loop> ::= "for" <statement> ";" [<expression>] ";" <statement> "{" <statement-list> "}"
 
-else_statement: else (if_statement | OPEN_BRACE statement_list CLOSE_BRACE)
+<if-statement> ::= "if" <ws> <expression> <opt-ws> "{" <statement-list> "}" [<else-statement>]
 
-print_statement: PRINT expression
+<else-statement> ::= "else" <opt-ws> "{" <statement-list> "}" | "else" <if-statement>
 
-assignment_statement: TYPE variable ASSIGN expression
+<print-statement> ::= "print" <ws> <expression>
 
-reassignment_statement: variable (PLUS | SUBTRACT | MULTIPLY | DIVIDE)ASSIGN expression
+<assignment-statement> ::= <type-identifier> <ws> <identifier> <opt-ws> "=" <opt-ws> <expression>
 
-variable_declaration: TYPE variable
+<reassignment-statement> ::= <identifier> <opt-ws> <assignment-operator> <opt-ws> <expression>
 
-empty:
+<assignment-operator> ::= "+=" | "-=" | "*=" | "/=" | "="
 
-relational: GREATER_THAN | EQUALS | LESS_THAN | LESS_EQ | GREATER_EQ | NOT_EQ
+<variable-decl> ::= <type-identifier> <ws> <identifier>
 
-expression: comparison ((AND | OR | XOR) comparison)*
+<relational> ::= ">" | "==" | "<" | "<=" | ">=" | "!="
 
-comparison: (NOT) math_expression ((relational) math_expression)*
+<logical> ::= "&&" | "||" | "<>"
 
-math_expression: term ((PLUS | SUBTRACT) term)*
+<expression> ::= <comparison> [<opt-ws> <logical> <opt-ws> <comparison>]+
 
-term: factor ((MULTIPLY | DIVIDE) factor)*
+<comparison> ::= ["!" <opt-ws>] <math-expression> [<opt-ws> <relational> <opt-ws> <math-expression>]+
 
-factor: PLUS factor
-      | SUBTRACT factor
-      | NOT expression
-      | INTEGER
-      | OPEN_PAREN expression CLOSE_PAREN
-      | variable
-      | function_call
-      | if_statement
+<math-expression> ::= <term> [<opt-ws> ("+" | "-") <opt-ws> <term>]+
 
-variable: IDENTIFIER
+<term> ::= <factor> [<opt-ws> ("*" | "/") <opt-ws> <factor>]+
 
-TYPE : 'float' | 'int' | 'string'
+<factor> ::= "+" <opt-ws> <factor>
+           | "-" <opt-ws> <factor>
+           | "!" <opt-ws> <expression>
+           | <integer>
+           | <float>
+           | <string-literal>
+           | "(" <opt-ws> <expression> <opt-ws> ")"
+           | <identifier>
+           | <function-call>
+           | <if-statement>
+
+<type-identifier> ::= "float" | "int" | "string"
