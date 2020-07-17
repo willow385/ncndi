@@ -1,77 +1,77 @@
-<ws> ::= " " <opt-ws> | "\n" <opt-ws> | "\r" <opt-ws> | "\t" <opt-ws>
+<ws> ::= " " <opt_ws> | "\n" <opt_ws> | "\r" <opt_ws> | "\t" <opt_ws>
 
-<opt-ws> ::= <ws> | ""
+<opt_ws> ::= <ws> | ""
 
-<program> ::= <function-list> <program> | "start" <opt-ws> "{" <statement-list> "}" <opt-ws> "end"
+<program> ::= <function_list> <program> | "start" <opt_ws> "{" <statement_list> "}" <opt_ws> "end"
 
-<statement-list> ::= <statement> | <statement> <statement-list>
+<statement_list> ::= <statement> | <statement> <statement_list>
 
-<function-list> ::= <function-decl> | <function-decl> <function-list>
+<function_list> ::= <function_decl> | <function_decl> <function_list>
 
-<parameter-list> ::= <opt-ws> | <variable-decl> | <variable-decl> "," <opt-ws> <parameter-list>
+<parameter_list> ::= <opt_ws> | <variable_decl> | <variable_decl> "," <opt_ws> <parameter_list>
 
-<function-decl> ::= "funct" <ws> <identifier> <opt-ws> "(" <parameter-list> ")"
-                    <opt-ws> [<type-identifier>] <opt-ws> "{" <statement-list> "}"
+<function_decl> ::= "funct" <ws> <identifier> <opt_ws> "(" <parameter_list> ")"
+                    <opt_ws> [<type_identifier>] <opt_ws> "{" <statement_list> "}"
 
-<function-call> ::= <identifier> <opt-ws> "(" <argument-list> ")"
+<function_call> ::= <identifier> <opt_ws> "(" <argument_list> ")"
 
-<argument-list> ::= <opt-ws> | <expression> | <expression> "," <opt-ws> <argument-list>
+<argument_list> ::= <opt_ws> | <expression> | <expression> "," <opt_ws> <argument_list>
 
-<statement> ::= <assignment-statement> ";"
-              | <variable-decl> ";"
-              | <reassignment-statement> ";"
-              | <print-statement> ";"
-              | <function-call> ";"
-              | <if-statement>
-              | <while-loop>
-              | <for-loop>
-              | <return-statement> ";"
-              | <opt-ws>
+<statement> ::= <assignment_statement> ";"
+              | <variable_decl> ";"
+              | <reassignment_statement> ";"
+              | <print_statement> ";"
+              | <function_call> ";"
+              | <if_statement>
+              | <while_loop>
+              | <for_loop>
+              | <return_statement> ";"
+              | <opt_ws>
               | <statement> ";"
               | <ws> <statement>
               | <statement> <ws>
 
-<return-statement> ::= "return" <ws> <expression>
+<return_statement> ::= "return" <ws> <expression>
 
-<while-loop> ::= "while" <ws> <expression> <opt-ws> "{" <statement-list> "}" 
+<while_loop> ::= "while" <ws> <expression> <opt_ws> "{" <statement_list> "}" 
 
-<for-loop> ::= "for" <statement> ";" [<expression>] ";" <statement> "{" <statement-list> "}"
+<for_loop> ::= "for" <statement> ";" [<expression>] ";" <statement> "{" <statement_list> "}"
 
-<if-statement> ::= "if" <ws> <expression> <opt-ws> "{" <statement-list> "}" [<else-statement>]
+<if_statement> ::= "if" <ws> <expression> <opt_ws> "{" <statement_list> "}" [<else_statement>]
 
-<else-statement> ::= "else" <opt-ws> "{" <statement-list> "}" | "else" <if-statement>
+<else_statement> ::= "else" <opt_ws> "{" <statement_list> "}" | "else" <if_statement>
 
-<print-statement> ::= "print" <ws> <expression>
+<print_statement> ::= "print" <ws> <expression>
 
-<assignment-statement> ::= <type-identifier> <ws> <identifier> <opt-ws> "=" <opt-ws> <expression>
+<assignment_statement> ::= <type_identifier> <ws> <identifier> <opt_ws> "=" <opt_ws> <expression>
 
-<reassignment-statement> ::= <identifier> <opt-ws> <assignment-operator> <opt-ws> <expression>
+<reassignment_statement> ::= <identifier> <opt_ws> <assignment_operator> <opt_ws> <expression>
 
-<assignment-operator> ::= "+=" | "-=" | "*=" | "/=" | "="
+<assignment_operator> ::= "+=" | "-=" | "*=" | "/=" | "="
 
-<variable-decl> ::= <type-identifier> <ws> <identifier>
+<variable_decl> ::= <type_identifier> <ws> <identifier>
 
 <relational> ::= ">" | "==" | "<" | "<=" | ">=" | "!="
 
 <logical> ::= "&&" | "||" | "<>"
 
-<expression> ::= <comparison> [<opt-ws> <logical> <opt-ws> <comparison>]+
+<expression> ::= <comparison> [<opt_ws> <logical> <opt_ws> <comparison>]+
 
-<comparison> ::= ["!" <opt-ws>] <math-expression> [<opt-ws> <relational> <opt-ws> <math-expression>]+
+<comparison> ::= ["!" <opt_ws>] <math_expression> [<opt_ws> <relational> <opt_ws> <math_expression>]+
 
-<math-expression> ::= <term> [<opt-ws> ("+" | "-") <opt-ws> <term>]+
+<math_expression> ::= <term> [<opt_ws> ("+" | "-") <opt_ws> <term>]+
 
-<term> ::= <factor> [<opt-ws> ("*" | "/") <opt-ws> <factor>]+
+<term> ::= <factor> [<opt_ws> ("*" | "/") <opt_ws> <factor>]+
 
-<factor> ::= "+" <opt-ws> <factor>
-           | "-" <opt-ws> <factor>
-           | "!" <opt-ws> <expression>
+<factor> ::= "+" <opt_ws> <factor>
+           | "-" <opt_ws> <factor>
+           | "!" <opt_ws> <expression>
            | <integer>
            | <float>
-           | <string-literal>
-           | "(" <opt-ws> <expression> <opt-ws> ")"
+           | <string_literal>
+           | "(" <opt_ws> <expression> <opt_ws> ")"
            | <identifier>
-           | <function-call>
-           | <if-statement>
+           | <function_call>
+           | <if_statement>
 
-<type-identifier> ::= "float" | "int" | "string"
+<type_identifier> ::= "float" | "int" | "string"
