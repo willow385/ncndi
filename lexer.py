@@ -132,6 +132,8 @@ class Lexer:
                 self.advance()
                 return Token(TokenType.PLUS, '+')
 
+            # TODO: parsing negative numbers is broken.
+            # Need to fix this
             if self.current_char == '-':
                 if self.pos == 0:
                     return self.get_number_token()
