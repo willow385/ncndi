@@ -39,7 +39,7 @@ print_statement: PRINT expression
 
 assignment_statement: TYPE variable ASSIGN expression
 
-reassignment_statement: variable ASSIGN expression
+reassignment_statement: variable (PLUS | SUBTRACT | MULTIPLY | DIVIDE)ASSIGN expression
 
 variable_declaration: TYPE variable
 

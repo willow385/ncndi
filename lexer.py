@@ -1,5 +1,4 @@
-# TODO: implement modulo operator, bitwise operators,
-# and +=, -=, /=, and *=
+# TODO: implement modulo operator and bitwise operators
 
 import string
 from token import Token, TokenType
@@ -41,19 +40,13 @@ class Lexer:
 
     def parse_number(self):
         result = ""
-        if self.current_char == '-': # handle negative numbers
-            result += self.current_char
-            self.advance()
         while self.current_char is not None and (self.current_char.isdigit() or self.current_char == '.'):
             result += self.current_char
             self.advance()
-        if result == "-":
-            self.error("Expected integer literal, got '-' instead")
+        if '.' in result:
+            return float(result)
         else:
-            if '.' in result:
-                return float(result)
-            else:
-                return int(result)
+            return int(result)
 
     def skip_comment(self):
         if self.current_char == '#':
@@ -130,25 +123,30 @@ class Lexer:
 
             if self.current_char == '+':
                 self.advance()
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.PLUS_ASSIGN, "+=")
                 return Token(TokenType.PLUS, '+')
 
-            # TODO: parsing negative numbers is broken.
-            # Need to fix this
             if self.current_char == '-':
-                if self.pos == 0:
-                    return self.get_number_token()
-                elif self.text[self.pos - 1] in ('-', '+', '*', '/', '('):
-                    return self.get_number_token()
-                else:
+                self.advance()
+                if self.current_char == '=':
                     self.advance()
-                    return Token(TokenType.SUBTRACT, '-')
+                    return Token(TokenType.SUBTRACT_ASSIGN, "-=")
+                return Token(TokenType.SUBTRACT, '-')
 
             if self.current_char == '*':
                 self.advance()
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.MULT_ASSIGN, "*=")
                 return Token(TokenType.MULT, '*')
 
             if self.current_char == '/':
                 self.advance()
+                if self.current_char == '=':
+                    self.advance()
+                    return Token(TokenType.DIVIDE_ASSIGN, "/=")
                 return Token(TokenType.DIVIDE, '/')
 
             if self.current_char == '(':

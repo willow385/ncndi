@@ -37,6 +37,10 @@ class TokenType(Enum):
     LESS_EQ = 33
     WHILE = 34
     FOR = 35
+    PLUS_ASSIGN = 36
+    SUBTRACT_ASSIGN = 37
+    MULT_ASSIGN = 38
+    DIVIDE_ASSIGN= 39
 
 class Token:
     def __init__(self, token_type, value):

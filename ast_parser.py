@@ -114,7 +114,14 @@ class Parser:
         elif self.current_token.token_type == TokenType.IDENTIFIER:
             token_id = self.current_token
             self.eat(TokenType.IDENTIFIER)
-            if self.current_token.token_type == TokenType.ASSIGN:
+            assign_ops = (
+                TokenType.ASSIGN,
+                TokenType.PLUS_ASSIGN,
+                TokenType.SUBTRACT_ASSIGN,
+                TokenType.MULT_ASSIGN,
+                TokenType.DIVIDE_ASSIGN
+            )
+            if self.current_token.token_type in assign_ops:
                 node = self.reassignment_statement(token_id)
             elif self.current_token.token_type == TokenType.OPEN_PAREN:
                 node = self.function_call(token_id)
@@ -233,7 +240,20 @@ class Parser:
 
     def reassignment_statement(self, id_token):
         token = self.current_token
-        self.eat(TokenType.ASSIGN)
+        assign_ops = (
+            TokenType.ASSIGN,
+            TokenType.PLUS_ASSIGN,
+            TokenType.SUBTRACT_ASSIGN,
+            TokenType.MULT_ASSIGN,
+            TokenType.DIVIDE_ASSIGN
+        )
+        if self.current_token.token_type in assign_ops:
+            self.eat(self.current_token.token_type)
+        else:
+            self.error(
+               f"Unexpected token ``{self.current_token}'' encountered, "
+                "expected one of =, +=, -=, *=, or /="
+            )
         value = self.expression()
         node = Reassignment(id_token, token, value)
         return node
@@ -285,6 +305,11 @@ class Parser:
             self.eat(TokenType.NOT)
             operand = self.expression()
             return Negation(operand)
+        elif token.token_type == TokenType.SUBTRACT:
+            self.eat(TokenType.SUBTRACT)
+            number = self.factor()
+            number.value = -(number.value)
+            return number
 
 
     def term(self):

@@ -305,7 +305,20 @@ class Reassignment(ASTNode):
             "string" : str
         }[variable_scope[var_id]["type"]]
 
-        variable_scope[var_id]["value"] = var_type(self.value.eval(variable_scope, function_scope))
+        if self.op.token_type == TokenType.ASSIGN:
+            variable_scope[var_id]["value"] = var_type(self.value.eval(variable_scope, function_scope))
+        elif self.op.token_type == TokenType.PLUS_ASSIGN:
+            variable_scope[var_id]["value"] += var_type(self.value.eval(variable_scope, function_scope))
+        elif self.op.token_type == TokenType.SUBTRACT_ASSIGN:
+            variable_scope[var_id]["value"] -= var_type(self.value.eval(variable_scope, function_scope))
+        elif self.op.token_type == TokenType.MULT_ASSIGN:
+            variable_scope[var_id]["value"] *= var_type(self.value.eval(variable_scope, function_scope))
+        elif self.op.token_type == TokenType.DIVIDE_ASSIGN:
+            if var_type is float:
+                variable_scope[var_id]["value"] /= var_type(self.value.eval(variable_scope, function_scope))
+            else:
+                variable_scope[var_id]["value"] //= var_type(self.value.eval(variable_scope, function_scope))
+
         return variable_scope[var_id]["value"]
 
 
