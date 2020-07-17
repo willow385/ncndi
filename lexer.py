@@ -1,10 +1,5 @@
 # TODO: implement modulo operator, bitwise operators,
-# and of course FUCKING LOOPS like seriously why did I
-# implement *functions* before I implemented loops wtf
-
-# oh and maybe something like a switch or match statement?
-
-# and also +=, -=, /=, and *=, for good measure
+# and +=, -=, /=, and *=
 
 import string
 from token import Token, TokenType
