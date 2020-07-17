@@ -36,7 +36,7 @@ to produce tokens.
 together into an interpreter which has
 both an interactive mode and a batch mode.
 
-- **grammar.bnf**: The grammar of MPL, expressed in a form of ABNF.
+- [**grammar.bnf**](https://github.com/DanteFalzone0/ncndi/blob/master/grammar.bnf): The grammar of MPL, expressed in a form of ABNF.
 
 - **examples/**: Directory containing MPL programs.
 
