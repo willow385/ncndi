@@ -4,6 +4,7 @@ from token import *
 from lexer import *
 from ast_parser import *
 import sys
+import os
 
 def main():
     text = ""
@@ -18,9 +19,16 @@ def main():
         except FileNotFoundError:
             text = open(sys.argv[3]).read()
     else:
+        print("NCNDI - the interpreter for the MPL Programming Language")
+        print("Licensed under the GNU GPL, version 3 or best offer")
+        print("Type in some code; when finished, ", end="")
+        if os.name == "nt":
+            print("press Ctrl+Z followed by Enter")
+        elif os.name == "posix":
+            print("press Ctrl+D")
         while True:
             try:
-                text += input("Enter some code, send EOF when done >> ")
+                text += input(">> ")
             except EOFError:
                 break
 
