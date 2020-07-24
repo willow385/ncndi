@@ -46,8 +46,8 @@ both an interactive mode and a batch mode.
 
 - [**conditionals.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/conditionals.mpl): MPL program showing the use of logical operators.
 
-- [**fibbonacci.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/fibbonacci.mpl): MPL program that calculates and prints the first
-twelve numbers of the Fibbonacci sequence using
+- [**fibonacci.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/fibonacci.mpl): MPL program that calculates and prints the first
+twelve numbers of the Fibonacci sequence using
 recursion.
 
 - [**hello.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/hello.mpl): Hello world program in MPL.
@@ -57,4 +57,4 @@ ability to correctly parse string literals.
 
 - [**type_safety.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/type_safety.mpl): Program demonstrating type coercion in MPL.
 
-- [**fizzbuzz.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/fizzbuzz.mpl): Implmentation of fizzBuzz in MPL using a for loop.
+- [**fizzbuzz.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/fizzbuzz.mpl): Implementation of FizzBuzz in MPL using a for loop.
