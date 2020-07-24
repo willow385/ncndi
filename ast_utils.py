@@ -1,5 +1,8 @@
-from token import Token, TokenType
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import copy
+from token import TokenType
+
 
 # TODO improve string representation of AST (low priority)
 # TODO This file is pretty long. Would it make sense to
@@ -22,7 +25,7 @@ class ASTNode:
 
 
 # Class representing binary operations.
-# This includes aritmetic operations (*, /, +, -) and
+# This includes arithmetic operations (*, /, +, -) and
 # logical operations (==, <, >, &&, ||, <>).
 class BinaryOp(ASTNode):
     def __init__(self, left, op, right):
@@ -46,7 +49,6 @@ class BinaryOp(ASTNode):
         # Check to see if they're both strings, if one of them is a string, or neither is a string.
         both_are_string = (type(left) is str and type(right) is str)
         one_is_a_string = (type(left) is not type(right)) and (str in [type(left), type(right)])
-        none_are_string = (type(left) is not str and type(right) is not str)
 
         # Identify which operation to perform. If the requested
         # operation is not implemented for the types of the
@@ -75,7 +77,7 @@ class BinaryOp(ASTNode):
             return left - right
         elif self.op.token_type == TokenType.EQUALS:
             if one_is_a_string:
-                return 0 # don't compare strings with other types
+                return 0  # don't compare strings with other types
             return 1 if left == right else 0
         elif self.op.token_type == TokenType.GREATER_THAN:
             if one_is_a_string:
@@ -235,20 +237,20 @@ class Assignment(ASTNode):
         # to be much more elegant and less verbose than a
         # chain of conditional statements.
         var_type = {
-            "int" : int,
-            "float" : float,
-            "string" : str
+            "int": int,
+            "float": float,
+            "string": str
         }[self.var_type.value]
 
         variable_scope[self.identifier.value] = {
-            "value" : var_type(self.value.eval(variable_scope, function_scope)),
-            "type" : self.var_type.value
+            "value": var_type(self.value.eval(variable_scope, function_scope)),
+            "type": self.var_type.value
         }
 
         return variable_scope[self.identifier.value]["value"]
 
 
-# Class represnting variable declarations which don't
+# Class representing variable declarations which don't
 # specify an explicit value, for example "int foo;".
 # By default, ints are initialized to 0, floats to 0.0,
 # and strings to "".
@@ -274,8 +276,8 @@ class VariableDecl(ASTNode):
         elif self.var_type.value == "string":
             value = ""
         variable_scope[self.identifier.value] = {
-            "value" : value,
-            "type" : self.var_type.value
+            "value": value,
+            "type": self.var_type.value
         }
         return variable_scope[self.identifier.value]["value"]
 
@@ -300,9 +302,9 @@ class Reassignment(ASTNode):
     def eval(self, variable_scope: dict, function_scope: dict):
         var_id = self.identifier.value
         var_type = {
-            "int" : int,
-            "float" : float,
-            "string" : str
+            "int": int,
+            "float": float,
+            "string": str
         }[variable_scope[var_id]["type"]]
 
         if self.op.token_type == TokenType.ASSIGN:
@@ -390,7 +392,7 @@ class Function(ASTNode):
         function_scope[self.function_name.value] = self
 
 
-# Class represnting a function call.
+# Class representing a function call.
 class FunctionCall(ASTNode):
     def __init__(self, function_id, args: list):
         self.func_id = function_id
@@ -430,14 +432,14 @@ class FunctionCall(ASTNode):
         # the parameter names to their passed values.
         for i in range(len(params)):
             arg_type = {
-                "int" : int,
-                "float" : float,
-                "string" : str
+                "int": int,
+                "float": float,
+                "string": str
             }[params[i].var_type.value]
 
             named_args[params[i].identifier.value] = {
-                "value" : arg_type(args[i].eval(variable_scope, function_scope)),
-                "type" : params[i].var_type.value
+                "value": arg_type(args[i].eval(variable_scope, function_scope)),
+                "type": params[i].var_type.value
             }
 
         # Find the function's return type and obtain a result

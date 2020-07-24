@@ -1,24 +1,23 @@
 #!/usr/bin/env python3
-from ast_utils import *
-from token import *
-from lexer import *
-from ast_parser import *
-import sys
+# -*- coding: utf-8 -*-
 import os
+import sys
+
+from ast_parser import *
+
 
 def main():
     text = ""
+    interactive_mode = False
 
-    if len(sys.argv) > 1:
-        # best code ever written /s
-        # obviously this is just a prototype lmao
-        try:
-            text = open(sys.argv[1]).read()
-        except FileNotFoundError:
-            text = open(sys.argv[2]).read()
-        except FileNotFoundError:
-            text = open(sys.argv[3]).read()
-    else:
+    # Try to find the file to run
+    for i in range(len(sys.argv)):
+        if i != 0 and os.path.isfile(sys.argv[i]):
+            text = open(sys.argv[i]).read()
+    if text == "":
+        interactive_mode = True
+
+    if interactive_mode:
         print("NCNDI - the interpreter for the MPL Programming Language")
         print("Licensed under the GNU GPL, version 3 or best offer")
         print("Type in some code; when finished, ", end="")
@@ -48,6 +47,7 @@ def main():
         print(f"Error: Nonexistent variable {k} referenced")
     except Exception as e:
         print(e)
+
 
 if __name__ == "__main__":
     main()

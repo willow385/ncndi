@@ -1,4 +1,7 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 from enum import Enum
+
 
 class TokenType(Enum):
     MULT = 0
@@ -40,7 +43,8 @@ class TokenType(Enum):
     PLUS_ASSIGN = 36
     SUBTRACT_ASSIGN = 37
     MULT_ASSIGN = 38
-    DIVIDE_ASSIGN= 39
+    DIVIDE_ASSIGN = 39
+
 
 class Token:
     def __init__(self, token_type, value):

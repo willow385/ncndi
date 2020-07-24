@@ -18,6 +18,7 @@ RESERVED_WORDS = {
     "for": Token(TokenType.FOR, "for")
 }
 
+
 class Lexer:
     def __init__(self, text):
         self.text = text
@@ -77,11 +78,13 @@ class Lexer:
         else:
             self.error("String literals must begin with '" '"' "'")
 
-        while self.current_char != '"' or (self.current_char == '"' and self.text[self.pos-1] == '\\' and self.text[self.pos-2] != '\\'):
+        while self.current_char != '"' or (
+                self.current_char == '"' and self.text[self.pos - 1] == '\\' and self.text[self.pos - 2] != '\\'):
             result += self.current_char
             self.advance()
         self.advance()
-        result = result.replace('\\n', '\n').replace('\\r', '\r').replace('\\t', '\t').replace('\\\\', '\\').replace("\\\"", "\"")
+        result = result.replace('\\n', '\n').replace('\\r', '\r').replace('\\t', '\t').replace('\\\\', '\\').replace(
+            "\\\"", "\"")
         return Token(TokenType.STRING, result)
 
     def peek(self):
