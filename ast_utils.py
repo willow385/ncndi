@@ -4,10 +4,6 @@ import copy
 from token import TokenType
 
 
-# TODO improve string representation of AST (low priority)
-# TODO This file is pretty long. Would it make sense to
-# break it up into smaller files? (Probably not, tbh.)
-
 # Base class representing abstract syntax tree nodes.
 # Objects inheriting from ASTNode are intended to
 # implement the eval() method. AST nodes which have
@@ -26,7 +22,7 @@ class ASTNode:
 
 # Class representing binary operations.
 # This includes arithmetic operations (*, /, +, -) and
-# logical operations (==, <, >, &&, ||, <>).
+# logical operations (==, !=, <, >, &&, ||, <>).
 class BinaryOp(ASTNode):
     def __init__(self, left, op, right):
         self.left = left
@@ -34,7 +30,15 @@ class BinaryOp(ASTNode):
         self.right = right
 
     def __str__(self):
-        return f"({self.left} {self.op.value} {self.right})"
+        if self.op.value == "==":
+            return f"(eq {self.left} {self.right})"
+        elif self.op.value == "!=" or self.op.value == "<>":
+            return f"(not (eq {self.left} {self.right}))"
+        elif self.op.value == "||":
+            return f"(or {self.left.value} {self.right.value})"
+        elif self.op.value == "&&":
+            return f"(and {self.left.value} {self.right.value})"
+        return f"({self.op.value} {self.left} {self.right})"
 
     def __repr__(self):
         return self.__str__()
@@ -121,7 +125,7 @@ class Integer(ASTNode):
         self.value = token.value
 
     def __str__(self):
-        return f"int({self.value})"
+        return f"{self.value}"
 
     def __repr__(self):
         return self.__str__()
@@ -137,7 +141,7 @@ class Float(ASTNode):
         self.value = token.value
 
     def __str__(self):
-        return f"float({self.value})"
+        return f"{self.value}"
 
     def __repr__(self):
         return self.__str__()
@@ -152,7 +156,7 @@ class String(ASTNode):
         self.value = value
 
     def __str__(self):
-        return f'string("{self.value}")'.replace(
+        return f'"{self.value}"'.replace(
             '\\', '\\\\'
         ).replace(
             '\n', '\\n'
@@ -177,7 +181,7 @@ class PrintStatement(ASTNode):
         self.arg = arg
 
     def __str__(self):
-        return f"(print {self.arg})"
+        return f'(format t "~a" {self.arg})'
 
     def __repr__(self):
         return self.__str__()
@@ -194,11 +198,7 @@ class Program(ASTNode):
         self.children = []
 
     def __str__(self):
-        result = "(\n"
-        for node in self.children:
-            result += "  " + str(node) + "\n"
-        result += ")\n"
-        return result
+        return " ".join(map(str, self.children))
 
     def __repr__(self):
         return self.__str__()
@@ -224,7 +224,7 @@ class Assignment(ASTNode):
         self.value = value
 
     def __str__(self):
-        return f"({self.var_type} {self.identifier} = {self.value})"
+        return f"(setq {self.identifier} {self.value})"
 
     def __repr__(self):
         return self.__str__()
@@ -260,7 +260,7 @@ class VariableDecl(ASTNode):
         self.identifier = identifier
 
     def __str__(self):
-        return f"({self.var_type} {self.identifier})"
+        return f"(setq {self.identifier} nil)"
 
     def __repr__(self):
         return self.__str__()
@@ -294,7 +294,7 @@ class Reassignment(ASTNode):
         self.value = value
 
     def __str__(self):
-        return f"({self.identifier} = {self.value})"
+        return f"(setq {self.identifier} {self.value})"
 
     def __repr__(self):
         return self.__str__()
@@ -368,17 +368,17 @@ class Function(ASTNode):
         self.body.children = function_body
 
     def __str__(self):
-        result = f"(function {self.function_name}("
+        result = f"(defun {self.function_name} ("
         if len(self.params) == 0:
             result += ")"
         elif len(self.params) == 1:
-            result += f"{self.params[0]})"
+            result += f"{self.params[0].identifier})"
         else:
-            result += f"{self.params[0]}"
+            result += f"{self.params[0].identifier}"
             for i in range(1, len(self.params)):
-                result += f", {self.params[i]}"
+                result += f" {self.params[i].identifier}"
             result += ")"
-        result += f": {self.return_type} = ({self.body})"
+        result += f" {self.body})"
         return result
 
     def __repr__(self):
@@ -400,17 +400,16 @@ class FunctionCall(ASTNode):
         self.local_scope = args
 
     def __str__(self):
-        result = f"(call to {self.func_id}("
+        result = f"({self.func_id}"
         if len(self.args) == 0:
             result += ")"
         elif len(self.args) == 1:
-            result += f"{self.args[0]})"
+            result += f" {self.args[0]})"
         else:
-            result += f"{self.args[0]}"
+            result += f" {self.args[0]}"
             for i in range(1, len(self.args)):
-                result += f", {self.args[i]}"
+                result += f" {self.args[i]}"
             result += ")"
-        result += ")"
         return result
 
     def __repr__(self):
@@ -466,9 +465,9 @@ class IfStatement(ASTNode):
 
     def __str__(self):
         if self.else_statement is not None:
-            return f"(if {self.condition} ({self.body}) else ({self.else_statement}))"
+            return f"(if {self.condition} {self.body} {self.else_statement})"
         else:
-            return f"(if {self.condition} ({self.body})"
+            return f"(if {self.condition} {self.body})"
 
     def __repr__(self):
         return self.__str__()
@@ -518,9 +517,9 @@ class ElseStatement(ASTNode):
     def __str__(self):
         result = ""
         if self.condition is not None:
-            result += f"(if {self.condition} ({self.body})"
+            result += f"(if {self.condition} {self.body}"
             if self.else_statement is not None:
-                result += f" else {self.else_statement}"
+                result += f" {self.else_statement}"
             result += ")"
         else:
             result = f"{self.body}"
@@ -559,7 +558,7 @@ class WhileLoop(ASTNode):
         self.condition = condition
 
     def __str__(self):
-        return f"(while ({self.condition}) ({self.body}))"
+        return f"(loop while {self.condition} do {self.body})"
 
     def __repr__(self):
         return self.__str__()
@@ -594,7 +593,7 @@ class ForLoop(ASTNode):
         self.iteration = iteration
 
     def __str__(self):
-        return f"(for ({self.initialization}; {self.condition}; {self.iteration}) ({self.body}))"
+        return f"(progn {self.initialization} (loop while {self.condition} do {self.body} {self.iteration}))"
 
     def __repr__(self):
         return self.__str__()
@@ -633,7 +632,7 @@ class Negation(ASTNode):
         self.operand = operand
 
     def __str__(self):
-        return f"!{self.operand}"
+        return f"(not {self.operand})"
 
     def __repr__(self):
         return self.__str__()
