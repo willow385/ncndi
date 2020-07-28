@@ -156,7 +156,7 @@ class String(ASTNode):
         self.value = value
 
     def __str__(self):
-        return f'"{self.value}"'.replace(
+        return '"' + f'{self.value}'.replace(
             '\\', '\\\\'
         ).replace(
             '\n', '\\n'
@@ -166,7 +166,7 @@ class String(ASTNode):
             '\r', '\\r'
         ).replace(
             '\t', '\\t'
-        )
+        ) + '"'
 
     def __repr__(self):
         return self.__str__()
