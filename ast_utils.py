@@ -38,6 +38,8 @@ class BinaryOp(ASTNode):
             return f"(or {self.left.value} {self.right.value})"
         elif self.op.value == "&&":
             return f"(and {self.left.value} {self.right.value})"
+        elif self.op.value == '%':
+            return f"(mod {self.left.value} {self.right.value})"
         return f"({self.op.value} {self.left} {self.right})"
 
     def __repr__(self):
