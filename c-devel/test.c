@@ -1,3 +1,11 @@
+/*
+    Compile with:
+    $ gcc -c lexer.c
+    $ gcc text.c lexer.o
+
+    TODO write a makefile
+*/
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -14,7 +22,11 @@ int main(void) {
         .current_char = program_code[0]
     };
 
+    /* parse_number  will parse a token from the text
+       in our struct lexer and return it as a pointer
+       to a malloc'd struct token. */
     struct token *first_token = parse_number(&lex);
+
     printf("Parsed this number: %s\n", first_token->value);
     if (first_token->type == INTEGER) {
         printf("It's an integer!\n");
