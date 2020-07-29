@@ -28,6 +28,7 @@ class BinaryOp(ASTNode):
         self.left = left
         self.token = self.op = op
         self.right = right
+        self.value = self.__str__()
 
     def __str__(self):
         if self.op.value == "==":
@@ -422,6 +423,11 @@ class FunctionCall(ASTNode):
         return self.__str__()
 
     def eval(self, variable_scope: dict, function_scope: dict):
+        # The readln() function is built-in, so we use this ugly
+        # hack to make it work.
+        if self.func_id.value == "readln":
+            return input()
+
         # We look up the function by its name to find out what
         # its parameters are supposed to be.
         params = function_scope[self.func_id.value].params

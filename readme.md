@@ -58,3 +58,5 @@ ability to correctly parse string literals.
 - [**type_safety.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/type_safety.mpl): Program demonstrating type coercion in MPL.
 
 - [**fizzbuzz.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/fizzbuzz.mpl): Implementation of FizzBuzz in MPL using a for loop.
+
+- [**greet.mpl**](https://github.com/DanteFalzone0/ncndi/blob/master/examples/greet.mpl): Program demonstrating the built-in readln() function.
