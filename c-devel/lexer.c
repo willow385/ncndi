@@ -135,7 +135,33 @@ struct token *parse_identifier(struct lexer *lex) {
     }
 
     // Next we count how much more space we're going to need.
-    
+    size_t char_count = 1;
+    size_t i = lex->pos;
+    while (
+        lex->text[i] == '_'
+    ||
+        (lex->text[i] >= 'a' && lex->text[i] <= 'z')
+    ||
+        (lex->text[i] >= 'A' && lex->text[i] <= 'Z')
+    ||
+        (lex->text[i] >= '0' && lex->text[i] <= '9')
+    ) {
+        ++i; ++char_count;
+    }
+
+    // Get the memory we need plus a little extra
+    char *result_identifier = calloc(char_count + 1, sizeof(char));
+
+    // Slurp up that juicy identifier
+    for (i = 0; i < char_count; ++i) {
+        result_identifier[i] = lex->current_char;
+        advance(lex);
+    }
+
+    struct token *result = malloc(sizeof(struct token));
+    result->type = identifier_type(result_identifier);
+    result->value = result_identifier;
+    return result;
 }
 
 /*
