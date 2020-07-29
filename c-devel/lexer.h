@@ -14,21 +14,17 @@ struct lexer {
     char current_char;
 };
 
-enum token_type reserved_word_type(const char *reserved_word);
+enum token_type identifier_type(const char *identifier);
 
-int is_reserved_word(const char *string);
-
-/* Print an error message to stderr. */
-void lexer_error(const char *error_message);
-
-/* These three functions all mutate lex->pos
-   in some way. */
+/* These three functions  all mutate  lex->pos
+   in some way, but leave the other members of
+   lex alone.  */
 void advance(struct lexer *lex);
 void skip_whitespace(struct lexer *lex);
 void skip_comment(struct lexer *lex);
 
-/* The functions here that return struct token pointers
-   all use malloc() internally. The caller is responsible
+/* The functions  here that  return  struct token pointers
+   all use  malloc() internally. The caller is responsible
    for freeing these. REMEMBER to free token->value BEFORE
    you free token! */
 struct token *parse_number(struct lexer *lex);
@@ -39,7 +35,7 @@ struct token *parse_string_literal(struct lexer *lex);
 char peek(struct lexer *lex);
 
 /* Get the next token. This too is malloc'd and must be
-   freed by the caller. Once again, remember to free
+   freed  by the caller.  Once again,  remember to free
    token->value before freeing token. */
 struct token *get_next_token(struct lexer *lex);
 

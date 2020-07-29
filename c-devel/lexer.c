@@ -22,51 +22,33 @@ const char *reserved_words[] = {
 
 size_t reserved_word_count = 12;
 
-enum token_type reserved_word_type(const char *reserved_word) {
-    if (!strcmp("start", reserved_word)) {
+enum token_type identifier_type(const char *identifier) {
+    if (!strcmp("start", identifier)) {
         return START;
-    } else if (!strcmp("end", reserved_word)) {
+    } else if (!strcmp("end", identifier)) {
         return END;
-    } else if (!strcmp("print", reserved_word)) {
+    } else if (!strcmp("print", identifier)) {
         return PRINT;
-    } else if (!strcmp("int", reserved_word)) {
+    } else if (!strcmp("int", identifier)) {
         return TYPE_IDENTIFIER;
-    } else if (!strcmp("float", reserved_word)) {
+    } else if (!strcmp("float", identifier)) {
         return TYPE_IDENTIFIER;
-    } else if (!strcmp("string", reserved_word)) {
+    } else if (!strcmp("string", identifier)) {
         return TYPE_IDENTIFIER;
-    } else if (!strcmp("funct", reserved_word)) {
+    } else if (!strcmp("funct", identifier)) {
         return FUNCTION_DECL;
-    } else if (!strcmp("return", reserved_word)) {
+    } else if (!strcmp("return", identifier)) {
         return RETURN;
-    } else if (!strcmp("if", reserved_word)) {
+    } else if (!strcmp("if", identifier)) {
         return IF;
-    } else if (!strcmp("else", reserved_word)) {
+    } else if (!strcmp("else", identifier)) {
         return ELSE;
-    } else if (!strcmp("while", reserved_word)) {
+    } else if (!strcmp("while", identifier)) {
         return WHILE;
-    } else if (!strcmp("for", reserved_word)) {
+    } else if (!strcmp("for", identifier)) {
         return FOR;
     }
     return IDENTIFIER;
-}
-
-int is_reserved_word(const char *string) {
-    size_t i;
-    for (i = 0; i < reserved_word_count; ++i) {
-        if (!strcmp(string, reserved_words[i])) {
-            return 1;
-        }
-    }
-    return 0;
-}
-
-void lexer_error(const char *error_message) {
-    fprintf(
-        stderr,
-        "Error while lexing: %s\n",
-        error_message
-    );
 }
 
 void advance(struct lexer *lex) {
@@ -129,6 +111,31 @@ struct token *parse_number(struct lexer *lex) {
     result->type = is_float? FLOAT : INTEGER;
     result->value = result_number;
     return result;
+}
+
+struct token *parse_identifier(struct lexer *lex) {
+    // Start by getting the first char, and making sure it's valid.
+    char first_char;
+    if (
+        lex->current_char == '_'
+    ||
+        (lex->current_char >= 'a' && lex->current_char <= 'z')
+    ||
+        (lex->current_char >= 'A' && lex->current_char <= 'Z')
+    ) {
+        first_char = lex->current_char;
+        advance(lex);
+    } else {
+        fprintf(
+            stderr,
+            "Error while lexing: identifiers can't start with %c\n",
+            lex->current_char
+        );
+        return NULL;
+    }
+
+    // Next we count how much more space we're going to need.
+    
 }
 
 /*
