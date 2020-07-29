@@ -36,7 +36,7 @@ def main():
     try:
         syntax_tree = parser.parse()
         scope = {}
-        funcs = {}
+        funcs = {"readln": "(<built-in function readln>)"}
         syntax_tree.eval(scope, funcs)
         if "--dump" in sys.argv:
             print(f"Variables: {scope}")
