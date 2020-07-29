@@ -1,4 +1,5 @@
 *.exe
 *.x86
+*.o
 __pycache__
 .idea
