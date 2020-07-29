@@ -80,5 +80,13 @@ void skip_comment(struct lexer *lex) {
 }
 
 struct token *parse_number(struct lexer *lex) {
-    // TODO implement
+    size_t char_count = 0;
+    // Find out how many chars we need to store the number.
+    size_t i = lexer->pos;
+    while (lexer->text[i] != '\0' && (lexer->text[i] == '.' || (lexer->text[i] >= '0' && lexer->text[i] <= '9'))) {
+        char_count++; i++;
+    }
+
+    // Allocate the requisite number of chars.
+    char *result_number = (char *)malloc(char_count * sizeof(char));
 }

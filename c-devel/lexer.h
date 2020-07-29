@@ -3,8 +3,6 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#define IS_WHITESPACE(
-
 const char *reserved_words[] = {
     "start",
     "end",
