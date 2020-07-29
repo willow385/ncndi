@@ -130,3 +130,11 @@ struct token *parse_number(struct lexer *lex) {
     result->value = result_number;
     return result;
 }
+
+/*
+    TODO implement the following functions:
+        parse_identifier()
+        parse_string_literal()
+        peek()
+        get_next_token()
+*/

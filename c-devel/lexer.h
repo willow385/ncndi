@@ -39,7 +39,8 @@ struct token *parse_string_literal(struct lexer *lex);
 char peek(struct lexer *lex);
 
 /* Get the next token. This too is malloc'd and must be
-   freed by the caller. */
+   freed by the caller. Once again, remember to free
+   token->value before freeing token. */
 struct token *get_next_token(struct lexer *lex);
 
 #endif // LEXER_H
