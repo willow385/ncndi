@@ -1,5 +1,3 @@
-# TODO: implement modulo operator and bitwise operators
-
 import string
 from token import Token, TokenType
 
@@ -214,6 +212,10 @@ class Lexer:
                     self.advance()
                     return Token(TokenType.NOT_EQ, "!=")
                 return Token(TokenType.NOT, '!')
+
+            if self.current_char == '%':
+                self.advance()
+                return Token(TokenType.MODULUS, '%')
 
             self.error(f"Syntax error at unexpected character '{self.current_char}'")
 

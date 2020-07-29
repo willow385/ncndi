@@ -61,7 +61,7 @@
 
 <math_expression> ::= <term> [<opt_ws> ("+" | "-") <opt_ws> <term>]+
 
-<term> ::= <factor> [<opt_ws> ("*" | "/") <opt_ws> <factor>]+
+<term> ::= <factor> [<opt_ws> ("*" | "/" | "%") <opt_ws> <factor>]+
 
 <factor> ::= "+" <opt_ws> <factor>
            | "-" <opt_ws> <factor>

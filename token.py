@@ -44,6 +44,7 @@ class TokenType(Enum):
     SUBTRACT_ASSIGN = 37
     MULT_ASSIGN = 38
     DIVIDE_ASSIGN = 39
+    MODULUS = 40
 
 
 class Token:

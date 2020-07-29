@@ -293,12 +293,14 @@ class Parser:
     def term(self):
         node = self.factor()
 
-        while self.current_token.token_type in (TokenType.MULT, TokenType.DIVIDE):
+        while self.current_token.token_type in (TokenType.MULT, TokenType.DIVIDE, TokenType.MODULUS):
             token = self.current_token
             if token.token_type == TokenType.MULT:
                 self.eat(TokenType.MULT)
             elif token.token_type == TokenType.DIVIDE:
                 self.eat(TokenType.DIVIDE)
+            elif token.token_type == TokenType.MODULUS:
+                self.eat(TokenType.MODULUS)
             node = BinaryOp(left=node, op=token, right=self.factor())
 
         return node

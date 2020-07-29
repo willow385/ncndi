@@ -21,7 +21,7 @@ class ASTNode:
 
 
 # Class representing binary operations.
-# This includes arithmetic operations (*, /, +, -) and
+# This includes arithmetic operations (*, /, +, -, %) and
 # logical operations (==, !=, <, >, &&, ||, <>).
 class BinaryOp(ASTNode):
     def __init__(self, left, op, right):
@@ -116,6 +116,10 @@ class BinaryOp(ASTNode):
                 return 0
             # Why doesn't Python have logical xor?
             return 1 if bool(left) != bool(right) else 0
+        elif self.op.token_type == TokenType.MODULUS:
+            if one_is_a_string:
+                return 0
+            return left % right
 
 
 # Class representing atomic values of the int type.
