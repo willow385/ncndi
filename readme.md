@@ -1,13 +1,14 @@
 # ncndi
 <sub>(This library is available under a free and permissive license)</sub>
 
-I'm (more or less) following this course:
-https://ruslanspivak.com/lsbasi-part1/
-
 The language is called "MPL". "MPL" is a recursive
 acronym for "MPL Programming Language". "ncndi" is
 the name of this implementation of the interpreter.
 I haven't decided what that stands for yet.
+
+I am currently in the process of reimplementing the interpreter in C, because
+Python is naturally a terrible choice of language for writing an interpreter
+except for prototyping and learning purposes.
 
 ## Usage
 

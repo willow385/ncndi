@@ -2,11 +2,7 @@
 #include "token.h"
 
 int main(void) {
-    struct token example_token = {
-        .type = GREATER_EQ,
-        .value = ">="
-    };
-
-    printf("The GREATER_EQ token has a value of %s\n", example_token.value);
-    return 0; 
+    char *program_code = "start { print \"Hello, world!\\n\" } end\n";
+    printf("The program that we want to lex is: %s\n", program_code);
+    return 0;
 }
