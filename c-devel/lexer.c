@@ -5,6 +5,23 @@
 #include "token.h"
 #include "lexer.h"
 
+const char *reserved_words[] = {
+    "start",
+    "end",
+    "print",
+    "int",
+    "float",
+    "string",
+    "funct",
+    "return",
+    "if",
+    "else",
+    "while",
+    "for"
+};
+
+size_t reserved_word_count = 12;
+
 enum token_type reserved_word_type(const char *reserved_word) {
     if (!strcmp("start", reserved_word)) {
         return START;
@@ -81,12 +98,35 @@ void skip_comment(struct lexer *lex) {
 
 struct token *parse_number(struct lexer *lex) {
     size_t char_count = 0;
+    int is_float = 0;
+
     // Find out how many chars we need to store the number.
-    size_t i = lexer->pos;
-    while (lexer->text[i] != '\0' && (lexer->text[i] == '.' || (lexer->text[i] >= '0' && lexer->text[i] <= '9'))) {
+    size_t i = lex->pos;
+    while (lex->text[i] == '.' || (lex->text[i] >= '0' && lex->text[i] <= '9')) {
         char_count++; i++;
+        // Are we parsing a float?
+        if (lex->text[i] == '.') is_float = 1;
     }
 
-    // Allocate the requisite number of chars.
-    char *result_number = (char *)malloc(char_count * sizeof(char));
+    // Give ourselves a tiny bit of extra room, just in case.
+    char_count++;
+
+    char *result_number = calloc(char_count, sizeof(char));
+
+    // Copy the number into the allocated buffer. Wish I knew a DRYer way...
+    i = 0;
+    while (
+        lex->text[lex->pos] == '.'
+    ||
+        (lex->text[lex->pos] >= '0' && lex->text[lex->pos] <= '9')
+    ) {
+        result_number[i] = lex->text[lex->pos];
+        ++i;
+        advance(lex);
+    }
+
+    struct token *result = malloc(sizeof(struct token));
+    result->type = is_float? FLOAT : INTEGER;
+    result->value = result_number;
+    return result;
 }

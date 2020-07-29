@@ -3,22 +3,9 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-const char *reserved_words[] = {
-    "start",
-    "end",
-    "print",
-    "int",
-    "float",
-    "string",
-    "funct",
-    "return",
-    "if",
-    "else",
-    "while",
-    "for"
-};
+extern const char *reserved_words[];
 
-size_t reserved_word_count = sizeof(reserved_words) / sizeof(char *);
+extern size_t reserved_word_count;
 
 struct lexer {
     char *text;
@@ -42,7 +29,8 @@ void skip_comment(struct lexer *lex);
 
 /* The functions here that return struct token pointers
    all use malloc() internally. The caller is responsible
-   for freeing these. */
+   for freeing these. REMEMBER to free token->value BEFORE
+   you free token! */
 struct token *parse_number(struct lexer *lex);
 struct token *parse_identifier(struct lexer *lex);
 struct token *parse_string_literal(struct lexer *lex);
