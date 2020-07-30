@@ -153,7 +153,8 @@ struct token *parse_identifier(struct lexer *lex) {
     char *result_identifier = calloc(char_count + 1, sizeof(char));
 
     // Slurp up that juicy identifier
-    for (i = 0; i < char_count; ++i) {
+    result_identifier[0] = first_char;
+    for (i = 1; i < char_count; ++i) {
         result_identifier[i] = lex->current_char;
         advance(lex);
     }

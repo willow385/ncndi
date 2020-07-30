@@ -1,0 +1,6 @@
+#!/bin/sh
+# TODO write a makefile. Build scripts like this are temporary hacks.
+gcc -c lexer.c
+gcc -c token.c
+gcc test.c lexer.o token.o
+echo "Done building!"

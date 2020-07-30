@@ -63,6 +63,8 @@ int main(void) {
     struct token *fourth_token = parse_identifier(&lex);
 
     printf("Parsed this identifier: %s\n", fourth_token->value);
+    if (fourth_token->type == FUNCTION_DECL)
+        printf("It was correctly found to be the reserved word \"funct\".\n");
 
     free_token(first_token);
     free_token(second_token);
