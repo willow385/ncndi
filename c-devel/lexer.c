@@ -207,20 +207,15 @@ struct token *parse_string_literal(struct lexer *lex) {
         if (parsed_chars[i] == '\\') {
             switch (parsed_chars[i+1]) {
                 case 'n':
-                    result_string[j] = '\n';
-                    break;
+                    result_string[j] = '\n'; break;
                 case 'r':
-                    result_string[j] = '\r';
-                    break;
+                    result_string[j] = '\r'; break;
                 case 't':
-                    result_string[j] = '\t';
-                    break;
+                    result_string[j] = '\t'; break;
                 case '\\':
-                    result_string[j] = '\\';
-                    break;
+                    result_string[j] = '\\'; break;
                 case '"':
-                    result_string[j] = '"';
-                    break;
+                    result_string[j] = '"'; break;
             }
             ++i;
         } else {
