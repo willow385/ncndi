@@ -183,29 +183,25 @@ struct token *parse_string_literal(struct lexer *lex) {
         fprintf(stderr, "Error while lexing: String literals must begin with '\"'\n");
         return NULL;
     }
-
-    // Count the characters
-    size_t char_count = 0;
-    size_t i = lex->pos;
+    // Find out how much space we need to allocate
+    size_t char_count = 0, i = lex->pos;
     while (INSIDE_STRING_LITERAL(lex, i)) {
         ++char_count; ++i;
     }
 
     char *parsed_chars = calloc(char_count + 1, sizeof(char));
-
     for (i = 0; i < char_count; ++i) {
         parsed_chars[i] = lex->current_char;
-        advance(lex);
+         advance(lex);
     }
 
     char *result_string = calloc(char_count + 1, sizeof(char));
 
-    /* Copy the characters over and handle
-       escape sequences appropriately. */
-    size_t j;
-    for (i = 0, j = 0; i < char_count; ++i, ++j) {
+    // Copy chars and handle escape sequences
+    size_t j = 0;
+    for (i = j; i < char_count; ++i, ++j) {
         if (parsed_chars[i] == '\\') {
-            switch (parsed_chars[i+1]) {
+            switch (parsed_chars[++i]) {
                 case 'n':
                     result_string[j] = '\n'; break;
                 case 'r':
@@ -217,7 +213,6 @@ struct token *parse_string_literal(struct lexer *lex) {
                 case '"':
                     result_string[j] = '"'; break;
             }
-            ++i;
         } else {
             result_string[j] = parsed_chars[i];
         }
