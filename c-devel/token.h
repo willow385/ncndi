@@ -64,4 +64,11 @@ struct token {
    token itself. This function does just that. */
 void free_token(struct token *t);
 
+/* Populate a token's members in place */
+void construct_token(
+    struct token *dest,
+    enum token_type type,
+    const char *value
+);
+
 #endif // TOKEN_H

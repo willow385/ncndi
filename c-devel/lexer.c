@@ -92,7 +92,7 @@ struct token *parse_number(struct lexer *lex) {
     // Find out how many chars we need to store the number.
     size_t i = lex->pos;
     while (lex->text[i] == '.'
-           || (lex->text[i] >= '0' && lex->text[i] <= '9')
+           || isdigit(lex->text[i])
     ) {
         char_count++; i++;
         // Are we parsing a float?
@@ -108,7 +108,7 @@ struct token *parse_number(struct lexer *lex) {
     i = 0;
     while (
         lex->text[lex->pos] == '.'
-        || (lex->text[lex->pos] >= '0' && lex->text[lex->pos] <= '9')
+        || isdigit(lex->text[i])
     ) {
         result_number[i] = lex->text[lex->pos];
         ++i;
@@ -126,8 +126,7 @@ struct token *parse_identifier(struct lexer *lex) {
     char first_char;
     if (
         lex->current_char == '_'
-        || (lex->current_char >= 'a' && lex->current_char <= 'z')
-        || (lex->current_char >= 'A' && lex->current_char <= 'Z')
+        || isaplha(lex->current_char)
     ) {
         first_char = lex->current_char;
         advance(lex);
@@ -145,9 +144,8 @@ struct token *parse_identifier(struct lexer *lex) {
     size_t i = lex->pos;
     while (
         lex->text[i] == '_'
-        || (lex->text[i] >= 'a' && lex->text[i] <= 'z')
-        || (lex->text[i] >= 'A' && lex->text[i] <= 'Z')
-        || (lex->text[i] >= '0' && lex->text[i] <= '9')
+        || isalpha(lex->text[i])
+        || isdigit(lex->text[i])
     ) {
         ++i; ++char_count;
     }
@@ -232,6 +230,49 @@ char peek(struct lexer *lex) {
 }
 
 struct token *get_next_token(struct lexer *lex) {
-    // TODO implement
+    while (lex->current_char != '\0') {
+
+        if (lex->current_char == '_'
+            || isalpha(lex->current_char)
+        ) {
+            return parse_identifier(lex);
+        }
+
+        if (isspace(lex->current_char)) {
+            skip_whitespace(lex);
+            continue;
+        }
+
+        if (isdigit(lex->current_char)) {
+            return parse_number(lex);
+        }
+
+        if (lex->current_char == ',') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            result->type = COMMA;
+            result->value = malloc(2);
+            strcpy(result->value, ",");
+            return result;
+        }
+
+        if (lex->current_char == '"') {
+            return parse_string_literal(lex);
+        }
+
+        if (lex->current_char == '#') {
+            skip_comment(lex);
+            return get_next_token(lex);
+        }
+
+        if (lex->current_char == '+')) {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            if (lex->current_char == '=') {
+                advance(lex);
+                result->type = 
+        }
+
+    }
     return NULL;
 }
