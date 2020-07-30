@@ -54,7 +54,7 @@ int main(void) {
 
     struct token *third_token = parse_identifier(&lex);
 
-    printf("Parsed this identifier: %s\n", third_token->value);
+    printf("Parsed this identifier: \"%s\"\n", third_token->value);
 
     printf("Skipping whitespace... ");
     skip_whitespace(&lex);
@@ -62,7 +62,7 @@ int main(void) {
 
     struct token *fourth_token = parse_identifier(&lex);
 
-    printf("Parsed this identifier: %s\n", fourth_token->value);
+    printf("Parsed this identifier: \"%s\"\n", fourth_token->value);
     if (fourth_token->type == FUNCTION_DECL)
         printf("It was correctly found to be the reserved word \"funct\".\n");
 
