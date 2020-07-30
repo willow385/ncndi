@@ -250,9 +250,7 @@ struct token *get_next_token(struct lexer *lex) {
         if (lex->current_char == ',') {
             advance(lex);
             struct token *result = malloc(sizeof(struct token));
-            result->type = COMMA;
-            result->value = malloc(2);
-            strcpy(result->value, ",");
+            construct_token(result, COMMA, ",");
             return result;
         }
 
@@ -270,7 +268,86 @@ struct token *get_next_token(struct lexer *lex) {
             struct token *result = malloc(sizeof(struct token));
             if (lex->current_char == '=') {
                 advance(lex);
-                result->type = 
+                construct_token(result, PLUS_ASSIGN, "+=");
+                return result;
+            }
+            construct_token(result, PLUS, "+");
+            return result;
+        }
+
+        if (lex->current_char == '-')) {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            if (lex->current_char == '=') {
+                advance(lex);
+                construct_token(result, SUBTRACT_ASSIGN, "-=");
+                return result;
+            }
+            construct_token(result, SUBTRACT, "-");
+            return result;
+        }
+
+        if (lex->current_char == '*')) {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            if (lex->current_char == '=') {
+                advance(lex);
+                construct_token(result, MULT_ASSIGN, "*=");
+                return result;
+            }
+            construct_token(result, MULT, "*");
+            return result;
+        }
+
+        if (lex->current_char == '/')) {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            if (lex->current_char == '=') {
+                advance(lex);
+                construct_token(result, DIVIDE_ASSIGN, "/=");
+                return result;
+            }
+            construct_token(result, DIVIDE, "/");
+            return result;
+        }
+
+        if (lex->current_char == '(') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            construct_token(result, OPEN_PAREN, "(");
+            return result;
+        }
+
+        if (lex->current_char == ')') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            construct_token(result, CLOSE_PAREN, ")");
+            return result;
+        }
+
+        if (lex->current_char == '{') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            construct_token(result, OPEN_BRACE, "{");
+            return result;
+        }
+
+        if (lex->current_char == '}') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            construct_token(result, CLOSE_BRACE, "}");
+            return result;
+        }
+
+        if (lex->current_char == ';') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            construct_token(result, SEMICOLON, ";");
+            return result;
+        }
+
+        if (lex->current_char == '=') {
+            // TODO
         }
 
     }
