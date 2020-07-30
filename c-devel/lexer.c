@@ -351,9 +351,95 @@ struct token *get_next_token(struct lexer *lex) {
         }
 
         if (lex->current_char == '=') {
-            // TODO
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            if (lex->current_char == '=') {
+                advance(lex);
+                construct_token(result, EQUALS, "==");
+                return result;
+            }
+            construct_token(result, ASSIGN, "=");
+            return result;
         }
 
+        if (lex->current_char == '>') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            if (lex->current_char == '=') {
+                advance(lex);
+                construct_token(result, GREATER_EQ, ">=");
+                return result;
+            }
+            construct_token(result, GREATER_THAN, ">");
+            return result;
+        }
+
+        if (lex->current_char == '<') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            if (lex->current_char == '>') {
+                advance(lex);
+                construct_token(result, XOR, "<>");
+                return result;
+            } else if (lex->current_char == '=') {
+                advance(lex);
+                construct_token(result, LESS_EQ, "<=");
+            }
+            construct_token(result, LESS_THAN, "<");
+            return result;
+        }
+
+        if (lex->current_char == '&') {
+            advance(lex);
+            if (lex->current_char == '&') {
+                advance(lex);
+                struct token *result = malloc(sizeof(struct token));
+                construct_token(result, AND, "&&");
+                return result;
+            }
+            return NULL; // TODO: implement bitwise operators?
+        }
+
+        if (lex->current_char == '|') {
+            advance(lex);
+            if (lex->current_char == '|') {
+                advance(lex);
+                struct token *result = malloc(sizeof(struct token));
+                construct_token(result, OR, "||");
+                return result;
+            }
+            return NULL;
+        }
+
+        if (lex->current_char == '!') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            if (lex->current_char == '=') {
+                advance(lex);
+                construct_token(result, NOT_EQ, "!=");
+                return result;
+            }
+            construct_token(result, NOT, "!");
+            return result;
+        }
+
+        if (lex->current_char == '%') {
+            advance(lex);
+            struct token *result = malloc(sizeof(struct token));
+            construct_token(result, MODULUS, "%");
+            return result;
+        }
+
+        fprintf(
+            stderr,
+            "Error while lexing: Syntax error at unexpected character %c\n",
+            lex->current_char
+        );
+        return NULL;
+
     }
-    return NULL;
+
+    struct token *result = malloc(sizeof(struct token));
+    construct_token(result, END_OF_FILE, "");
+    return result;
 }
