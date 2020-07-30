@@ -220,8 +220,7 @@ struct token *parse_string_literal(struct lexer *lex) {
 
     free(parsed_chars);
     struct token *result = malloc(sizeof(struct token));
-    result->type = STRING;
-    result->value = result_string;
+    result->type = STRING; result->value = result_string;
     return result;
 }
 
