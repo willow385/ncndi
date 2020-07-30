@@ -126,7 +126,7 @@ struct token *parse_identifier(struct lexer *lex) {
     char first_char;
     if (
         lex->current_char == '_'
-        || isaplha(lex->current_char)
+        || isalpha(lex->current_char)
     ) {
         first_char = lex->current_char;
         advance(lex);
@@ -263,7 +263,7 @@ struct token *get_next_token(struct lexer *lex) {
             return get_next_token(lex);
         }
 
-        if (lex->current_char == '+')) {
+        if (lex->current_char == '+') {
             advance(lex);
             struct token *result = malloc(sizeof(struct token));
             if (lex->current_char == '=') {
@@ -275,7 +275,7 @@ struct token *get_next_token(struct lexer *lex) {
             return result;
         }
 
-        if (lex->current_char == '-')) {
+        if (lex->current_char == '-') {
             advance(lex);
             struct token *result = malloc(sizeof(struct token));
             if (lex->current_char == '=') {
@@ -287,7 +287,7 @@ struct token *get_next_token(struct lexer *lex) {
             return result;
         }
 
-        if (lex->current_char == '*')) {
+        if (lex->current_char == '*') {
             advance(lex);
             struct token *result = malloc(sizeof(struct token));
             if (lex->current_char == '=') {
@@ -299,7 +299,7 @@ struct token *get_next_token(struct lexer *lex) {
             return result;
         }
 
-        if (lex->current_char == '/')) {
+        if (lex->current_char == '/') {
             advance(lex);
             struct token *result = malloc(sizeof(struct token));
             if (lex->current_char == '=') {
