@@ -30,19 +30,20 @@ int main(int argc, char *argv[]) {
 
     /* We slurp up tokens from the code and
        spit them out as soon as we've got them. */
-    struct token *tok;
+    struct token *tok = NULL;
     printf("-=-=-=-=-=-=-=-=-=-=-=-=-\n");
     printf("Got these tokens:\n");
     do {
+        free_token(tok);
         tok = get_next_token(&lex);
         if (tok == NULL) {
             printf("<NULL token returned>\n");
         } else {
             printf("%s\n", tok->value);
         }
-        free_token(tok);
     } while (tok->type != END_OF_FILE && tok != NULL);
     printf("-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+    free_token(tok);
 
     return 0;
 }
