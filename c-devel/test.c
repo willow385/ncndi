@@ -16,7 +16,7 @@
 int main(int argc, char *argv[]) {
     /* stupid-simple MPL program */
     char *program_code
-        = "funct foo() { int x = 60 % 3; print \"Hello!\\n\"; } start { foo(); } end";
+        = "funct foo() {\n  int x = 60 % 3;\n  print \"Hello!\\n\";\n}\n\n# here's a comment\nstart {\n  foo();\n} end\n";
 
     struct lexer lex = {
         .text = program_code,
