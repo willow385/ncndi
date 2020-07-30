@@ -14,6 +14,7 @@
 #include "lexer.h"
 
 int main(int argc, char *argv[]) {
+    /* stupid-simple MPL program */
     char *program_code
         = "funct foo() { int x = 60 % 3; print \"Hello!\\n\"; } start { foo(); } end";
 
@@ -24,16 +25,24 @@ int main(int argc, char *argv[]) {
         .current_char = program_code[0]
     };
 
+    printf("-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+    printf("Program to tokenize:\n%s\n", lex.text);
+
+    /* We slurp up tokens from the code and
+       spit them out as soon as we've got them. */
     struct token *tok;
+    printf("-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+    printf("Got these tokens:\n");
     do {
         tok = get_next_token(&lex);
         if (tok == NULL) {
-            printf("Null token returned.\n");
+            printf("<NULL token returned>\n");
         } else {
             printf("%s\n", tok->value);
         }
         free_token(tok);
-    } while (tok->type != END_OF_FILE);
+    } while (tok->type != END_OF_FILE && tok != NULL);
+    printf("-=-=-=-=-=-=-=-=-=-=-=-=-\n");
 
     return 0;
 }
