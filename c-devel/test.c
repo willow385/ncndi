@@ -15,7 +15,7 @@
 
 int main(int argc, char *argv[]) {
     char *program_code
-        = "funct foo() { int x = 60 % 3; print \"Hello!\\n\"; } start { foo(); } end";
+        = "funct foo() { int x =60 % 3; print \"Hello!\\n\"; } start { foo(); } end";
 
     struct lexer lex = {
         .text = program_code,
@@ -24,7 +24,18 @@ int main(int argc, char *argv[]) {
         .current_char = program_code[0]
     };
 
-    printf("%s\n", lex.text);
+    struct token *tok;
+    char ignore;
+    do {
+        tok = get_next_token(&lex);
+        if (tok == NULL) {
+            printf("Null token returned.\n");
+        } else {
+            printf("%s\n", tok->value);
+        }
+        scanf("%c", &ignore);
+        free_token(tok);
+    } while (tok->type != END_OF_FILE);
 
     return 0;
 }
