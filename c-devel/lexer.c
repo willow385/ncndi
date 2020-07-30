@@ -231,7 +231,11 @@ char peek(struct lexer *lex) {
 
 struct token *get_next_token(struct lexer *lex) {
     while (lex->current_char != '\0') {
-
+        /* This code isn't great. It's very repetetive.
+           I'll probably refactor most of it into a switch
+           statement  at  some  point,  and  find a way to
+           make  it  so it doesn't have the same few lines
+           copied almost verbatim all over the place. */
         if (lex->current_char == '_'
             || isalpha(lex->current_char)
         ) {
