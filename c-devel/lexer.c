@@ -168,6 +168,77 @@ struct token *parse_identifier(struct lexer *lex) {
     return result;
 }
 
+/* This condition looks butt-ugly, so I made it
+   into a macro. Sue me. */
+#define INSIDE_STRING_LITERAL(lex, i)         \
+    lex->text[i] != '"'                       \
+    || (lex->text[i] == '"'                   \
+        && lex->text[i - 1] == '\\'           \
+        && lex->text[i - 2] != '\\')
+
+struct token *parse_string_literal(struct lexer *lex) {
+    if (lex->current_char == '"') {
+        advance(lex);
+    } else {
+        fprintf(stderr, "Error while lexing: String literals must begin with '\"'\n");
+        return NULL;
+    }
+
+    // Count the characters
+    size_t char_count = 0;
+    size_t i = lex->pos;
+    while (INSIDE_STRING_LITERAL(lex, i)) {
+        ++char_count; ++i;
+    }
+
+    // Get memory
+    char *result_string = calloc(char_count + 1, sizeof(char));
+
+    // Copy the characters
+    for (i = 0; i < char_count; ++i) {
+        result_string[i] = lex->current_char;
+        advance(lex);
+    }
+
+    /* But wait a second! We're not done yet! We need
+       to handle escape sequences.  The easiest way I
+       can think of to do that is with sprintf().  Of
+       course, we'll need to handle any percent signs
+       in the string literal to ensure that sprintf()
+       doesn't start messing with the stack, thinking
+       it's supposed to print formatted args. */
+    size_t percent_sign_count = 0;
+    for (i = 0; result_string[i]; ++i) {
+        if (result_string[i] == '%') {
+            ++percent_sign_count;
+        }
+    }
+    char *result_format_string =
+        calloc(char_count + percent_sign_count + 1, sizeof(char));
+    size_t j;
+    for (i = 0, j = 0; result_string[i]; ++i) {
+        if (result_string[i] == '%') {
+            result_format_string[j] = '%';
+            ++j;
+        }
+        result_format_string[j] = result_string[i];
+        ++j;
+    }
+
+    /* GCC will complain about this, but it's fine
+       because of all that code above for handling
+       percent signs. */
+    sprintf(result_string, result_format_string);
+
+    // Don't need result_format_string anymore
+    free(result_format_string);
+
+    struct token *result = malloc(sizeof(struct token));
+    result->type = STRING;
+    result->value = result_string;
+    return result;
+}
+
 /*
     TODO implement the following functions:
         parse_string_literal()

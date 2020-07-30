@@ -14,7 +14,7 @@
 #include "lexer.h"
 
 int main(void) {
-    char *program_code = "69420   3.14159 _my_fun_iDEntifier123 funct";
+    char *program_code = "69420  \"string\\\\t literal \\r\\n%-%%%-% C:\\Users\\admin \\n\"";
 
     struct lexer lex = {
         .text = program_code,
@@ -23,9 +23,6 @@ int main(void) {
         .current_char = program_code[0]
     };
 
-    /* parse_number  will parse a token from the text
-       in our struct lexer and return it as a pointer
-       to a malloc'd struct token. */
     struct token *first_token = parse_number(&lex);
 
     printf("Parsed this number: %s\n", first_token->value);
@@ -39,36 +36,11 @@ int main(void) {
     skip_whitespace(&lex);
     printf("Whitespace skipped.\n");
 
-    struct token *second_token = parse_number(&lex);
+    struct token *second_token = parse_string_literal(&lex);
 
-    printf("Parsed this number: %s\n", second_token->value);
-    if (second_token->type == INTEGER) {
-        printf("It's an integer!\n");
-    } else if (second_token->type == FLOAT) {
-        printf("It's a float!\n");
-    }
-
-    printf("Skipping whitespace... ");
-    skip_whitespace(&lex);
-    printf("Whitespace skipped.\n");
-
-    struct token *third_token = parse_identifier(&lex);
-
-    printf("Parsed this identifier: \"%s\"\n", third_token->value);
-
-    printf("Skipping whitespace... ");
-    skip_whitespace(&lex);
-    printf("Whitespace skipped.\n");
-
-    struct token *fourth_token = parse_identifier(&lex);
-
-    printf("Parsed this identifier: \"%s\"\n", fourth_token->value);
-    if (fourth_token->type == FUNCTION_DECL)
-        printf("It was correctly found to be the reserved word \"funct\".\n");
+    printf("Parsed this string literal: \"%s\"\n", second_token->value);
 
     free_token(first_token);
     free_token(second_token);
-    free_token(third_token);
-    free_token(fourth_token);
     return 0;
 }
