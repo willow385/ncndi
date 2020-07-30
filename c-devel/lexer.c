@@ -225,8 +225,10 @@ struct token *parse_string_literal(struct lexer *lex) {
 }
 
 char peek(struct lexer *lex) {
-    // TODO implement
-    return '\0';
+    if ((lex->pos + 1) >= lex->text_size)
+        return '\0';
+
+    return lex->text[lex->pos + 1];
 }
 
 struct token *get_next_token(struct lexer *lex) {
