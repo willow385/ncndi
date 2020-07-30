@@ -192,7 +192,7 @@ struct token *parse_string_literal(struct lexer *lex) {
     char *parsed_chars = calloc(char_count + 1, sizeof(char));
     for (i = 0; i < char_count; ++i) {
         parsed_chars[i] = lex->current_char;
-         advance(lex);
+        advance(lex);
     }
 
     char *result_string = calloc(char_count + 1, sizeof(char));
