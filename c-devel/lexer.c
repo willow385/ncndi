@@ -5,6 +5,10 @@
 #include "token.h"
 #include "lexer.h"
 
+/* XXX No part of the code is actually using this, but
+   it really,  really  seems  like it could be used in
+   the future to do  some  optimizations.  Perhaps  by
+   indexing into it with an enum token_type? Idk */
 const char *reserved_words[] = {
     "start",
     "end",
@@ -23,6 +27,9 @@ const char *reserved_words[] = {
 size_t reserved_word_count = 12;
 
 enum token_type identifier_type(const char *identifier) {
+    /* TODO find a prettier and more cache-friendly way
+       to do this... this code is kind of gross and the
+       assembly is probably full of jumps. */
     if (!strcmp("start", identifier)) {
         return START;
     } else if (!strcmp("end", identifier)) {
@@ -84,7 +91,9 @@ struct token *parse_number(struct lexer *lex) {
 
     // Find out how many chars we need to store the number.
     size_t i = lex->pos;
-    while (lex->text[i] == '.' || (lex->text[i] >= '0' && lex->text[i] <= '9')) {
+    while (lex->text[i] == '.'
+           || (lex->text[i] >= '0' && lex->text[i] <= '9')
+    ) {
         char_count++; i++;
         // Are we parsing a float?
         if (lex->text[i] == '.') is_float = 1;
@@ -99,8 +108,7 @@ struct token *parse_number(struct lexer *lex) {
     i = 0;
     while (
         lex->text[lex->pos] == '.'
-    ||
-        (lex->text[lex->pos] >= '0' && lex->text[lex->pos] <= '9')
+        || (lex->text[lex->pos] >= '0' && lex->text[lex->pos] <= '9')
     ) {
         result_number[i] = lex->text[lex->pos];
         ++i;
@@ -118,10 +126,8 @@ struct token *parse_identifier(struct lexer *lex) {
     char first_char;
     if (
         lex->current_char == '_'
-    ||
-        (lex->current_char >= 'a' && lex->current_char <= 'z')
-    ||
-        (lex->current_char >= 'A' && lex->current_char <= 'Z')
+        || (lex->current_char >= 'a' && lex->current_char <= 'z')
+        || (lex->current_char >= 'A' && lex->current_char <= 'Z')
     ) {
         first_char = lex->current_char;
         advance(lex);
@@ -139,12 +145,9 @@ struct token *parse_identifier(struct lexer *lex) {
     size_t i = lex->pos;
     while (
         lex->text[i] == '_'
-    ||
-        (lex->text[i] >= 'a' && lex->text[i] <= 'z')
-    ||
-        (lex->text[i] >= 'A' && lex->text[i] <= 'Z')
-    ||
-        (lex->text[i] >= '0' && lex->text[i] <= '9')
+        || (lex->text[i] >= 'a' && lex->text[i] <= 'z')
+        || (lex->text[i] >= 'A' && lex->text[i] <= 'Z')
+        || (lex->text[i] >= '0' && lex->text[i] <= '9')
     ) {
         ++i; ++char_count;
     }
@@ -167,7 +170,6 @@ struct token *parse_identifier(struct lexer *lex) {
 
 /*
     TODO implement the following functions:
-        parse_identifier()
         parse_string_literal()
         peek()
         get_next_token()
