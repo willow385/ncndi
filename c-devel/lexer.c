@@ -176,6 +176,12 @@ struct token *parse_identifier(struct lexer *lex) {
         && lex->text[i - 1] == '\\'           \
         && lex->text[i - 2] != '\\')
 
+/* TODO The code in this function simply does not work.
+   I have a fair idea of how to fix it;  my idea to use
+   sprintf()  to do the  work  for me was probably ill-
+   conceived  to  begin  with.  I tried reading how GCC
+   handles string literals internally but it was really
+   unreadable to me. */
 struct token *parse_string_literal(struct lexer *lex) {
     if (lex->current_char == '"') {
         advance(lex);
