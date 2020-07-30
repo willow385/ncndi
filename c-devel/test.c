@@ -1,7 +1,8 @@
 /*
     Compile with:
     $ gcc -c lexer.c
-    $ gcc text.c lexer.o
+    $ gcc -c token.c
+    $ gcc text.c lexer.o token.o
 
     TODO write a makefile
 */
@@ -13,7 +14,7 @@
 #include "lexer.h"
 
 int main(void) {
-    char *program_code = "69420   3.14159";
+    char *program_code = "69420   3.14159 _my_fun_iDEntifier123 funct";
 
     struct lexer lex = {
         .text = program_code,
@@ -47,9 +48,25 @@ int main(void) {
         printf("It's a float!\n");
     }
 
-    free(first_token->value);
-    free(first_token);
-    free(second_token->value);
-    free(second_token);
+    printf("Skipping whitespace... ");
+    skip_whitespace(&lex);
+    printf("Whitespace skipped.\n");
+
+    struct token *third_token = parse_identifier(&lex);
+
+    printf("Parsed this identifier: %s\n", third_token->value);
+
+    printf("Skipping whitespace... ");
+    skip_whitespace(&lex);
+    printf("Whitespace skipped.\n");
+
+    struct token *fourth_token = parse_identifier(&lex);
+
+    printf("Parsed this identifier: %s\n", fourth_token->value);
+
+    free_token(first_token);
+    free_token(second_token);
+    free_token(third_token);
+    free_token(fourth_token);
     return 0;
 }
