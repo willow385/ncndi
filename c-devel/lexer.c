@@ -181,17 +181,17 @@ struct token *parse_string_literal(struct lexer *lex) {
         fprintf(stderr, "Error while lexing: String literals must begin with '\"'\n");
         return NULL;
     }
+
     // Find out how much space we need to allocate
     size_t char_count = 0, i = lex->pos;
-    while (INSIDE_STRING_LITERAL(lex, i)) {
-        ++char_count; ++i;
-    }
+    while (INSIDE_STRING_LITERAL(lex, i)) { ++char_count; ++i; }
 
     char *parsed_chars = calloc(char_count + 1, sizeof(char));
     for (i = 0; i < char_count; ++i) {
         parsed_chars[i] = lex->current_char;
         advance(lex);
     }
+    advance(lex); // skip the closing quotation mark when done looping
 
     char *result_string = calloc(char_count + 1, sizeof(char));
 
