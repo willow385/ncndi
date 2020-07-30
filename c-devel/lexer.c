@@ -107,10 +107,10 @@ struct token *parse_number(struct lexer *lex) {
     // Copy the number into the allocated buffer. Wish I knew a DRYer way...
     i = 0;
     while (
-        lex->text[lex->pos] == '.'
-        || isdigit(lex->text[i])
+        lex->current_char == '.'
+        || isdigit(lex->current_char)
     ) {
-        result_number[i] = lex->text[lex->pos];
+        result_number[i] = lex->current_char;
         ++i;
         advance(lex);
     }
@@ -244,7 +244,7 @@ struct token *get_next_token(struct lexer *lex) {
 
         if (isspace(lex->current_char)) {
             skip_whitespace(lex);
-            continue;
+            return get_next_token(lex);
         }
 
         if (isdigit(lex->current_char)) {
@@ -440,6 +440,6 @@ struct token *get_next_token(struct lexer *lex) {
     }
 
     struct token *result = malloc(sizeof(struct token));
-    construct_token(result, END_OF_FILE, "");
+    construct_token(result, END_OF_FILE, "<end of file>");
     return result;
 }
