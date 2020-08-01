@@ -23,3 +23,16 @@ void construct_token(
     );
 }
 
+void change_token_value(
+    struct token *dest,
+    const char *value
+) {
+    free(dest->value);
+    size_t value_len = strlen(value) + 1;
+    dest->value = malloc(value_len);
+    strncpy(
+        dest->value,
+        value,
+        value_len
+    );
+}

@@ -71,4 +71,10 @@ void construct_token(
     const char *value
 );
 
+/* Change a token's value */
+void change_token_value(
+    struct token *dest,
+    const char *value
+);
+
 #endif // TOKEN_H
