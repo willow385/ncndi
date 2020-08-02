@@ -222,13 +222,6 @@ struct token *parse_string_literal(struct lexer *lex) {
     return result;
 }
 
-char peek(struct lexer *lex) {
-    if ((lex->pos + 1) >= lex->text_size)
-        return '\0';
-
-    return lex->text[lex->pos + 1];
-}
-
 struct token *get_next_token(struct lexer *lex) {
     while (lex->current_char != '\0') {
         /* This code isn't great. It's very repetetive.

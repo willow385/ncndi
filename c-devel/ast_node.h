@@ -12,14 +12,18 @@ enum mpl_type {
     VOID
 };
 
-struct variable {
-    char *identifier;
+struct mpl_object {
     enum mpl_type type;
     union {
         long double float_value;
         long long int_value;
         char *string_value;
     } value;
+};
+
+struct variable {
+    char *identifier;
+    struct mpl_object *value;
 };
 
 struct function {
@@ -29,7 +33,13 @@ struct function {
 };
 
 struct ast_node {
-    // TODO implement
+    struct mpl_object *(*eval)(
+        struct ast_node *,
+        size_t,
+        struct variable *,
+        size_t,
+        struct function *
+    );
 };
 
 #endif // AST_NODE_H
