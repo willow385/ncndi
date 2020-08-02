@@ -12,6 +12,7 @@
 #include <string.h>
 #include "token.h"
 #include "lexer.h"
+#include "ast_node.h"
 
 int main(int argc, char *argv[]) {
     /* stupid-simple MPL program */

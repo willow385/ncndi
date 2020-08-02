@@ -116,7 +116,7 @@ struct token *parse_number(struct lexer *lex) {
     }
 
     struct token *result = malloc(sizeof(struct token));
-    result->type = is_float? FLOAT : INTEGER;
+    result->type = is_float? FLOAT_L : INT_L;
     result->value = result_number;
     return result;
 }
@@ -218,7 +218,7 @@ struct token *parse_string_literal(struct lexer *lex) {
 
     free(parsed_chars);
     struct token *result = malloc(sizeof(struct token));
-    result->type = STRING; result->value = result_string;
+    result->type = STRING_L; result->value = result_string;
     return result;
 }
 
