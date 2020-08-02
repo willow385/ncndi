@@ -1,0 +1,45 @@
+The MPL programming language is a statically-typed, curly-brace, interpreted scripting language
+created for learning purposes. It brings absolutely nothing new or useful to the table and is
+strictly a toy language.
+
+MPL is a C-like language, with some differences. The language uses mostly the same operators
+as C with the same precedence, with the exception that bitwise operators are not supported,
+and with an operator which doesn't exist in C (the <> operator for logical XOR).
+
+Functions are declared with the following syntax:
+
+    funct <identifier>([type param[, type param, ...]]) [return-type] {
+        <body>
+    }
+
+For example:
+
+    funct simon_says() string {
+        print "Enter something for Simon to say: ";
+        string input = readln();
+        return "Simon says \"" + input + "\"";
+    }
+
+    funct foo() {
+        print "foo() was called\n";
+    }
+
+The program starts at the keyword "start" and ends at the keyword "end". 
+Like so:
+
+    start {
+        print "Hello, world!\n";
+    } end
+
+MPL has no support for modularization; there is no "import" or "using" or "include". This may
+change in the future.
+
+MPL's only support for I/O is stdin and stdout. It reads from stdin using the built-in readln()
+function and prints to stdout using print statements. stderr and other files are not yet supported.
+
+MPL does not have support for object-oriented programming or user-defined types. It doesn't even
+have support for arrays. The only types MPL has are int, float, and string. (Under the hood, there
+is also a void type which is only used for functions that don't return anything.)
+
+Arguments to functions are always passed by value in MPL. This may change in the future, with
+either the & operator or the ref keyword being added to the language.
