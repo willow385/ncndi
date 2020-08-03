@@ -44,7 +44,11 @@ int main(int argc, char *argv[]) {
             printf("<NULL token returned>\n");
             goto fail;
         } else {
-            printf("%s\n", tok->value);
+            if (tok->type == STRING_L) {
+                printf("\"%s\"\n", tok->value);
+            } else {
+                printf("%s\n", tok->value);
+            }
         }
     } while (tok->type != END_OF_FILE && tok != NULL);
     printf("-=-=-=-=-=-=-=-=-=-=-=-=-\n");
