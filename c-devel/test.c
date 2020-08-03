@@ -15,9 +15,12 @@
 #include "ast_node.h"
 
 int main(int argc, char *argv[]) {
-    /* stupid-simple MPL program */
-    char *program_code
-        = "funct foo() {\n  int x = 60 % 3;\n  print \"Hello!\\n\";\n}\n\n# here's a comment\nstart {\n  foo();\n} end\n";
+    char *program_code;
+    if (argc >= 2) {
+        program_code = argv[1];
+    } else {
+        program_code = "funct foo() {\n  int x = 60 % 3;\n  print \"Hello!\\n\";\n}\n\n# here's a comment\nstart {\n  foo();\n} end\n";
+    }
 
     struct lexer lex = {
         .text = program_code,
@@ -39,6 +42,7 @@ int main(int argc, char *argv[]) {
         tok = get_next_token(&lex);
         if (tok == NULL) {
             printf("<NULL token returned>\n");
+            goto fail;
         } else {
             printf("%s\n", tok->value);
         }
@@ -47,4 +51,11 @@ int main(int argc, char *argv[]) {
     free_token(tok);
 
     return 0;
+
+fail:
+    printf("-=-=-=-=-=-=-=-=-=-=-=-=-\n");
+    fprintf(stderr, "An unexpected NULL pointer was returned from get_next_token().\n");
+    free_token(tok);
+    return 1;
+
 }
