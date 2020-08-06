@@ -4,6 +4,10 @@ echo "Building lexer..."
 gcc -c lexer.c
 echo "Building token..."
 gcc -c token.c
-echo "Building test..."
-gcc test.c lexer.o token.o -o test
+echo "Building binary_op..."
+gcc -c binary_op.c
+echo "Building lexer test..."
+gcc test_lexer.c lexer.o token.o -o test_lexer
+echo "Building binary_op test..."
+gcc test_binary_op.c binary_op.o token.o -o test_binary_op
 echo "Done building!"
