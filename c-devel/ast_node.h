@@ -12,10 +12,16 @@ enum mpl_type {
     VOID
 };
 
+/* These forward declarations prevent the compiler from screaming
+   that it doesn't yet know what they are when we compile the
+   eval() methods for various objects. */
 struct ast_node;
 struct mpl_variable;
 struct mpl_function;
 
+/* This method returns NULL or a pointer to a heap-allocated
+   struct mpl_object. The caller is responsible for freeing
+   this. */
 #define EVAL_METHOD struct mpl_object *(*eval)(\
     struct ast_node *,\
     size_t,\
@@ -38,7 +44,14 @@ struct mpl_function;
     recursively calling its children's implementations of eval(), it
     deallocates itself by recursively calling its children's
     implementations of destroy_children().
+
+    TL;DR: Every object that has a destroy_children() method is responsible
+    for freeing all heap-allocated memory that it has pointers to, and all
+    pointers in an object with a destroy_children() method are expected to
+    point to heap-allocated memory.
 */
+
+// This struct should never be actually instantiated.
 struct ast_node {
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;

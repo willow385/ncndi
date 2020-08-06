@@ -21,6 +21,9 @@ int main(void) {
         (struct ast_node *)right
     );
 
+    /* Remember that any pointers inside an object that has a destroy_children()
+       method are expected to point to heap-allocated memory, and that such objects
+       are responsible for freeing that memory with said destroy_children() methods. */
     if (operation != NULL) {
         struct mpl_object *result = operation->eval(
             (struct ast_node *)operation,
@@ -50,6 +53,7 @@ int main(void) {
 
         operation->destroy_children((struct ast_node *)operation);
         free(operation);
+
     } else {
         printf("Obtained a NULL object.\n");
     }
