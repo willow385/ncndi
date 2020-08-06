@@ -4,27 +4,43 @@
 #include "ast_node.h"
 
 int main(void) {
-    /* The operation to perform on the operands of the binary_op. */
-    struct token *op = malloc(sizeof(struct token));
-    construct_token(op, PLUS, "+");
+    /* We're going to build a binary_op that looks like this:
+
+                            binary_op
+                            /   |   \
+                           /    |    \
+                          /     |     \
+                         /      |      \
+                        /       |       \
+                   binary_op    +       " is nice :)"
+                   /   |   \
+                  /    |    \
+                 /     |     \
+                /      |      \
+     "The number "     +      69
+
+    */
 
     struct mpl_variable *variable_scope = NULL;
     struct mpl_function *function_scope = NULL;
 
-    /* Operands of the binary_op */
-    struct mpl_object *left = malloc(sizeof(struct mpl_object));
-    construct_mpl_object(left, STRING, "\"The magic number is ");
-    struct mpl_object *right = malloc(sizeof(struct mpl_object));
-    construct_mpl_object(right, STRING, "69420 lol\"");
+    struct binary_op  *root          = malloc(sizeof(struct binary_op));
+    struct binary_op  *level_0_left  = malloc(sizeof(struct binary_op));
+    struct token      *level_0_op    = malloc(sizeof(struct token));
+    struct mpl_object *level_0_right = malloc(sizeof(struct mpl_object));
+    struct mpl_object *level_1_left  = malloc(sizeof(struct mpl_object));
+    struct token      *level_1_op    = malloc(sizeof(struct token));
+    struct mpl_object *level_1_right = malloc(sizeof(struct mpl_object));
 
-    /* The operation we want to perform. */
-    struct binary_op *operation = malloc(sizeof(struct binary_op));
-    construct_binary_op(
-        operation,
-        (struct ast_node *)left,
-        op,
-        (struct ast_node *)right
-    );
+    construct_mpl_object(level_1_left, STRING, "The number ");
+    construct_token(level_1_op, PLUS, "+");
+    construct_mpl_object(level_1_right, INT, "69");
+
+    construct_binary_op(level_0_left, (struct ast_node *)level_1_left, level_1_op, (struct ast_node *)level_1_right);
+    construct_token(level_0_op, PLUS, "+");
+    construct_mpl_object(level_0_right, STRING, " is nice :)");
+
+    construct_binary_op(root, (struct ast_node *)level_0_left, level_0_op, (struct ast_node *)level_0_right);
 
     /* Remember that any pointers inside an object that has a destroy_children()
        method are expected to point to heap-allocated memory, and that such objects
@@ -32,36 +48,34 @@ int main(void) {
 
        See ast_node.h for more details.
     */
-    if (operation != NULL) {
-        struct mpl_object *result = operation->eval(
-            (struct ast_node *)operation,
+    if (root != NULL) {
+        struct mpl_object *result = root->eval(
+            (struct ast_node *)root,
             0, variable_scope,
             0, function_scope
         );
 
-        printf("Obtained ");
         if (result != NULL) {
             switch (result->type) {
                 case STRING:
-                    printf("%s\n", result->value.string_value);
+                    printf("Obtained \"%s\" from root->eval()\n", result->value.string_value);
                     break;
                 case FLOAT:
-                    printf("%lf\n", result->value.float_value);
+                    printf("Obtained %lf from root->eval()\n", result->value.float_value);
                     break;
                 case INT:
-                    printf("%lld\n", result->value.int_value);
+                    printf("Obtained %lld from root->eval()\n", result->value.int_value);
                     break;
             }
+
             result->destroy_children((struct ast_node *)result);
             free(result);
-
         } else {
-            printf("NULL returned from operation->eval()\n");
+            printf("Obtained NULL result from root->eval()\n");
         }
 
-        operation->destroy_children((struct ast_node *)operation);
-        free(operation);
-
+        root->destroy_children((struct ast_node *)root);
+        free(root);
     } else {
         printf("Obtained a NULL object.\n");
     }
