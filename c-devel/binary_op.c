@@ -108,15 +108,18 @@ static void binary_op_destroy_children(struct ast_node *this_node) {
     if (this_bin_op->left != NULL) {
         this_bin_op->left->destroy_children(this_bin_op->left);
         free(this_bin_op->left);
+        this_bin_op->left = NULL;
     }
 
     if (this_bin_op->right != NULL) {
         this_bin_op->right->destroy_children(this_bin_op->right);
         free(this_bin_op->right);
+        this_bin_op->left = NULL;
     }
 
     if (this_bin_op->op != NULL) {
         free_token(this_bin_op->op);
+        this_bin_op->op = NULL;
     }
 }
 
