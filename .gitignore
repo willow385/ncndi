@@ -6,3 +6,4 @@ __pycache__
 .idea
 test_lexer
 test_binary_op
+debug.txt

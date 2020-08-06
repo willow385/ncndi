@@ -36,7 +36,7 @@ static struct mpl_object *binary_op_eval(
         || this_bin_op->right == NULL
         || this_bin_op->op == NULL
     ) {
-        MPL_DEBUG(fprintf(stderr, "DEBUG:\tNULL value returned from binary_op->eval().\n"));
+        MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tNULL value returned from binary_op->eval().\n"));
         return NULL;
     }
 

@@ -14,6 +14,7 @@ static struct mpl_object *mpl_object_eval(
     MPL_DEBUG(fprintf(stderr, "DEBUG: Calling mpl_object->eval() on mpl_object @ 0x%p.\n", (void *)this_node));
     struct mpl_object *result = malloc(sizeof(struct mpl_object));
     memcpy(result, this_node, sizeof(struct mpl_object));
+    MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tmpl_object->eval() constructed a new mpl_object @ 0x%p.\n", (void *)result));
     return result;
 }
 
