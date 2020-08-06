@@ -23,7 +23,10 @@ int main(void) {
 
     /* Remember that any pointers inside an object that has a destroy_children()
        method are expected to point to heap-allocated memory, and that such objects
-       are responsible for freeing that memory with said destroy_children() methods. */
+       are responsible for freeing that memory with said destroy_children() methods.
+
+       See ast_node.h for more details.
+    */
     if (operation != NULL) {
         struct mpl_object *result = operation->eval(
             (struct ast_node *)operation,
