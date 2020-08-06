@@ -3,13 +3,19 @@
 #include "ast_node.h"
 
 int main(void) {
+    /* The operation to perform on the operands of the binary_op. */
     struct token *op = malloc(sizeof(struct token));
     construct_token(op, PLUS, "+");
+
     struct mpl_variable *variable_scope = NULL;
     struct mpl_function *function_scope = NULL;
     struct mpl_object *left = NULL;
     struct mpl_object *right = NULL;
-    struct binary_op *operation = construct_binary_op(
+
+    /* The operation we want to perform. */
+    struct binary_op *operation = malloc(sizeof(struct binary_op));
+    construct_binary_op(
+        operation,
         (struct ast_node *)left,
         op,
         (struct ast_node *)right
@@ -42,6 +48,8 @@ int main(void) {
             printf("NULL returned from operation->eval()\n");
         }
 
+        operation->destroy_children((struct ast_node *)operation);
+        free(operation);
     } else {
         printf("Obtained a NULL object.\n");
     }

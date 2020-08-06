@@ -104,25 +104,33 @@ static struct mpl_object *binary_op_eval(
 
 static void binary_op_destroy_children(struct ast_node *this_node) {
     struct binary_op *this_bin_op = (struct binary_op *)this_node;
-    this_bin_op->left->destroy_children(this_bin_op->left);
-    this_bin_op->right->destroy_children(this_bin_op->right);
-    free(this_bin_op->left);
-    free_token(this_bin_op->op);
-    free(this_bin_op->right);
+
+    if (this_bin_op->left != NULL) {
+        this_bin_op->left->destroy_children(this_bin_op->left);
+        free(this_bin_op->left);
+    }
+
+    if (this_bin_op->right != NULL) {
+        this_bin_op->right->destroy_children(this_bin_op->right);
+        free(this_bin_op->right);
+    }
+
+    if (this_bin_op->op != NULL) {
+        free_token(this_bin_op->op);
+    }
 }
 
-struct binary_op *construct_binary_op(
+void construct_binary_op(
+    struct binary_op *dest,
     struct ast_node *left,
     struct token *op,
     struct ast_node *right
 ) {
-    struct binary_op *result = malloc(sizeof(struct binary_op));
-    result->left = left;
-    result->op = op;
-    result->right = right;
-    result->eval = &binary_op_eval;
-    result->destroy_children = &binary_op_destroy_children;
-    return result;
+    dest->left = left;
+    dest->op = op;
+    dest->right = right;
+    dest->eval = &binary_op_eval;
+    dest->destroy_children = &binary_op_destroy_children;
 }
 
 // TODO implement these too

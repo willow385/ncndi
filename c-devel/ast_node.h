@@ -51,6 +51,13 @@ struct mpl_program_block {
     struct ast_node **children;
 };
 
+void construct_mpl_program_block(struct mpl_program_block *dest);
+
+void mpl_program_block_append_child(
+    struct mpl_program_block *dest,
+    struct ast_node *child
+);
+
 struct mpl_object {
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
@@ -62,6 +69,12 @@ struct mpl_object {
     } value;
 };
 
+void construct_mpl_object(
+    struct mpl_object *dest,
+    enum mpl_type type,
+    const char *value
+);
+
 struct mpl_variable {
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
@@ -69,13 +82,26 @@ struct mpl_variable {
     struct mpl_object *value;
 };
 
+void construct_mpl_variable(
+    struct mpl_variable *dest,
+    const char *identifier,
+    struct mpl_object *value
+);
+
 struct mpl_function {
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
     char *identifier;
     enum mpl_type return_type;
-    struct ast_node *body;
+    struct mpl_program_block *body;
 };
+
+void construct_mpl_function(
+    struct mpl_function *dest,
+    const char *identifier,
+    enum mpl_type return_type,
+    struct mpl_program_block *body
+);
 
 struct binary_op {
     EVAL_METHOD;
@@ -85,12 +111,8 @@ struct binary_op {
     struct ast_node *right;
 };
 
-struct mpl_object *construct_mpl_object(
-    enum mpl_type type,
-    const char *value
-);
-
-struct binary_op *construct_binary_op(
+void construct_binary_op(
+    struct binary_op *dest,
     struct ast_node *left,
     struct token *op,
     struct ast_node *right
