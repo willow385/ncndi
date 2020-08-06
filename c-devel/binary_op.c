@@ -136,8 +136,48 @@ void construct_binary_op(
     dest->destroy_children = &binary_op_destroy_children;
 }
 
-// TODO implement these too
-static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct mpl_object *right) { return NULL; }
+static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
+    struct mpl_object *result;
+    if (left->type == STRING || right->type == STRING) {
+        fprintf(stderr, "Error: Operator '*' does not support operands of type string\n");
+        result = NULL;
+    } else if (left->type == INT && right->type == INT) {
+        result = malloc(sizeof(struct mpl_object));
+        long long result_value = left->value.int_value * right->value.int_value;
+        int bufsize = 1 + snprintf(NULL, 0, "%lld", result_value);
+        char *result_value_str = malloc(bufsize);
+        sprintf(result_value_str, "%lld", result_value);
+        construct_mpl_object(result, INT, result_value_str);
+        free(result_value_str);
+    } else if (left->type == FLOAT && right->type == INT) {
+        result = malloc(sizeof(struct mpl_object));
+        long double result_value = left->value.float_value * right->value.int_value;
+        int bufsize = 1 + snprintf(NULL, 0, "%Lf", result_value);
+        char *result_value_str = malloc(bufsize);
+        sprintf(result_value_str, "%Lf", result_value);
+        construct_mpl_object(result, FLOAT, result_value_str);
+        free(result_value_str);
+    } else if (left->type == INT && right->type == FLOAT) {
+        result = malloc(sizeof(struct mpl_object));
+        long double result_value = left->value.int_value * right->value.float_value;
+        int bufsize = 1 + snprintf(NULL, 0, "%Lf", result_value);
+        char *result_value_str = malloc(bufsize);
+        sprintf(result_value_str, "%Lf", result_value);
+        construct_mpl_object(result, FLOAT, result_value_str);
+        free(result_value_str);
+    } else { /* left->type == FLOAT && right->type == FLOAT */
+        result = malloc(sizeof(struct mpl_object));
+        long double result_value = left->value.float_value * right->value.float_value;
+        int bufsize = 1 + snprintf(NULL, 0, "%Lf", result_value);
+        char *result_value_str = malloc(bufsize);
+        sprintf(result_value_str, "%Lf", result_value);
+        construct_mpl_object(result, FLOAT, result_value_str);
+        free(result_value_str);
+    }
+
+    return result;
+}
+
 static struct mpl_object *add_mpl_objects(struct mpl_object *left, struct mpl_object *right) { return NULL; }
 static struct mpl_object *divide_mpl_objects(struct mpl_object *left, struct mpl_object *right) { return NULL; }
 static struct mpl_object *subtract_mpl_objects(struct mpl_object *left, struct mpl_object *right) { return NULL; }
