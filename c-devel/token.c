@@ -31,7 +31,7 @@ void change_token_value(
     struct token *dest,
     const char *value
 ) {
-    MPL_DEBUG(fprintf(stderr, "Changing value of token from \"%s\" to \"%s\" @ 0x%p.\n", dest->value, value, (void *)dest));
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Changing value of token from \"%s\" to \"%s\" @ 0x%p.\n", dest->value, value, (void *)dest));
     free(dest->value);
     size_t value_len = strlen(value) + 1;
     dest->value = malloc(value_len);
