@@ -4,3 +4,5 @@
 *.o
 __pycache__
 .idea
+test_lexer
+test_binary_op
