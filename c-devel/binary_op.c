@@ -144,6 +144,39 @@ void construct_binary_op(
     dest->destroy_children = &binary_op_destroy_children;
 }
 
+static struct mpl_object *mpl_object_to_string(struct mpl_object *object) {
+    MPL_DEBUG(fprintf(stderr,
+        "DEBUG: Converting mpl_object @ 0x%p to mpl_object of type STRING.\n", (void *)object));
+
+    if (object == NULL) {
+        MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tObject was NULL; returning NULL.\n"));
+        return NULL;
+    }
+
+    struct mpl_object *result = malloc(sizeof(struct mpl_object));
+    char *result_value;
+    switch (object->type) {
+        case STRING:
+            construct_mpl_object(result, STRING, object->value.string_value);
+            break;
+        case FLOAT:
+            result_value = malloc(1 + snprintf(NULL, 0, "%lf", object->value.float_value));
+            sprintf(result_value, "%lf", object->value.float_value);
+            construct_mpl_object(result, STRING, result_value);
+            free(result_value);
+            break;
+        case INT:
+            result_value = malloc(1 + snprintf(NULL, 0, "%lld", object->value.int_value));
+            sprintf(result_value, "%lld", object->value.int_value);
+            construct_mpl_object(result, STRING, result_value);
+            free(result_value);
+            break;
+    }
+
+    MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tReturning new mpl_object @ 0x%p.\n", (void *)result));
+    return result;
+}
+
 static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: multiply_mpl_objects() called.\n"));
     struct mpl_object *result;
@@ -187,7 +220,40 @@ static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct m
     return result;
 }
 
-static struct mpl_object *add_mpl_objects(struct mpl_object *left, struct mpl_object *right) { return NULL; }
+static struct mpl_object *add_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
+    MPL_DEBUG(fprintf(stderr, "DEBUG: add_mpl_objects() called.\n"));
+
+    struct mpl_object *result;
+    if (left->type == STRING || right->type == STRING) {
+        // '+' operator overloaded for string concatenation
+        struct mpl_object *left_str  = mpl_object_to_string(left);
+        struct mpl_object *right_str = mpl_object_to_string(right);
+        int result_len = 1 + snprintf(NULL, 0, "%s%s", left_str->value.string_value, right_str->value.string_value);
+        char *result_string = malloc(result_len);
+        sprintf(result_string, "%s%s", left_str->value.string_value, right_str->value.string_value);
+        result = malloc(sizeof(struct mpl_object));
+        construct_mpl_object(result, STRING, result_string);
+        free(result_string);
+        left_str->destroy_children((struct ast_node *)left_str);
+        right_str->destroy_children((struct ast_node *)right_str);
+        free(left_str); free(right_str);
+    } else if (left->type == INT && right->type == INT) {
+        // TODO
+        result = NULL;
+    } else if (left->type == INT && right->type == INT) {
+        // TODO
+        result = NULL;
+    } else if (left->type == INT && right->type == INT) {
+        // TODO
+        result = NULL;
+    } else { /* left->type == FLOAT && right->type == FLOAT */
+        // TODO
+        result = NULL;
+    }
+
+    return result;
+}
+
 static struct mpl_object *divide_mpl_objects(struct mpl_object *left, struct mpl_object *right) { return NULL; }
 static struct mpl_object *subtract_mpl_objects(struct mpl_object *left, struct mpl_object *right) { return NULL; }
 static struct mpl_object *modulo_mpl_objects(struct mpl_object *left, struct mpl_object *right) { return NULL; }
