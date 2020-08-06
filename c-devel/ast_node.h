@@ -1,3 +1,4 @@
+#include "config.h"
 #include <stdlib.h>
 #include "token.h"
 
@@ -76,7 +77,7 @@ struct mpl_object {
     DESTROY_CHILDREN_METHOD;
     enum mpl_type type;
     union {
-        long double float_value;
+        double float_value;
         long long int_value;
         char *string_value;
     } value;

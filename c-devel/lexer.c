@@ -1,3 +1,4 @@
+#include "config.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -30,6 +31,7 @@ enum token_type identifier_type(const char *identifier) {
     /* TODO find a prettier and more cache-friendly way
        to do this... this code is kind of gross and the
        assembly is probably full of jumps. */
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Calling indentifier_type() on \"%s\".\n", identifier));
     if (!strcmp("start", identifier)) {
         return START;
     } else if (!strcmp("end", identifier)) {
@@ -223,6 +225,7 @@ struct token *parse_string_literal(struct lexer *lex) {
 }
 
 struct token *get_next_token(struct lexer *lex) {
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Calling get_next_token() on lexer object @ 0x%p.\n", (void *)lex));
     while (lex->current_char != '\0') {
         /* This code isn't great. It's very repetetive.
            I'll probably refactor most of it into a switch

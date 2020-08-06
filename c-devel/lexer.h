@@ -1,3 +1,4 @@
+#include "config.h"
 #include "token.h"
 
 #ifndef LEXER_H

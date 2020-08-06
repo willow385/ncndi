@@ -1,3 +1,4 @@
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include "token.h"
@@ -25,6 +26,8 @@ static struct mpl_object *binary_op_eval(
     size_t function_count,
     struct mpl_function *function_scope
 ) {
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Calling binary_op->eval() on binary_op @ 0x%p.\n", (void *)this_node));
+
     /* Cast this_node to the appropriate type to find this_node's children, since
        we know that this_node is actually a binary_op. */
     struct binary_op *this_bin_op = (struct binary_op *)this_node;
@@ -33,6 +36,7 @@ static struct mpl_object *binary_op_eval(
         || this_bin_op->right == NULL
         || this_bin_op->op == NULL
     ) {
+        MPL_DEBUG(fprintf(stderr, "DEBUG:\tNULL value returned from binary_op->eval().\n"));
         return NULL;
     }
 
@@ -103,6 +107,9 @@ static struct mpl_object *binary_op_eval(
 }
 
 static void binary_op_destroy_children(struct ast_node *this_node) {
+    MPL_DEBUG(fprintf(
+        stderr, "DEBUG: Calling destroy_children() methods on children of binary_op @ 0x%p.\n", (void *)this_node));
+
     struct binary_op *this_bin_op = (struct binary_op *)this_node;
 
     if (this_bin_op->left != NULL) {
@@ -129,6 +136,7 @@ void construct_binary_op(
     struct token *op,
     struct ast_node *right
 ) {
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Constructing binary_op @ 0x%p.\n", (void *)dest));
     dest->left = left;
     dest->op = op;
     dest->right = right;
@@ -137,6 +145,7 @@ void construct_binary_op(
 }
 
 static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
+    MPL_DEBUG(fprintf(stderr, "DEBUG: multiply_mpl_objects() called.\n"));
     struct mpl_object *result;
     if (left->type == STRING || right->type == STRING) {
         fprintf(stderr, "Error: Operator '*' does not support operands of type string\n");
@@ -151,26 +160,26 @@ static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct m
         free(result_value_str);
     } else if (left->type == FLOAT && right->type == INT) {
         result = malloc(sizeof(struct mpl_object));
-        long double result_value = left->value.float_value * right->value.int_value;
-        int bufsize = 1 + snprintf(NULL, 0, "%Lf", result_value);
+        double result_value = left->value.float_value * right->value.int_value;
+        int bufsize = 1 + snprintf(NULL, 0, "%lf", result_value);
         char *result_value_str = malloc(bufsize);
-        sprintf(result_value_str, "%Lf", result_value);
+        sprintf(result_value_str, "%lf", result_value);
         construct_mpl_object(result, FLOAT, result_value_str);
         free(result_value_str);
     } else if (left->type == INT && right->type == FLOAT) {
         result = malloc(sizeof(struct mpl_object));
-        long double result_value = left->value.int_value * right->value.float_value;
-        int bufsize = 1 + snprintf(NULL, 0, "%Lf", result_value);
+        double result_value = left->value.int_value * right->value.float_value;
+        int bufsize = 1 + snprintf(NULL, 0, "%lf", result_value);
         char *result_value_str = malloc(bufsize);
-        sprintf(result_value_str, "%Lf", result_value);
+        sprintf(result_value_str, "%lf", result_value);
         construct_mpl_object(result, FLOAT, result_value_str);
         free(result_value_str);
     } else { /* left->type == FLOAT && right->type == FLOAT */
         result = malloc(sizeof(struct mpl_object));
-        long double result_value = left->value.float_value * right->value.float_value;
-        int bufsize = 1 + snprintf(NULL, 0, "%Lf", result_value);
+        double result_value = left->value.float_value * right->value.float_value;
+        int bufsize = 1 + snprintf(NULL, 0, "%lf", result_value);
         char *result_value_str = malloc(bufsize);
-        sprintf(result_value_str, "%Lf", result_value);
+        sprintf(result_value_str, "%lf", result_value);
         construct_mpl_object(result, FLOAT, result_value_str);
         free(result_value_str);
     }

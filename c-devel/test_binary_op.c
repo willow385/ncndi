@@ -1,3 +1,4 @@
+#include "config.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include "ast_node.h"
@@ -45,7 +46,7 @@ int main(void) {
                     printf("%s\n", result->value.string_value);
                     break;
                 case FLOAT:
-                    printf("%Lf\n", result->value.float_value);
+                    printf("%lf\n", result->value.float_value);
                     break;
                 case INT:
                     printf("%lld\n", result->value.int_value);
