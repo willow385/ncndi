@@ -1,15 +1,15 @@
 #!/bin/sh
 # TODO write a makefile. Build scripts like this are temporary hacks.
 echo "Building lexer..."
-gcc -c -g lexer.c
+gcc -c -g lexer.c $@
 echo "Building token..."
-gcc -c -g token.c
+gcc -c -g token.c $@
 echo "Building binary_op..."
-gcc -c -g binary_op.c
+gcc -c -g binary_op.c $@
 echo "Building mpl_object..."
-gcc -c -g mpl_object.c
+gcc -c -g mpl_object.c $@
 echo "Building lexer test..."
-gcc -g test_lexer.c binary_op.o lexer.o token.o mpl_object.o -o test_lexer
+gcc -g test_lexer.c binary_op.o lexer.o token.o mpl_object.o -o test_lexer $@
 echo "Building binary_op test..."
-gcc -g test_binary_op.c mpl_object.o binary_op.o token.o -o test_binary_op
+gcc -g test_binary_op.c mpl_object.o binary_op.o token.o -o test_binary_op $@
 echo "Done building!"
