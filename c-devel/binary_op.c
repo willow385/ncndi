@@ -26,7 +26,7 @@ static struct mpl_object *binary_op_eval(
     size_t function_count,
     struct mpl_function *function_scope
 ) {
-    MPL_DEBUG(fprintf(stderr, "DEBUG: Calling binary_op->eval() on binary_op @ 0x%p.\n", (void *)this_node));
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Calling binary_op->eval() on binary_op @ %p.\n", (void *)this_node));
 
     /* Cast this_node to the appropriate type to find this_node's children, since
        we know that this_node is actually a binary_op. */
@@ -95,11 +95,24 @@ static struct mpl_object *binary_op_eval(
             break;
     }
 
-    /* Do some cleanup. */
+    MPL_DEBUG(
+        if (left == this_bin_op->left) {
+            fprintf(stderr, "DEBUG: Warning: temporary object `left` at same address as this_bin_op->left\n");
+        }
+
+        if (right == this_bin_op->right) {
+            fprintf(stderr, "DEBUG: Warning: temporary object `right` at same address as this_bin_op->right\n");
+        }
+    );
+
     left->destroy_children((struct ast_node *)left);
     right->destroy_children((struct ast_node *)right);
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Freeing memory at %p in binary_op->eval().\n", (void *)left));
     free(left);
+    left = NULL;
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Freeing memory at %p in binary_op->eval().\n", (void *)right));
     free(right);
+    right = NULL;
 
     /* Aaaand we're done! The caller is responsible for
        checking if we returned NULL at this point. */
@@ -108,23 +121,29 @@ static struct mpl_object *binary_op_eval(
 
 static void binary_op_destroy_children(struct ast_node *this_node) {
     MPL_DEBUG(fprintf(
-        stderr, "DEBUG: Calling destroy_children() methods on children of binary_op @ 0x%p.\n", (void *)this_node));
+        stderr, "DEBUG: Calling destroy_children() methods on children of binary_op @ %p.\n", (void *)this_node));
 
     struct binary_op *this_bin_op = (struct binary_op *)this_node;
 
     if (this_bin_op->left != NULL) {
         this_bin_op->left->destroy_children(this_bin_op->left);
+        MPL_DEBUG(fprintf(stderr, "DEBUG: Freeing memory at %p in binary_op->destroy_children().\n",
+            (void *)this_bin_op->left));
         free(this_bin_op->left);
         this_bin_op->left = NULL;
     }
 
     if (this_bin_op->right != NULL) {
         this_bin_op->right->destroy_children(this_bin_op->right);
+        MPL_DEBUG(fprintf(stderr, "DEBUG: Freeing memory at %p in binary_op->destroy_children().\n",
+            (void *)this_bin_op->right));
         free(this_bin_op->right);
         this_bin_op->left = NULL;
     }
 
     if (this_bin_op->op != NULL) {
+        MPL_DEBUG(fprintf(stderr, "DEBUG: Calling free_token() on %p in binary_op->destroy_children().\n",
+            (void *)this_bin_op->op));
         free_token(this_bin_op->op);
         this_bin_op->op = NULL;
     }
@@ -132,21 +151,27 @@ static void binary_op_destroy_children(struct ast_node *this_node) {
 
 void construct_binary_op(
     struct binary_op *dest,
-    struct ast_node *left,
+    struct ast_node **left,
     struct token *op,
-    struct ast_node *right
+    struct ast_node **right
 ) {
-    MPL_DEBUG(fprintf(stderr, "DEBUG: Constructing binary_op @ 0x%p.\n", (void *)dest));
-    dest->left = left;
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Constructing binary_op @ %p.\n", (void *)dest));
+    dest->left = *left;
     dest->op = op;
-    dest->right = right;
+    dest->right = *right;
     dest->eval = &binary_op_eval;
     dest->destroy_children = &binary_op_destroy_children;
+
+    /* Because binary_op dest now owns the memory referred to by
+       left and right, we set those pointers to NULL, ensuring that
+       there's no other references to that memory. */
+    *left  = NULL;
+    *right = NULL;
 }
 
 static struct mpl_object *mpl_object_to_string(struct mpl_object *object) {
     MPL_DEBUG(fprintf(stderr,
-        "DEBUG: Converting mpl_object @ 0x%p to mpl_object of type STRING.\n", (void *)object));
+        "DEBUG: Converting mpl_object @ %p to mpl_object of type STRING.\n", (void *)object));
 
     if (object == NULL) {
         MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tObject was NULL; returning NULL.\n"));
@@ -163,17 +188,17 @@ static struct mpl_object *mpl_object_to_string(struct mpl_object *object) {
             result_value = malloc(1 + snprintf(NULL, 0, "%lf", object->value.float_value));
             sprintf(result_value, "%lf", object->value.float_value);
             construct_mpl_object(result, STRING, result_value);
-            free(result_value);
+            free(result_value); result_value = NULL;
             break;
         case INT:
             result_value = malloc(1 + snprintf(NULL, 0, "%lld", object->value.int_value));
             sprintf(result_value, "%lld", object->value.int_value);
             construct_mpl_object(result, STRING, result_value);
-            free(result_value);
+            free(result_value); result_value = NULL;
             break;
     }
 
-    MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tReturning new mpl_object @ 0x%p.\n", (void *)result));
+    MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tReturning new mpl_object @ %p.\n", (void *)result));
     return result;
 }
 
@@ -191,6 +216,7 @@ static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct m
         sprintf(result_value_str, "%lld", result_value);
         construct_mpl_object(result, INT, result_value_str);
         free(result_value_str);
+        result_value_str = NULL;
     } else if (left->type == FLOAT && right->type == INT) {
         result = malloc(sizeof(struct mpl_object));
         double result_value = left->value.float_value * right->value.int_value;
@@ -199,6 +225,7 @@ static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct m
         sprintf(result_value_str, "%lf", result_value);
         construct_mpl_object(result, FLOAT, result_value_str);
         free(result_value_str);
+        result_value_str = NULL;
     } else if (left->type == INT && right->type == FLOAT) {
         result = malloc(sizeof(struct mpl_object));
         double result_value = left->value.int_value * right->value.float_value;
@@ -207,6 +234,7 @@ static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct m
         sprintf(result_value_str, "%lf", result_value);
         construct_mpl_object(result, FLOAT, result_value_str);
         free(result_value_str);
+        result_value_str = NULL;
     } else { /* left->type == FLOAT && right->type == FLOAT */
         result = malloc(sizeof(struct mpl_object));
         double result_value = left->value.float_value * right->value.float_value;
@@ -215,6 +243,7 @@ static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct m
         sprintf(result_value_str, "%lf", result_value);
         construct_mpl_object(result, FLOAT, result_value_str);
         free(result_value_str);
+        result_value_str = NULL;
     }
 
     return result;
@@ -237,6 +266,7 @@ static struct mpl_object *add_mpl_objects(struct mpl_object *left, struct mpl_ob
         left_str->destroy_children((struct ast_node *)left_str);
         right_str->destroy_children((struct ast_node *)right_str);
         free(left_str); free(right_str);
+        left_str = NULL; right_str = NULL;
     } else if (left->type == INT && right->type == INT) {
         // TODO
         result = NULL;

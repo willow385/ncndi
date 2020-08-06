@@ -225,7 +225,7 @@ struct token *parse_string_literal(struct lexer *lex) {
 }
 
 struct token *get_next_token(struct lexer *lex) {
-    MPL_DEBUG(fprintf(stderr, "DEBUG: Calling get_next_token() on lexer object @ 0x%p.\n", (void *)lex));
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Calling get_next_token() on lexer object @ %p.\n", (void *)lex));
     while (lex->current_char != '\0') {
         /* This code isn't great. It's very repetetive.
            I'll probably refactor most of it into a switch

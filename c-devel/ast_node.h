@@ -127,9 +127,9 @@ struct binary_op {
 
 void construct_binary_op(
     struct binary_op *dest,
-    struct ast_node *left,
+    struct ast_node **left,
     struct token *op,
-    struct ast_node *right
+    struct ast_node **right
 );
 
 #endif // AST_NODE_H

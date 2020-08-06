@@ -36,11 +36,11 @@ int main(void) {
     construct_token(level_1_op, PLUS, "+");
     construct_mpl_object(level_1_right, INT, "69");
 
-    construct_binary_op(level_0_left, (struct ast_node *)level_1_left, level_1_op, (struct ast_node *)level_1_right);
+    construct_binary_op(level_0_left, (struct ast_node **)&level_1_left, level_1_op, (struct ast_node **)&level_1_right);
     construct_token(level_0_op, PLUS, "+");
     construct_mpl_object(level_0_right, STRING, " is nice :)");
 
-    construct_binary_op(root, (struct ast_node *)level_0_left, level_0_op, (struct ast_node *)level_0_right);
+    construct_binary_op(root, (struct ast_node **)&level_0_left, level_0_op, (struct ast_node **)&level_0_right);
 
     /* Remember that any pointers inside an object that has a destroy_children()
        method are expected to point to heap-allocated memory, and that such objects
