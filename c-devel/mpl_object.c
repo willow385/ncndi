@@ -34,7 +34,20 @@ void construct_mpl_object(
     enum mpl_type type,
     const char *value
 ) {
-    MPL_DEBUG(fprintf(stderr, "DEBUG: Constructing mpl_object @ 0x%p.\n", (void *)dest));
+    MPL_DEBUG(
+        if (type == STRING) {
+            fprintf(
+                stderr,
+                "DEBUG: Constructing mpl_object with value \"%s\" @ 0x%p.\n", value, (void *)dest
+            );
+        } else {
+            fprintf(
+                stderr,
+                "DEBUG: Constructing mpl_object with value %s @ 0x%p.\n", value, (void *)dest
+            );
+        }
+    );
+
     dest->eval = &mpl_object_eval;
     dest->destroy_children = &mpl_object_destroy_children;
     dest->type = type;
