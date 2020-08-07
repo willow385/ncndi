@@ -62,6 +62,7 @@ int main(void) {
        See ast_node.h for more details.
     */
     if (root != NULL) {
+
         struct mpl_object *result = root->eval(
             (struct ast_node *)root,
             0, variable_scope,
@@ -83,17 +84,20 @@ int main(void) {
 
             result->destroy_children((struct ast_node *)result);
             free(result);
+
         } else {
+
             printf("Obtained NULL result from root->eval()\n");
+
         }
 
-        /* For some reason, the line below causes a double-free bug. */
         root->destroy_children((struct ast_node *)root);
-        /* Does anyone know why this happens? I can't seem to figure it out. */
-
         free(root);
+
     } else {
+
         printf("Obtained a NULL object.\n");
+
     }
 
     return 0;
