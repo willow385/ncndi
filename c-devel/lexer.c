@@ -6,10 +6,6 @@
 #include "token.h"
 #include "lexer.h"
 
-/* XXX No part of the code is actually using this, but
-   it really,  really  seems  like it could be used in
-   the future to do  some  optimizations.  Perhaps  by
-   indexing into it with an enum token_type? Idk */
 const char *reserved_words[] = {
     "start",
     "end",
