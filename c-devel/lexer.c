@@ -29,10 +29,14 @@ enum token_type identifier_type(const char *identifier) {
     enum token_type i;
     for (i = 0; i < reserved_word_count; ++i) {
         if (!strcmp(identifier, reserved_words[i])) {
+            MPL_DEBUG(fprintf(stderr,
+                "DEBUG:\t\tIdentifier type was MPL reserved word \"%s\".\n", reserved_words[i]));
+
             return i;
         }
     }
 
+    MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tIdentifier was not an MPL reserved word.\n"));
     return IDENTIFIER;
 }
 
