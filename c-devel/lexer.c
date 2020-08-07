@@ -26,7 +26,7 @@ size_t reserved_word_count = 12;
 enum token_type identifier_type(const char *identifier) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: Calling indentifier_type() on \"%s\".\n", identifier));
 
-    enum token_type i = 0;
+    enum token_type i;
     for (i = 0; i < reserved_word_count; ++i) {
         if (!strcmp(identifier, reserved_words[i])) {
             return i;
