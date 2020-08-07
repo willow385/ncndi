@@ -60,7 +60,7 @@ enum token_type identifier_type(const char *identifier) {
     return IDENTIFIER;
 }
 
-void advance(struct lexer *lex) {
+static void advance(struct lexer *lex) {
     lex->pos++;
     if (lex->pos >= lex->text_size) {
         lex->current_char = '\0';
@@ -69,13 +69,13 @@ void advance(struct lexer *lex) {
     }
 }
 
-void skip_whitespace(struct lexer *lex) {
+static void skip_whitespace(struct lexer *lex) {
     while (lex->current_char && isspace(lex->current_char)) {
         advance(lex);
     }
 }
 
-void skip_comment(struct lexer *lex) {
+static void skip_comment(struct lexer *lex) {
     if (lex->current_char == '#') {
         while (lex->current_char != '\r' && lex->current_char != '\n') {
             advance(lex);
@@ -87,7 +87,7 @@ void skip_comment(struct lexer *lex) {
     }
 }
 
-struct token *parse_number(struct lexer *lex) {
+static struct token *parse_number(struct lexer *lex) {
     size_t char_count = 0;
     int is_float = 0;
 
@@ -123,7 +123,7 @@ struct token *parse_number(struct lexer *lex) {
     return result;
 }
 
-struct token *parse_identifier(struct lexer *lex) {
+static struct token *parse_identifier(struct lexer *lex) {
     // Start by getting the first char, and making sure it's valid.
     char first_char;
     if (
@@ -176,7 +176,7 @@ struct token *parse_identifier(struct lexer *lex) {
         && lex->text[i - 1] == '\\'           \
         && lex->text[i - 2] != '\\')
 
-struct token *parse_string_literal(struct lexer *lex) {
+static struct token *parse_string_literal(struct lexer *lex) {
     if (lex->current_char == '"') {
         advance(lex);
     } else {
