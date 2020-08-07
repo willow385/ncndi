@@ -21,9 +21,10 @@ static struct mpl_object *mpl_object_eval(
     result->destroy_children = &mpl_object_destroy_children;
     if (this_object->type == STRING) {
 
-        /* We can't just assign result->value to the value of this_object->value in this case.
-           If we do, then the object we return will have a reference to memory owned by another
-           object, and when both objects try to free that memory, we'll get a double-free bug.
+        /*
+            We can't just assign result->value to the value of this_object->value in this case.
+            If we do, then the object we return will have a reference to memory owned by another
+            object, and when both objects try to free that memory, we'll get a double-free bug.
 
             How did I figure this out, you ask? Simple: I compiled with `-fsanitize=address` and
             stepped through the program with `gdb -tui` because I was having double-free bugs.
