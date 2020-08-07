@@ -1,0 +1,26 @@
+#!/bin/sh
+# Script to delete object files and binaries
+
+echo "Removing object files...";
+
+rm *.o;
+
+echo "Removing executables...";
+
+if [ -f test_lexer.exe ]; then
+    rm test_lexer.exe;
+fi
+
+if [ -f test_binary_op.exe ]; then
+    rm test_binary_op.exe;
+fi
+
+if [ -f test_binary_op ]; then
+    rm test_binary_op;
+fi
+
+if [ -f test_lexer ]; then
+    rm test_lexer;
+fi
+
+echo "Done cleaning.";
