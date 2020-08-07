@@ -3,9 +3,9 @@
 
 echo "Removing object files...";
 
-for file in ./*.o; do
+{ for file in ./*.o; do
     rm $file;
-done
+done } 2> /dev/null;
 
 echo "Removing executables...";
 
