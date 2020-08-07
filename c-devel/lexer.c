@@ -28,35 +28,15 @@ const char *reserved_words[] = {
 size_t reserved_word_count = 12;
 
 enum token_type identifier_type(const char *identifier) {
-    /* TODO find a prettier and more cache-friendly way
-       to do this... this code is kind of gross and the
-       assembly is probably full of jumps. */
     MPL_DEBUG(fprintf(stderr, "DEBUG: Calling indentifier_type() on \"%s\".\n", identifier));
-    if (!strcmp("start", identifier)) {
-        return START;
-    } else if (!strcmp("end", identifier)) {
-        return END;
-    } else if (!strcmp("print", identifier)) {
-        return PRINT;
-    } else if (!strcmp("int", identifier)) {
-        return TYPE_IDENTIFIER;
-    } else if (!strcmp("float", identifier)) {
-        return TYPE_IDENTIFIER;
-    } else if (!strcmp("string", identifier)) {
-        return TYPE_IDENTIFIER;
-    } else if (!strcmp("funct", identifier)) {
-        return FUNCTION_DECL;
-    } else if (!strcmp("return", identifier)) {
-        return RETURN;
-    } else if (!strcmp("if", identifier)) {
-        return IF;
-    } else if (!strcmp("else", identifier)) {
-        return ELSE;
-    } else if (!strcmp("while", identifier)) {
-        return WHILE;
-    } else if (!strcmp("for", identifier)) {
-        return FOR;
+
+    enum token_type i = 0;
+    for (i = 0; i < reserved_word_count; ++i) {
+        if (!strcmp(identifier, reserved_words[i])) {
+            return i;
+        }
     }
+
     return IDENTIFIER;
 }
 
