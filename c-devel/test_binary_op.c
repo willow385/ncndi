@@ -4,26 +4,39 @@
 #include "ast_node.h"
 
 int main(void) {
-    /* We're going to build a binary_op that looks like this:
 
-                            binary_op
-                            /   |   \
-                           /    |    \
-                          /     |     \
-                         /      |      \
-                        /       |       \
-                   binary_op    +       " is nice :)"
-                   /   |   \
-                  /    |    \
-                 /     |     \
-                /      |      \
-     "The number "     +      69
+    /*
+        We're going to build a rudimentary AST that looks like this:
+
+                                binary_op
+                                /   |   \
+                               /    |    \
+                              /     |     \
+                             /      |      \
+                            /       |       \
+                       binary_op    +       " is nice :)"
+                       /   |   \
+                      /    |    \
+                     /     |     \
+                    /      |      \
+                   /       |       \
+         "The number "     +       69
 
     */
 
     struct mpl_variable *variable_scope = NULL;
     struct mpl_function *function_scope = NULL;
 
+    /*
+        The lines below this comment look ugly because we're directly calling malloc()
+        and the constructor functions. Later, when the parser is implemented, we'll
+        simply get a pointer to a complete AST by sticking the lexer into a function,
+        probably something like
+
+            struct mpl_program_block *root = parser_gen_ast(&lex);
+
+        And all we'll have to do from there is call root->eval() to run the program.
+    */
     struct binary_op  *root          = malloc(sizeof(struct binary_op));
     struct binary_op  *level_0_left  = malloc(sizeof(struct binary_op));
     struct token      *level_0_op    = malloc(sizeof(struct token));
@@ -74,7 +87,10 @@ int main(void) {
             printf("Obtained NULL result from root->eval()\n");
         }
 
+        /* For some reason, the line below causes a double-free bug. */
         root->destroy_children((struct ast_node *)root);
+        /* Does anyone know why this happens? I can't seem to figure it out. */
+
         free(root);
     } else {
         printf("Obtained a NULL object.\n");

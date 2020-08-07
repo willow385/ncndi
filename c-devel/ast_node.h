@@ -65,11 +65,33 @@ struct mpl_program_block {
     struct ast_node **children;
 };
 
+/*
+    In the constructor functions below, some parameters are passed as double
+    pointers. The rationale for this is that I'm trying to simulate ownership
+    semantics in C.
+
+    You  see, for a double pointer param in one of the constructor functions,
+    *dest owns **param after said constructor function is finished. That means
+    that *dest is responsible for freeing **param at runtime, and that **param
+    can only be modified through *dest. To enforce this, the constructor
+    functions set *param to NULL when they get called. This ensures that there
+    aren't any other pointers to **param in the calling code. Having other
+    pointers to **param in the calling code could lead to buggy behavior (such
+    as sneaky random state changes made by the caller) or undefined behavior
+    (such as double-free bugs).
+
+    Obviously, this convention is inspired by ownership and lifetime semantics
+    from Rust and C++, languages which have very useful built-in implementations
+    of this idea. But since I'm writing this in C instead, I have to roll my
+    own. I want to write in C to improve interoperability with other code and
+    to challenge myself.
+*/
+
 void construct_mpl_program_block(struct mpl_program_block *dest);
 
 void mpl_program_block_append_child(
     struct mpl_program_block *dest,
-    struct ast_node *child
+    struct ast_node **child
 );
 
 struct mpl_object {
@@ -86,7 +108,7 @@ struct mpl_object {
 void construct_mpl_object(
     struct mpl_object *dest,
     enum mpl_type type,
-    const char *value
+    const char *value /* String representation, regardless of type. */
 );
 
 struct mpl_variable {
@@ -96,10 +118,11 @@ struct mpl_variable {
     struct mpl_object *value;
 };
 
+
 void construct_mpl_variable(
     struct mpl_variable *dest,
     const char *identifier,
-    struct mpl_object *value
+    struct mpl_object **value
 );
 
 struct mpl_function {
@@ -114,7 +137,7 @@ void construct_mpl_function(
     struct mpl_function *dest,
     const char *identifier,
     enum mpl_type return_type,
-    struct mpl_program_block *body
+    struct mpl_program_block **body
 );
 
 struct binary_op {
