@@ -13,12 +13,20 @@ if [ -f test_lexer.exe ]; then
     rm test_lexer.exe;
 fi
 
-if [ -f test_binary_op.exe ]; then
-    rm test_binary_op.exe;
+if [ -f test_binary_op_0.exe ]; then
+    rm test_binary_op_0.exe;
 fi
 
-if [ -f test_binary_op ]; then
-    rm test_binary_op;
+if [ -f test_binary_op_0 ]; then
+    rm test_binary_op_0;
+fi
+
+if [ -f test_binary_op_1.exe ]; then
+    rm test_binary_op_1.exe;
+fi
+
+if [ -f test_binary_op_1 ]; then
+    rm test_binary_op_1;
 fi
 
 if [ -f test_lexer ]; then
