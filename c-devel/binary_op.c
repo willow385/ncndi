@@ -490,6 +490,12 @@ static struct mpl_object *equal_mpl_objects(struct mpl_object *left, struct mpl_
         construct_mpl_object(
             result,
             INT,
+
+            /*
+                We can save a few clock cycles here by not bothering to check the types of
+                the operands here, because sizeof(long long) is probably >= sizeof(double).
+                If anyone can find an architecture where that isn't true, I'll change this.
+            */
             left->value.int_value == right->value.int_value?
                 "1"
             :
@@ -549,14 +555,29 @@ static struct mpl_object *greater_mpl_objects(struct mpl_object *left, struct mp
     } else if (left->type == right->type) {
 
         result = malloc(sizeof(struct mpl_object));
-        construct_mpl_object(
-            result,
-            INT,
-            left->value.int_value > right->value.int_value?
-                "1"
-            :
-                "0"
-        );
+        if (left->type == INT) {
+
+            construct_mpl_object(
+                result,
+                INT,
+                left->value.int_value > right->value.int_value?
+                    "1"
+                :
+                    "0"
+            );
+
+        } else {
+
+            construct_mpl_object(
+                result,
+                INT,
+                left->value.float_value > right->value.float_value?
+                    "1"
+                :
+                    "0"
+            );
+
+        }
 
     } else if (left->type == FLOAT /* && right->type == INT */) {
 
@@ -610,14 +631,29 @@ static struct mpl_object *less_mpl_objects(struct mpl_object *left, struct mpl_o
     } else if (left->type == right->type) {
 
         result = malloc(sizeof(struct mpl_object));
-        construct_mpl_object(
-            result,
-            INT,
-            left->value.int_value < right->value.int_value?
-                "1"
-            :
-                "0"
-        );
+        if (left->type == INT) {
+
+            construct_mpl_object(
+                result,
+                INT,
+                left->value.int_value < right->value.int_value?
+                    "1"
+                :
+                    "0"
+            );
+
+        } else {
+
+            construct_mpl_object(
+                result,
+                INT,
+                left->value.float_value < right->value.float_value?
+                    "1"
+                :
+                    "0"
+            );
+
+        }
 
     } else if (left->type == FLOAT /* && right->type == INT */) {
 
@@ -732,14 +768,29 @@ static struct mpl_object *greater_eq_mpl_objects(struct mpl_object *left, struct
     } else if (left->type == right->type) {
 
         result = malloc(sizeof(struct mpl_object));
-        construct_mpl_object(
-            result,
-            INT,
-            left->value.int_value >= right->value.int_value?
-                "1"
-            :
-                "0"
-        );
+        if (left->type == INT) {
+
+            construct_mpl_object(
+                result,
+                INT,
+                left->value.int_value >= right->value.int_value?
+                    "1"
+                :
+                    "0"
+            );
+
+        } else {
+
+            construct_mpl_object(
+                result,
+                INT,
+                left->value.float_value >= right->value.float_value?
+                    "1"
+                :
+                    "0"
+            );
+
+        }
 
     } else if (left->type == FLOAT /* && right->type == INT */) {
 
@@ -793,14 +844,29 @@ static struct mpl_object *less_eq_mpl_objects(struct mpl_object *left, struct mp
     } else if (left->type == right->type) {
 
         result = malloc(sizeof(struct mpl_object));
-        construct_mpl_object(
-            result,
-            INT,
-            left->value.int_value <= right->value.int_value?
-                "1"
-            :
-                "0"
-        );
+        if (left->type == INT) {
+
+            construct_mpl_object(
+                result,
+                INT,
+                left->value.int_value <= right->value.int_value?
+                    "1"
+                :
+                    "0"
+            );
+
+        } else {
+
+            construct_mpl_object(
+                result,
+                INT,
+                left->value.float_value <= right->value.float_value?
+                    "1"
+                :
+                    "0"
+            );
+
+        }
 
     } else if (left->type == FLOAT /* && right->type == INT */) {
 
