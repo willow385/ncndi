@@ -50,4 +50,6 @@ int main(void) {
 
     root->destroy_children((struct ast_node *)root);
     free(root);
+
+    return 0;
 }
