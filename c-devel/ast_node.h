@@ -17,8 +17,8 @@ enum mpl_type {
    that it doesn't yet know what they are when we compile the
    eval() methods for various objects. */
 struct ast_node;
-struct mpl_variable;
-struct mpl_function;
+struct key_object_pair;
+struct key_program_block_pair;
 
 /* This method returns NULL or a pointer to a heap-allocated
    struct mpl_object. The caller is responsible for freeing
@@ -26,9 +26,9 @@ struct mpl_function;
 #define EVAL_METHOD struct mpl_object *(*eval)(\
     struct ast_node *,\
     size_t,\
-    struct mpl_variable *,\
+    struct key_object_pair *,\
     size_t,\
-    struct mpl_function *\
+    struct key_program_block_pair *\
 );
 
 #define DESTROY_CHILDREN_METHOD void (*destroy_children)(struct ast_node *);
@@ -64,6 +64,8 @@ struct mpl_program_block {
     size_t child_count;
     struct ast_node **children;
 };
+
+
 
 /*
     In the constructor functions below, some parameters are passed as double
@@ -115,14 +117,12 @@ struct mpl_variable {
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
     char *identifier;
-    struct mpl_object *value;
 };
 
 
 void construct_mpl_variable(
     struct mpl_variable *dest,
-    const char *identifier,
-    struct mpl_object **value
+    const char *identifier
 );
 
 struct mpl_function {

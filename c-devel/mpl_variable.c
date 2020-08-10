@@ -26,8 +26,7 @@ static void mpl_variable_destroy_children(struct ast_node *this_node) {
 
 void construct_mpl_variable(
     struct mpl_variable *dest,
-    const char *identifier,
-    struct mpl_object **value
+    const char *identifier
 ) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: Constructing mpl_variable @ %p.\n", (void *)dest));
     // TODO implement
