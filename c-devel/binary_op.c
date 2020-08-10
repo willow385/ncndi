@@ -25,9 +25,9 @@ static struct mpl_object *xor_mpl_objects(struct mpl_object *left, struct mpl_ob
 static struct mpl_object *binary_op_eval(
     struct ast_node *this_node,
     size_t variable_count,
-    struct mpl_variable *variable_scope,
+    struct key_object_pair *variable_scope,
     size_t function_count,
-    struct mpl_function *function_scope
+    struct key_program_block_pair *function_scope
 ) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: Calling binary_op->eval() on binary_op @ %p.\n", (void *)this_node));
 

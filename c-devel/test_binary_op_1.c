@@ -6,20 +6,6 @@
 
 
 int main(void) {
-    struct mpl_object *left = malloc(sizeof(struct mpl_object));
-    struct token *op = malloc(sizeof(struct token));
-    struct mpl_object *right = malloc(sizeof(struct mpl_object));
-    struct binary_op *root = malloc(sizeof(struct binary_op));
-
-    // Change these values to see how MPL handles various operators and operands.
-    construct_mpl_object(left, INT, "2920429980");
-    construct_token(op, DIVIDE, "/");
-    construct_mpl_object(right, INT, "42069");
-
-    construct_binary_op(root, (struct ast_node **)&left, op, (struct ast_node **)&right);
-
-    struct mpl_variable *variable_scope = NULL;
-    struct mpl_function *function_scope = NULL;
 
     struct mpl_object *result = root->eval(
         (struct ast_node *)root,

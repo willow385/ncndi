@@ -25,8 +25,8 @@ int main(void) {
 
     */
 
-    struct mpl_variable *variable_scope = NULL;
-    struct mpl_function *function_scope = NULL;
+    struct key_object_pair *variable_scope = NULL;
+    struct key_program_block_pair *function_scope = NULL;
 
     /*
         The lines below this comment look ugly because we're directly calling malloc()

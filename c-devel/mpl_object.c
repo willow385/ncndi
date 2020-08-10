@@ -11,9 +11,9 @@ static void mpl_object_destroy_children(struct ast_node *this_node);
 static struct mpl_object *mpl_object_eval(
     struct ast_node *this_node,
     size_t variable_count,
-    struct mpl_variable *variable_scope,
+    struct key_object_pair *variable_scope,
     size_t function_count,
-    struct mpl_function *function_scope
+    struct key_program_block_pair *function_scope
 ) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: Calling mpl_object->eval() on mpl_object @ %p.\n", (void *)this_node));
     struct mpl_object *this_object = (struct mpl_object *)this_node;
