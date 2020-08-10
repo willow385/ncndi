@@ -8,10 +8,12 @@ echo "Building binary_op..."
 gcc -c -g binary_op.c $@
 echo "Building mpl_object..."
 gcc -c -g mpl_object.c $@
+echo "Bulding mpl_variable..."
+gcc -c -g mpl_variable.c $@
 echo "Building lexer test..."
-gcc -g test_lexer.c binary_op.o lexer.o token.o mpl_object.o -o test_lexer $@
+gcc -g test_lexer.c binary_op.o lexer.o token.o mpl_object.o mpl_variable.o -o test_lexer $@
 echo "Building binary_op test 0..."
-gcc -g test_binary_op_0.c mpl_object.o binary_op.o token.o -o test_binary_op_0 $@
+gcc -g test_binary_op_0.c mpl_object.o binary_op.o token.o mpl_variable.o -o test_binary_op_0 $@
 echo "Building binary_op test 1..."
-gcc -g test_binary_op_1.c mpl_object.o binary_op.o token.o -o test_binary_op_1 $@
+gcc -g test_binary_op_1.c mpl_object.o binary_op.o token.o mpl_variable.o -o test_binary_op_1 $@
 echo "Done building!"

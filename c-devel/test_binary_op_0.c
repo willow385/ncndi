@@ -27,6 +27,8 @@ int main(void) {
 
     struct key_object_pair *variable_scope = NULL;
     struct key_program_block_pair *function_scope = NULL;
+    size_t variable_count = 0;
+    size_t function_count = 0;
 
     /*
         The lines below this comment look ugly because we're directly calling malloc()
@@ -66,8 +68,8 @@ int main(void) {
 
         struct mpl_object *result = root->eval(
             (struct ast_node *)root,
-            0, variable_scope,
-            0, function_scope
+            &variable_count, variable_scope,
+            &function_count, function_scope
         );
 
         if (result != NULL) {

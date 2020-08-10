@@ -25,9 +25,9 @@ struct key_program_block_pair;
    this. */
 #define EVAL_METHOD struct mpl_object *(*eval)(\
     struct ast_node *,\
-    size_t,\
+    size_t *,\
     struct key_object_pair *,\
-    size_t,\
+    size_t *,\
     struct key_program_block_pair *\
 );
 
