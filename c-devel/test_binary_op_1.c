@@ -4,6 +4,7 @@
 #include "ast_node.h"
 #include "token.h"
 
+
 int main(void) {
     struct mpl_object *left = malloc(sizeof(struct mpl_object));
     struct token *op = malloc(sizeof(struct token));
@@ -52,4 +53,5 @@ int main(void) {
     free(root);
 
     return 0;
+
 }

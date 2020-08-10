@@ -6,6 +6,7 @@
 #include "token.h"
 #include "lexer.h"
 
+
 const char *reserved_words[] = {
     "start",
     "end",
@@ -23,6 +24,7 @@ const char *reserved_words[] = {
 
 size_t reserved_word_count = 12;
 
+
 enum token_type identifier_type(const char *identifier) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: Calling indentifier_type() on \"%s\".\n", identifier));
 
@@ -38,7 +40,9 @@ enum token_type identifier_type(const char *identifier) {
 
     MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tIdentifier was not an MPL reserved word.\n"));
     return IDENTIFIER;
+
 }
+
 
 static void advance(struct lexer *lex) {
     lex->pos++;
@@ -49,11 +53,13 @@ static void advance(struct lexer *lex) {
     }
 }
 
+
 static void skip_whitespace(struct lexer *lex) {
     while (lex->current_char && isspace(lex->current_char)) {
         advance(lex);
     }
 }
+
 
 static void skip_comment(struct lexer *lex) {
     if (lex->current_char == '#') {
@@ -66,6 +72,7 @@ static void skip_comment(struct lexer *lex) {
         advance(lex);
     }
 }
+
 
 static struct token *parse_number(struct lexer *lex) {
     size_t char_count = 0;
@@ -101,7 +108,9 @@ static struct token *parse_number(struct lexer *lex) {
     result->type = is_float? FLOAT_L : INT_L;
     result->value = result_number;
     return result;
+
 }
+
 
 static struct token *parse_identifier(struct lexer *lex) {
     // Start by getting the first char, and making sure it's valid.
@@ -146,7 +155,9 @@ static struct token *parse_identifier(struct lexer *lex) {
     result->type = identifier_type(result_identifier);
     result->value = result_identifier;
     return result;
+
 }
+
 
 /* This condition looks butt-ugly, so I made it
    into a macro. Sue me. */
@@ -155,6 +166,7 @@ static struct token *parse_identifier(struct lexer *lex) {
     || (lex->text[i] == '"'                   \
         && lex->text[i - 1] == '\\'           \
         && lex->text[i - 2] != '\\')
+
 
 static struct token *parse_string_literal(struct lexer *lex) {
     if (lex->current_char == '"') {
@@ -202,7 +214,9 @@ static struct token *parse_string_literal(struct lexer *lex) {
     struct token *result = malloc(sizeof(struct token));
     result->type = STRING_L; result->value = result_string;
     return result;
+
 }
+
 
 struct token *get_next_token(struct lexer *lex) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: Calling get_next_token() on lexer object @ %p.\n", (void *)lex));
@@ -418,4 +432,5 @@ struct token *get_next_token(struct lexer *lex) {
     struct token *result = malloc(sizeof(struct token));
     construct_token(result, END_OF_FILE, "<end of file>");
     return result;
+
 }

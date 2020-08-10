@@ -15,6 +15,7 @@
 #include "lexer.h"
 #include "ast_node.h"
 
+
 int main(int argc, char *argv[]) {
     char *program_code;
     if (argc >= 2) {

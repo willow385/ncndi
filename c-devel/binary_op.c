@@ -5,6 +5,7 @@
 #include "token.h"
 #include "ast_node.h"
 
+
 static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct mpl_object *right);
 static struct mpl_object *add_mpl_objects(struct mpl_object *left, struct mpl_object *right);
 static struct mpl_object *divide_mpl_objects(struct mpl_object *left, struct mpl_object *right);
@@ -19,6 +20,7 @@ static struct mpl_object *less_eq_mpl_objects(struct mpl_object *left, struct mp
 static struct mpl_object *and_mpl_objects(struct mpl_object *left, struct mpl_object *right);
 static struct mpl_object *or_mpl_objects(struct mpl_object *left, struct mpl_object *right);
 static struct mpl_object *xor_mpl_objects(struct mpl_object *left, struct mpl_object *right);
+
 
 static struct mpl_object *binary_op_eval(
     struct ast_node *this_node,
@@ -108,7 +110,9 @@ static struct mpl_object *binary_op_eval(
     /* Aaaand we're done! The caller is responsible for
        checking if we returned NULL at this point. */
     return result;
+
 }
+
 
 static void binary_op_destroy_children(struct ast_node *this_node) {
     MPL_DEBUG(fprintf(
@@ -135,7 +139,9 @@ static void binary_op_destroy_children(struct ast_node *this_node) {
             (void *)this_bin_op->op));
         free_token(this_bin_op->op);
     }
+
 }
+
 
 void construct_binary_op(
     struct binary_op *dest,
@@ -155,7 +161,9 @@ void construct_binary_op(
        there's no other references to that memory. */
     *left  = NULL;
     *right = NULL;
+
 }
+
 
 static struct mpl_object *mpl_object_to_string(struct mpl_object *object) {
     MPL_DEBUG(fprintf(stderr,
@@ -188,7 +196,9 @@ static struct mpl_object *mpl_object_to_string(struct mpl_object *object) {
 
     MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tReturning new mpl_object @ %p.\n", (void *)result));
     return result;
+
 }
+
 
 #define OBTAIN_RESULT_OBJECT(dest, return_type, value_type, value)        \
     value_type result_value = value;                                      \
@@ -208,56 +218,49 @@ static struct mpl_object *mpl_object_to_string(struct mpl_object *object) {
     construct_mpl_object(dest, return_type, result_value_str);            \
     free(result_value_str);
 
+
 static struct mpl_object *multiply_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: multiply_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING || right->type == STRING) {
-
         fprintf(stderr, "Error: Operator '*' does not support operands of type string\n");
         result = NULL;
-
     } else if (left->type == INT && right->type == INT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             INT,
             long long,
             left->value.int_value * right->value.int_value
         );
-
     } else if (left->type == FLOAT && right->type == INT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.float_value * right->value.int_value
         );
-
     } else if (left->type == INT && right->type == FLOAT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.int_value * right->value.float_value
         );
-
     } else { /* left->type == FLOAT && right->type == FLOAT */
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.float_value * right->value.float_value
         );
-
     }
 
     return result;
 
 }
+
 
 static struct mpl_object *add_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: add_mpl_objects() called.\n"));
@@ -284,194 +287,165 @@ static struct mpl_object *add_mpl_objects(struct mpl_object *left, struct mpl_ob
         free(right_str);
 
     } else if (left->type == INT && right->type == INT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             INT,
             long long,
             left->value.int_value + right->value.int_value
         );
-
     } else if (left->type == INT && right->type == FLOAT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.int_value + right->value.float_value
         );
-
     } else if (left->type == FLOAT && right->type == INT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.float_value + right->value.int_value
         );
-
     } else { /* left->type == FLOAT && right->type == FLOAT */
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.float_value + right->value.float_value
         );
-
     }
 
     return result;
 
 }
 
+
 static struct mpl_object *divide_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: divide_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING || right->type == STRING) {
-
         fprintf(stderr, "Error: Operator '/' does not support operands of type string\n");
         result = NULL;
-
     } else if (
         (right->type == INT && right->value.int_value == 0)
         || (right->type == FLOAT && right->value.float_value == 0)
     ) {
-
         fprintf(stderr, "Error: Attempted to divide by 0\n");
         result = NULL;
-
     } else if (left->type == INT && right->type == INT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             INT,
             long long,
             left->value.int_value / right->value.int_value
         );
-
     } else if (left->type == INT && right->type == FLOAT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.int_value / right->value.float_value
         );
-
     } else if (left->type == FLOAT && right->type == INT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.float_value / right->value.int_value
         );
-
     } else { /* left->type == FLOAT && right->type == FLOAT */
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.float_value / right->value.float_value
         );
-
     }
 
     return result;
 
 }
 
+
 static struct mpl_object *subtract_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: subtract_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING || right->type == STRING) {
-
         fprintf(stderr, "Error: Operator '-' does not support operands of type string\n");
         result = NULL;
-
     } else if (left->type == INT && right->type == INT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             INT,
             long long,
             left->value.int_value - right->value.int_value
         );
-
     } else if (left->type == FLOAT && right->type == INT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.float_value - right->value.int_value
         );
-
     } else if (left->type == INT && right->type == FLOAT) {
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.int_value - right->value.float_value
         );
-
     } else { /* left->type == FLOAT && right->type == FLOAT */
-
         OBTAIN_RESULT_OBJECT(
             result,
             FLOAT,
             double,
             left->value.float_value - right->value.float_value
         );
-
     }
 
     return result;
 
 }
 
+
 static struct mpl_object *modulo_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: modulo_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING || right->type == STRING) {
-
         fprintf(stderr, "Error: Operator '%%' does not support operands of type string\n");
         result = NULL;
-
     } else if (left->type == FLOAT || right->type == FLOAT) {
-
         fprintf(stderr, "Error: Operator '%%' does not support operands of type float\n");
         result = NULL;
-
     } else {
-
         OBTAIN_RESULT_OBJECT(
             result,
             INT,
             long long,
             left->value.int_value % right->value.int_value
         );
-
     }
 
     return result;
 
 }
 
+
 static struct mpl_object *equal_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: equal_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING && right->type == STRING) {
 
         result = malloc(sizeof(struct mpl_object));
-
         if (!strcmp(left->value.string_value, right->value.string_value)) {
             construct_mpl_object(result, INT, "1");
         } else {
@@ -490,16 +464,12 @@ static struct mpl_object *equal_mpl_objects(struct mpl_object *left, struct mpl_
         construct_mpl_object(
             result,
             INT,
-
             /*
                 We can save a few clock cycles here by not bothering to check the types of
                 the operands here, because sizeof(long long) is probably >= sizeof(double).
                 If anyone can find an architecture where that isn't true, I'll change this.
             */
-            left->value.int_value == right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.int_value == right->value.int_value? "1" : "0"
         );
 
     } else if (left->type == FLOAT /* && right->type == INT */) {
@@ -508,10 +478,7 @@ static struct mpl_object *equal_mpl_objects(struct mpl_object *left, struct mpl_
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value == right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.float_value == right->value.int_value? "1" : "0"
         );
 
     } else { /* left->type == INT && right->type == FLOAT */
@@ -520,10 +487,7 @@ static struct mpl_object *equal_mpl_objects(struct mpl_object *left, struct mpl_
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value == right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.int_value == right->value.float_value? "1" : "0"
         );
 
     }
@@ -532,8 +496,10 @@ static struct mpl_object *equal_mpl_objects(struct mpl_object *left, struct mpl_
 
 }
 
+
 static struct mpl_object *greater_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: greater_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING && right->type == STRING) {
@@ -560,10 +526,7 @@ static struct mpl_object *greater_mpl_objects(struct mpl_object *left, struct mp
             construct_mpl_object(
                 result,
                 INT,
-                left->value.int_value > right->value.int_value?
-                    "1"
-                :
-                    "0"
+                left->value.int_value > right->value.int_value? "1" : "0"
             );
 
         } else {
@@ -571,10 +534,7 @@ static struct mpl_object *greater_mpl_objects(struct mpl_object *left, struct mp
             construct_mpl_object(
                 result,
                 INT,
-                left->value.float_value > right->value.float_value?
-                    "1"
-                :
-                    "0"
+                left->value.float_value > right->value.float_value? "1" : "0"
             );
 
         }
@@ -585,10 +545,7 @@ static struct mpl_object *greater_mpl_objects(struct mpl_object *left, struct mp
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value > right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.float_value > right->value.int_value? "1" : "0"
         );
 
     } else { /* left->type == INT && right->type == FLOAT */
@@ -597,10 +554,7 @@ static struct mpl_object *greater_mpl_objects(struct mpl_object *left, struct mp
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value > right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.int_value > right->value.float_value? "1" : "0"
         );
 
     }
@@ -609,8 +563,10 @@ static struct mpl_object *greater_mpl_objects(struct mpl_object *left, struct mp
 
 }
 
+
 static struct mpl_object *less_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: less_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING && right->type == STRING) {
@@ -636,10 +592,7 @@ static struct mpl_object *less_mpl_objects(struct mpl_object *left, struct mpl_o
             construct_mpl_object(
                 result,
                 INT,
-                left->value.int_value < right->value.int_value?
-                    "1"
-                :
-                    "0"
+                left->value.int_value < right->value.int_value? "1" : "0"
             );
 
         } else {
@@ -647,10 +600,7 @@ static struct mpl_object *less_mpl_objects(struct mpl_object *left, struct mpl_o
             construct_mpl_object(
                 result,
                 INT,
-                left->value.float_value < right->value.float_value?
-                    "1"
-                :
-                    "0"
+                left->value.float_value < right->value.float_value? "1" : "0"
             );
 
         }
@@ -661,10 +611,7 @@ static struct mpl_object *less_mpl_objects(struct mpl_object *left, struct mpl_o
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value < right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.float_value < right->value.int_value? "1" : "0"
         );
 
     } else { /* left->type == INT && right->type == FLOAT */
@@ -673,10 +620,7 @@ static struct mpl_object *less_mpl_objects(struct mpl_object *left, struct mpl_o
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value < right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.int_value < right->value.float_value? "1" : "0"
         );
 
     }
@@ -685,8 +629,10 @@ static struct mpl_object *less_mpl_objects(struct mpl_object *left, struct mpl_o
 
 }
 
+
 static struct mpl_object *not_eq_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: not_eq_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING && right->type == STRING) {
@@ -710,10 +656,7 @@ static struct mpl_object *not_eq_mpl_objects(struct mpl_object *left, struct mpl
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value != right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.int_value != right->value.int_value? "1" : "0"
         );
 
     } else if (left->type == FLOAT /* && right->type == INT */) {
@@ -722,10 +665,7 @@ static struct mpl_object *not_eq_mpl_objects(struct mpl_object *left, struct mpl
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value != right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.float_value != right->value.int_value? "1" : "0"
         );
 
     } else { /* left->type == INT && right->type == FLOAT */
@@ -734,10 +674,7 @@ static struct mpl_object *not_eq_mpl_objects(struct mpl_object *left, struct mpl
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value != right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.int_value != right->value.float_value? "1" : "0"
         );
 
     }
@@ -746,8 +683,10 @@ static struct mpl_object *not_eq_mpl_objects(struct mpl_object *left, struct mpl
 
 }
 
+
 static struct mpl_object *greater_eq_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: greater_eq_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING && right->type == STRING) {
@@ -773,10 +712,7 @@ static struct mpl_object *greater_eq_mpl_objects(struct mpl_object *left, struct
             construct_mpl_object(
                 result,
                 INT,
-                left->value.int_value >= right->value.int_value?
-                    "1"
-                :
-                    "0"
+                left->value.int_value >= right->value.int_value? "1" : "0"
             );
 
         } else {
@@ -784,10 +720,7 @@ static struct mpl_object *greater_eq_mpl_objects(struct mpl_object *left, struct
             construct_mpl_object(
                 result,
                 INT,
-                left->value.float_value >= right->value.float_value?
-                    "1"
-                :
-                    "0"
+                left->value.float_value >= right->value.float_value? "1" : "0"
             );
 
         }
@@ -798,10 +731,7 @@ static struct mpl_object *greater_eq_mpl_objects(struct mpl_object *left, struct
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value >= right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.float_value >= right->value.int_value? "1" : "0"
         );
 
     } else { /* left->type == INT && right->type == FLOAT */
@@ -810,10 +740,7 @@ static struct mpl_object *greater_eq_mpl_objects(struct mpl_object *left, struct
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value >= right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.int_value >= right->value.float_value? "1" : "0"
         );
 
     }
@@ -822,8 +749,10 @@ static struct mpl_object *greater_eq_mpl_objects(struct mpl_object *left, struct
 
 }
 
+
 static struct mpl_object *less_eq_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: less_eq_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING && right->type == STRING) {
@@ -849,10 +778,7 @@ static struct mpl_object *less_eq_mpl_objects(struct mpl_object *left, struct mp
             construct_mpl_object(
                 result,
                 INT,
-                left->value.int_value <= right->value.int_value?
-                    "1"
-                :
-                    "0"
+                left->value.int_value <= right->value.int_value? "1" : "0"
             );
 
         } else {
@@ -860,10 +786,7 @@ static struct mpl_object *less_eq_mpl_objects(struct mpl_object *left, struct mp
             construct_mpl_object(
                 result,
                 INT,
-                left->value.float_value <= right->value.float_value?
-                    "1"
-                :
-                    "0"
+                left->value.float_value <= right->value.float_value? "1" : "0"
             );
 
         }
@@ -874,10 +797,7 @@ static struct mpl_object *less_eq_mpl_objects(struct mpl_object *left, struct mp
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value <= right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.float_value <= right->value.int_value? "1" : "0"
         );
 
     } else { /* left->type == INT && right->type == FLOAT */
@@ -886,10 +806,7 @@ static struct mpl_object *less_eq_mpl_objects(struct mpl_object *left, struct mp
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value <= right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.int_value <= right->value.float_value? "1" : "0"
         );
 
     }
@@ -898,8 +815,10 @@ static struct mpl_object *less_eq_mpl_objects(struct mpl_object *left, struct mp
 
 }
 
+
 static struct mpl_object *and_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: and_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING && right->type == STRING) {
@@ -924,10 +843,7 @@ static struct mpl_object *and_mpl_objects(struct mpl_object *left, struct mpl_ob
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value && right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.int_value && right->value.int_value? "1" : "0"
         );
 
     } else if (left->type == FLOAT && right->type == INT) {
@@ -936,10 +852,7 @@ static struct mpl_object *and_mpl_objects(struct mpl_object *left, struct mpl_ob
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value && right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.float_value && right->value.int_value? "1" : "0"
         );
 
     } else if (left->type == INT && right->type == FLOAT) {
@@ -948,10 +861,7 @@ static struct mpl_object *and_mpl_objects(struct mpl_object *left, struct mpl_ob
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value && right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.int_value && right->value.float_value? "1" : "0"
         );
 
     } else { /* left->type == FLOAT && right->type == INT */
@@ -960,10 +870,7 @@ static struct mpl_object *and_mpl_objects(struct mpl_object *left, struct mpl_ob
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value && right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.float_value && right->value.float_value? "1" : "0"
         );
 
     }
@@ -972,8 +879,10 @@ static struct mpl_object *and_mpl_objects(struct mpl_object *left, struct mpl_ob
 
 }
 
+
 static struct mpl_object *or_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: or_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING && right->type == STRING) {
@@ -998,10 +907,7 @@ static struct mpl_object *or_mpl_objects(struct mpl_object *left, struct mpl_obj
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value || right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.int_value || right->value.int_value? "1" : "0"
         );
 
     } else if (left->type == FLOAT && right->type == INT) {
@@ -1010,10 +916,7 @@ static struct mpl_object *or_mpl_objects(struct mpl_object *left, struct mpl_obj
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value || right->value.int_value?
-                "1"
-            :
-                "0"
+            left->value.float_value || right->value.int_value? "1" : "0"
         );
 
     } else if (left->type == INT && right->type == FLOAT) {
@@ -1022,10 +925,7 @@ static struct mpl_object *or_mpl_objects(struct mpl_object *left, struct mpl_obj
         construct_mpl_object(
             result,
             INT,
-            left->value.int_value || right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.int_value || right->value.float_value? "1" : "0"
         );
 
     } else { /* left->type == FLOAT && right->type == INT */
@@ -1034,10 +934,7 @@ static struct mpl_object *or_mpl_objects(struct mpl_object *left, struct mpl_obj
         construct_mpl_object(
             result,
             INT,
-            left->value.float_value || right->value.float_value?
-                "1"
-            :
-                "0"
+            left->value.float_value || right->value.float_value? "1" : "0"
         );
 
     }
@@ -1046,8 +943,10 @@ static struct mpl_object *or_mpl_objects(struct mpl_object *left, struct mpl_obj
 
 }
 
+
 static struct mpl_object *xor_mpl_objects(struct mpl_object *left, struct mpl_object *right) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: xor_mpl_objects() called.\n"));
+
     struct mpl_object *result;
 
     if (left->type == STRING && right->type == STRING) {
@@ -1072,10 +971,7 @@ static struct mpl_object *xor_mpl_objects(struct mpl_object *left, struct mpl_ob
         construct_mpl_object(
             result,
             INT,
-            !left->value.int_value != !right->value.int_value?
-                "1"
-            :
-                "0"
+            !left->value.int_value != !right->value.int_value? "1" : "0"
         );
 
     } else if (left->type == FLOAT && right->type == INT) {
@@ -1084,10 +980,7 @@ static struct mpl_object *xor_mpl_objects(struct mpl_object *left, struct mpl_ob
         construct_mpl_object(
             result,
             INT,
-            !left->value.float_value != !right->value.int_value?
-                "1"
-            :
-                "0"
+            !left->value.float_value != !right->value.int_value? "1" : "0"
         );
 
     } else if (left->type == INT && right->type == FLOAT) {
@@ -1096,10 +989,7 @@ static struct mpl_object *xor_mpl_objects(struct mpl_object *left, struct mpl_ob
         construct_mpl_object(
             result,
             INT,
-            !left->value.int_value != !right->value.float_value?
-                "1"
-            :
-                "0"
+            !left->value.int_value != !right->value.float_value? "1" : "0"
         );
 
     } else { /* left->type == FLOAT && right->type == INT */
@@ -1108,10 +998,7 @@ static struct mpl_object *xor_mpl_objects(struct mpl_object *left, struct mpl_ob
         construct_mpl_object(
             result,
             INT,
-            !left->value.float_value != !right->value.float_value?
-                "1"
-            :
-                "0"
+            !left->value.float_value != !right->value.float_value? "1" : "0"
         );
 
     }

@@ -4,7 +4,9 @@
 #include <stdlib.h>
 #include "ast_node.h"
 
+
 static void mpl_object_destroy_children(struct ast_node *this_node);
+
 
 static struct mpl_object *mpl_object_eval(
     struct ast_node *this_node,
@@ -38,7 +40,9 @@ static struct mpl_object *mpl_object_eval(
 
     MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tmpl_object->eval() constructed a new mpl_object @ %p.\n", (void *)result));
     return result;
+
 }
+
 
 static void mpl_object_destroy_children(struct ast_node *this_node) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: Calling mpl_object->destroy_children() on mpl_object @ %p.\n", (void *)this_node));
@@ -52,6 +56,7 @@ static void mpl_object_destroy_children(struct ast_node *this_node) {
         }
     }
 }
+
 
 void construct_mpl_object(
     struct mpl_object *dest,

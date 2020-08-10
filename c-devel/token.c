@@ -4,12 +4,14 @@
 #include <string.h>
 #include "token.h"
 
+
 void free_token(struct token *t) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: Calling free_token() on token @ %p.\n", (void *)t));
     if (t == NULL) return;
     free(t->value);
     free(t);
 }
+
 
 void construct_token(
     struct token *dest,
@@ -26,6 +28,7 @@ void construct_token(
         value_len
     );
 }
+
 
 void change_token_value(
     struct token *dest,
