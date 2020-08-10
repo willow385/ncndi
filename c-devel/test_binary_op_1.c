@@ -98,10 +98,12 @@ int main(void) {
     size_t i;
     for (i = 0; i < variable_count; ++i) {
         variable_scope[i].value->destroy_children((struct ast_node *)variable_scope[i].value);
+        free(variable_scope[i].value);
     }
 
     for (i = 0; i < function_count; ++i) {
-        variable_scope[i].value->destroy_children((struct ast_node *)variable_scope[i].value);
+        function_scope[i].value->destroy_children((struct ast_node *)function_scope[i].value);
+        free(function_scope[i].value);
     }
 
     free(variable_scope);
