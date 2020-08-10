@@ -7,6 +7,29 @@
 
 int main(void) {
 
+    /*
+
+        In this program we construct an AST that looks like this:
+
+                        binary_op
+                        /   |   \
+                       /    |    \
+                      /     |     \
+                     /      |      \
+                    /       |       \
+                variable    +       420
+                  /  \
+                 /    \
+                /      \
+               /        \
+              /          \
+         identifier     value
+             |            |
+             |            |
+       test_variable    69000
+
+    */
+
     size_t variable_count = 0;
     size_t function_count = 0;
 
