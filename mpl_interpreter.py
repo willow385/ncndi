@@ -29,6 +29,7 @@ def main():
             try:
                 text += input(">> ")
             except EOFError:
+                print("")
                 break
 
     lexer = Lexer(text)
