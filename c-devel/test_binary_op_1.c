@@ -7,9 +7,13 @@
 
 int main(void) {
 
+    struct key_object_pair *variable_scope = malloc(1 * sizeof(struct key_object_pair));
+    struct mpl_object *left_value = malloc(sizeof(struct mpl_object));
+    construct_mpl_object(left_value, 
+
     struct mpl_object *result = root->eval(
         (struct ast_node *)root,
-        0, variable_scope,
+        1, variable_scope,
         0, function_scope
     );
 

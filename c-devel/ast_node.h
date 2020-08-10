@@ -58,36 +58,34 @@ struct ast_node {
     DESTROY_CHILDREN_METHOD;
 };
 
+struct mpl_object;
+struct mpl_program_block;
+
+/*
+    The pointers in a key_object_pair and a key_program_block_pair are non-owning.
+    The caller is responsible for freeing them.
+*/
+struct key_object_pair {
+    char *key;
+    struct mpl_object *value;
+};
+
+struct key_program_block_pair {
+    char *key;
+    struct mpl_program_block *value;
+};
+
+/*
+    The structs below all own the memory to which their members point and are thus responsible
+    for freeing them with their destroy_children() methods.
+*/
+
 struct mpl_program_block {
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
     size_t child_count;
     struct ast_node **children;
 };
-
-
-
-/*
-    In the constructor functions below, some parameters are passed as double
-    pointers. The rationale for this is that I'm trying to simulate ownership
-    semantics in C.
-
-    You  see, for a double pointer param in one of the constructor functions,
-    *dest owns **param after said constructor function is finished. That means
-    that *dest is responsible for freeing **param at runtime, and that **param
-    can only be modified through *dest. To enforce this, the constructor
-    functions set *param to NULL when they get called. This ensures that there
-    aren't any other pointers to **param in the calling code. Having other
-    pointers to **param in the calling code could lead to buggy behavior (such
-    as sneaky random state changes made by the caller) or undefined behavior
-    (such as double-free bugs).
-
-    Obviously, this convention is inspired by ownership and lifetime semantics
-    from Rust and C++, languages which have very useful built-in implementations
-    of this idea. But since I'm writing this in C instead, I have to roll my
-    own. I want to write in C to improve interoperability with other code and
-    to challenge myself.
-*/
 
 void construct_mpl_program_block(struct mpl_program_block *dest);
 
