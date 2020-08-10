@@ -71,6 +71,7 @@ int main(void) {
     root->destroy_children((struct ast_node *)root);
     free(root);
 
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Freeing variable_scope and function_scope now.\n"));
     /* don't forget to free variable_scope - this is the caller's responsibility! */
     size_t i;
     for (i = 0; i < variable_count; ++i) {

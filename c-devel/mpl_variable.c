@@ -12,7 +12,11 @@ static struct mpl_object *mpl_variable_eval(
     size_t *function_count,
     struct key_program_block_pair *function_scope
 ) {
-    MPL_DEBUG(fprintf(stderr, "DEBUG: Calling mpl_variable->eval() on mpl_variable @ %p.\n", (void *)this_node));
+    MPL_DEBUG(fprintf(stderr,
+        "DEBUG: Calling mpl_variable->eval() on mpl_variable \"%s\" @ %p.\n",
+        ((struct mpl_variable *)this_node)->identifier,
+        (void *)this_node)
+    );
 
     struct mpl_variable *this_var = (struct mpl_variable *)this_node;
 
@@ -27,7 +31,9 @@ static struct mpl_object *mpl_variable_eval(
         }
     }
 
+    MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tNo such variable found in current scope.\n"));
     return NULL;
+
 }
 
 
@@ -42,7 +48,9 @@ void construct_mpl_variable(
     struct mpl_variable *dest,
     const char *identifier
 ) {
-    MPL_DEBUG(fprintf(stderr, "DEBUG: Constructing mpl_variable @ %p.\n", (void *)dest));
+    MPL_DEBUG(fprintf(stderr, "DEBUG: Constructing mpl_variable with identifier \"%s\" @ %p.\n",
+        identifier, (void *)dest));
+
     dest->identifier = malloc(1 + strlen(identifier));
     strcpy(dest->identifier, identifier);
     dest->eval = &mpl_variable_eval;
