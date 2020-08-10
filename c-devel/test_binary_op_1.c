@@ -7,7 +7,7 @@
 
 int main(void) {
 
-    size_t variable_count = 1;
+    size_t variable_count = 0;
     size_t function_count = 0;
 
     struct key_program_block_pair *function_scope = NULL;
@@ -16,11 +16,10 @@ int main(void) {
         We want to have a single variable in the global scope, "test_variable", which
         is an int and equals 69000.
     */
-    struct key_object_pair *variable_scope = malloc(1 * sizeof(struct key_object_pair));
+    struct key_object_pair *variable_scope = NULL;
     struct mpl_object *left_value = malloc(sizeof(struct mpl_object));
     construct_mpl_object(left_value, INT, "69000");
-    variable_scope[0].key = "test_variable";
-    variable_scope[0].value = left_value; /* variable_scope contains non-owning pointers */
+    append_key_object_pair(&variable_scope, &variable_count, "test_variable", left_value);
 
 
     struct mpl_variable *left = malloc(sizeof(struct mpl_variable));

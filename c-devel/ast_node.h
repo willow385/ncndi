@@ -78,16 +78,16 @@ struct key_program_block_pair {
 /* The pointers in the next two functions' arguments are non-owning too. */
 
 void append_key_object_pair(
-    struct key_object_pair *dest,
+    struct key_object_pair **dest,
     size_t *size,
-    const char *key,
+    char *key,
     struct mpl_object *value
 );
 
 void append_key_program_block_pair(
-    struct key_program_block_pair *dest,
+    struct key_program_block_pair **dest,
     size_t *size,
-    const char *key,
+    char *key,
     struct mpl_program_block *value
 );
 
