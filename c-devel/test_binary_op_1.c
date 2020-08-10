@@ -16,7 +16,7 @@ int main(void) {
         We want to have a single variable in the global scope, "test_variable", which
         is an int and equals 69000.
     */
-    struct key_object_pair *variable_scope = NULL;
+    struct key_object_pair *variable_scope = malloc(sizeof(struct key_object_pair));
     struct mpl_object *left_value = malloc(sizeof(struct mpl_object));
     construct_mpl_object(left_value, INT, "69000");
     append_key_object_pair(&variable_scope, &variable_count, "test_variable", left_value);

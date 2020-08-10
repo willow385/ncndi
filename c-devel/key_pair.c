@@ -11,7 +11,11 @@ void append_key_object_pair(
     char *key,
     struct mpl_object *value
 ) {
-    *size++;
+    MPL_DEBUG(fprintf(stderr,
+        "DEBUG: Calling append_key_object_pair on %p with key \"%s\" and value @ %p.\n",
+        (void *)*dest, key, (void *)value));
+
+    ++*size;
     *dest = realloc(*dest, *size * sizeof(struct key_object_pair));
     struct key_object_pair *this_pair = *dest + (*size - 1);
     this_pair->key = key;
@@ -25,7 +29,11 @@ void append_key_program_block_pair(
     char *key,
     struct mpl_program_block *value
 ) {
-    *size++;
+    MPL_DEBUG(fprintf(stderr,
+        "DEBUG: Calling append_key_program_block_pair on %p with key \"%s\" and value @ %p.\n",
+        (void *)*dest, key, (void *)value));
+
+    ++*size;
     *dest = realloc(*dest, *size * sizeof(struct key_program_block_pair));
     struct key_program_block_pair *this_pair = *dest + (*size - 1);
     this_pair->key = key;
