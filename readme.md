@@ -1,6 +1,8 @@
 # ncndi
 <sub>(This library is available under a free and permissive license)</sub>
 
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/DanteFalzone0/ncndi.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/DanteFalzone0/ncndi/context:python)
+
 The language is called "MPL". "MPL" is a recursive
 acronym for "MPL Programming Language". "ncndi" is
 the name of this implementation of the interpreter.
