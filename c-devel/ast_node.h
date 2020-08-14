@@ -62,7 +62,7 @@ struct key_program_block_pair;
 
 // This struct should never be actually instantiated.
 struct ast_node {
-    enum ast_node_type type;
+    enum ast_node_type node_type;
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
 };
@@ -106,7 +106,7 @@ void append_key_program_block_pair(
 */
 
 struct mpl_program_block {
-    enum ast_node_type type;
+    enum ast_node_type node_type;
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
     size_t child_count;
@@ -121,7 +121,7 @@ void mpl_program_block_append_child(
 );
 
 struct mpl_object {
-    enum ast_node_type type;
+    enum ast_node_type node_type;
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
     enum mpl_type type;
@@ -139,7 +139,7 @@ void construct_mpl_object(
 );
 
 struct mpl_variable {
-    enum ast_node_type type;
+    enum ast_node_type node_type;
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
     char *identifier;
@@ -152,7 +152,7 @@ void construct_mpl_variable(
 );
 
 struct mpl_function {
-    enum ast_node_type type;
+    enum ast_node_type node_type;
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
     char *identifier;
@@ -168,7 +168,7 @@ void construct_mpl_function(
 );
 
 struct binary_op {
-    enum ast_node_type type;
+    enum ast_node_type node_type;
     EVAL_METHOD;
     DESTROY_CHILDREN_METHOD;
     struct ast_node *left;

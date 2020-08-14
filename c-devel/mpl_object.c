@@ -77,6 +77,7 @@ void construct_mpl_object(
         }
     );
 
+    dest->node_type = MPL_OBJECT;
     dest->eval = &mpl_object_eval;
     dest->destroy_children = &mpl_object_destroy_children;
     dest->type = type;

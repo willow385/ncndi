@@ -150,6 +150,7 @@ void construct_binary_op(
     struct ast_node **right
 ) {
     MPL_DEBUG(fprintf(stderr, "DEBUG: Constructing binary_op @ %p.\n", (void *)dest));
+    dest->node_type = BINARY_OP;
     dest->left = *left;
     dest->op = op;
     dest->right = *right;

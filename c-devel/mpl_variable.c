@@ -51,6 +51,7 @@ void construct_mpl_variable(
     MPL_DEBUG(fprintf(stderr, "DEBUG: Constructing mpl_variable with identifier \"%s\" @ %p.\n",
         identifier, (void *)dest));
 
+    dest->node_type = MPL_VARIABLE;
     dest->identifier = malloc(1 + strlen(identifier));
     strcpy(dest->identifier, identifier);
     dest->eval = &mpl_variable_eval;
