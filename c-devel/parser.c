@@ -4,14 +4,7 @@
 #include "token.h"
 #include "lexer.h"
 #include "ast_node.h"
-
-/* The parser does not own *lex, but it does own *current_token
-   and is responsible for managing it. */
-struct parser {
-    struct lexer *lex;
-    struct token *current_token;
-    int just_parsed_program_block;
-};
+#include "parser.h"
 
 int eat(struct parser *parse, enum token_type type) {
     if (parse->current_token->type == type) {
@@ -26,13 +19,111 @@ int eat(struct parser *parse, enum token_type type) {
 
 struct mpl_program_block *program(struct parser *parse);
 
-struct ast_node *factor(struct parser *parse);
+struct ast_node *factor(struct parser *parse) {
+    struct token *tok = malloc(sizeof(struct token));
+    construct_token(tok, parse->current_token->type, parse->current_token->value);
 
-struct ast_node *term(struct parser *parse);
+    switch (tok->type) {
+        case INT_L:
+            // TODO return mpl_object of mpl_type INT
+        break;
 
-struct ast_node *math_expression(struct parser *parse);
+        case FLOAT_L:
+            // TODO return mpl_object of mpl_type FLOAT
+        break;
 
-struct ast_node *expression(struct parser *parse);
+        case STRING_L:
+            // TODO return mpl_object of mpl_type STRING
+        break;
+
+        case OPEN_PAREN:
+            // TODO return expression()
+        break;
+
+        case IDENTIFIER:
+            // TODO return mpl_variable or mpl function call
+        break;
+
+        case IF:
+            // TODO return if-statement
+        break;
+
+        case NOT:
+            // TODO return logical negation
+        break;
+
+        case SUBTRACT:
+            // TODO return negative number
+        break;
+
+        default:
+            fprintf(stderr, "Error: Unexpected token \"%s\" encountered\n", tok->value);
+            // TODO cleanup garbage
+        break;
+    }
+
+    return NULL;
+}
+
+struct ast_node *term(struct parser *parse) {
+    struct ast_node *node = factor(parse);
+    struct token *tok;
+
+    while (
+        parse->current_token->type == MULT
+        || parse->current_token->type == DIVIDE
+        || parse->current_token->type == MODULUS
+    ) {
+        tok = malloc(sizeof(struct token));
+        construct_token(tok, parse->current_token->type, parse->current_token->value);
+        eat(parse, tok->type);
+        struct ast_node *left = node;
+        struct ast_node *right = factor(parse);
+        node = malloc(sizeof(struct binary_op));
+        construct_binary_op((struct binary_op *)node, &left, tok, &right);
+    }
+
+    return node;
+}
+
+struct ast_node *math_expression(struct parser *parse) {
+    struct ast_node *node = term(parse);
+    struct token *tok;
+
+    while (parse->current_token->type == PLUS || parse->current_token->type == SUBTRACT) {
+        tok = malloc(sizeof(struct ast_node));
+        construct_token(tok, parse->current_token->type, parse->current_token->value);
+        eat(parse, tok->type);
+        struct ast_node *left = node;
+        struct ast_node *right = term(parse);
+        node = malloc(sizeof(struct binary_op));
+        construct_binary_op((struct binary_op *)node, &left, tok, &right);
+    }
+
+    return node;
+}
+
+#define IS_LOGICAL_OP(x)  \
+    x == AND              \
+    || x == OR            \
+    || x == XOR
+
+struct ast_node *expression(struct parser *parse) {
+    struct ast_node *node = comparison(parse);
+    struct token *tok;
+
+    while (IS_LOGICAL_OP(parse->current_token->type)) {
+        tok = malloc(sizeof(struct token));
+        construct_token(tok, parse->current_token->type, parse->current_token->value);
+        eat(parse, tok->type);
+        struct ast_node *left = node;
+        node = malloc(sizeof(struct binary_op));
+        struct ast_node *right = comparison(parse);
+        construct_binary_op((struct binary_op *)node, &left, tok, &right);
+    }
+
+    return node;
+}
 
 #define IS_RELATIONAL(x)  \
     x == LESS_THAN        \
@@ -43,7 +134,20 @@ struct ast_node *expression(struct parser *parse);
     || x == GREATER_EQ
 
 struct ast_node *comparison(struct parser *parse) {
-    // TODO implement
+    struct ast_node *node = math_expression(parse);
+    struct token *tok;
+
+    while (IS_RELATIONAL(parse->current_token->type)) {
+        tok = malloc(sizeof(struct token));
+        construct_token(tok, parse->current_token->type, parse->current_token->value);
+        eat(parse, tok->type);
+        struct ast_node *left = node;
+        node = malloc(sizeof(struct binary_op));
+        struct ast_node *right = math_expression(parse);
+        construct_binary_op((struct binary_op *)node, &left, tok, &right);
+    }
+
+    return node;
 }
 
 struct mpl_program_block *parser_gen_ast(struct parser *parse);
