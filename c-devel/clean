@@ -33,4 +33,12 @@ if [ -f test_lexer ]; then
     rm test_lexer;
 fi
 
+if [ -f test_calculate.exe ]; then
+    rm test_calculate.exe;
+fi
+
+if [ -f test_calculate ]; then
+    rm test_calculate;
+fi
+
 echo "Done cleaning.";

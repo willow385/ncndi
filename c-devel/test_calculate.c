@@ -7,22 +7,23 @@
 #include "lexer.h"
 #include "parser.h"
 
-int main(void) {
+int main(int argc, char *argv[]) {
 
-    char *math_expression = "3 + ((3 * 15) / 5)";
+    char *program_code;
+    if (argc < 2) {
+        program_code = "3 + ((3 * 15) / 5)";
+    } else {
+        program_code = argv[1];
+    }
 
-    printf(
-        "Evaluating expression \"%s\". It should result in %d.\n",
-        math_expression,
-        3 + ((3 * 15) / 5)
-    );
+    printf("Evaluating expression \"%s\".\n", program_code);
 
     /* Set up objects */
     struct lexer lex = {
-        .text = math_expression,
-        .text_size = strlen(math_expression),
+        .text = program_code,
+        .text_size = strlen(program_code),
         .pos = 0,
-        .current_char = math_expression[0]
+        .current_char = program_code[0]
     };
     struct token *current_token = get_next_token(&lex);
     struct parser parse = {
