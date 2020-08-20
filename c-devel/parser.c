@@ -25,19 +25,35 @@ struct ast_node *factor(struct parser *parse) {
 
     switch (tok->type) {
         case INT_L:
-            // TODO return mpl_object of mpl_type INT
+            eat(parse, INT_L);
+            struct mpl_object *result = malloc(sizeof(struct mpl_object));
+            construct_mpl_object(result, INT, tok->value);
+            free_token(tok);
+            return (struct ast_node *)result;
         break;
 
         case FLOAT_L:
-            // TODO return mpl_object of mpl_type FLOAT
+            eat(parse, FLOAT_L);
+            struct mpl_object *result = malloc(sizeof(struct mpl_object));
+            construct_mpl_object(result, FLOAT, tok->value);
+            free_token(tok);
+            return (struct ast_node *)result;
         break;
 
         case STRING_L:
-            // TODO return mpl_object of mpl_type STRING
+            eat(parse, STRING_L);
+            struct mpl_object *result = malloc(sizeof(struct mpl_object));
+            construct_mpl_object(result, STRING, tok->value);
+            free_token(tok);
+            return (struct ast_node *)result;
         break;
 
         case OPEN_PAREN:
-            // TODO return expression()
+            eat(parse, OPEN_PAREN);
+            struct ast_node *result = expression(parse);
+            free_token(tok);
+            eat(parse, CLOSE_PAREN);
+            return result;
         break;
 
         case IDENTIFIER:
@@ -58,7 +74,7 @@ struct ast_node *factor(struct parser *parse) {
 
         default:
             fprintf(stderr, "Error: Unexpected token \"%s\" encountered\n", tok->value);
-            // TODO cleanup garbage
+            free_token(tok);
         break;
     }
 
