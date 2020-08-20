@@ -50,4 +50,16 @@ gcc -g test_binary_op_1.c \
     mpl_variable.o \
     -o test_binary_op_1 $@
 
+echo "Building calculation test..."
+
+gcc -g test_calculate.c \
+    binary_op.o \
+    key_pair.o \
+    token.o \
+    parser.o \
+    lexer.o \
+    mpl_object.o \
+    mpl_variable.o \
+    -o test_calculate $@
+
 echo "Done building!"
