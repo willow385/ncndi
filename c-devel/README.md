@@ -9,3 +9,15 @@ You can turn on debugging messages at compile time by one of the following means
 - Pass the option `-DMPL_DEBUG_=1` to the build script; i.e. `./build -DMPL_DEBUG_=1`.
 
 To get rid of object files and executables in this directory, run `./clean`.
+
+---
+
+# What the programs do
+
+- `test_binary_op_0.c`: Evaluates a simple AST with just literals.
+
+- `test_binary_op_1.c`: Evaluates an AST with a variable and a literal.
+
+- `test_lexer.c`: Tokenizes an MPL program and prints the tokens to stdout.
+
+- `test_calculate.c`: Constructs an AST from an MPL expression and evaluates it.
