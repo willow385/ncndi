@@ -22,38 +22,35 @@ struct mpl_program_block *program(struct parser *parse);
 struct ast_node *factor(struct parser *parse) {
     struct token *tok = malloc(sizeof(struct token));
     construct_token(tok, parse->current_token->type, parse->current_token->value);
+    struct ast_node *result;
 
     switch (tok->type) {
         case INT_L:
             eat(parse, INT_L);
-            struct mpl_object *result = malloc(sizeof(struct mpl_object));
-            construct_mpl_object(result, INT, tok->value);
+            result = malloc(sizeof(struct mpl_object));
+            construct_mpl_object((struct mpl_object *)result, INT, tok->value);
             free_token(tok);
-            return (struct ast_node *)result;
         break;
 
         case FLOAT_L:
             eat(parse, FLOAT_L);
-            struct mpl_object *result = malloc(sizeof(struct mpl_object));
-            construct_mpl_object(result, FLOAT, tok->value);
+            result = malloc(sizeof(struct mpl_object));
+            construct_mpl_object((struct mpl_object *)result, FLOAT, tok->value);
             free_token(tok);
-            return (struct ast_node *)result;
         break;
 
         case STRING_L:
             eat(parse, STRING_L);
-            struct mpl_object *result = malloc(sizeof(struct mpl_object));
-            construct_mpl_object(result, STRING, tok->value);
+            result = malloc(sizeof(struct mpl_object));
+            construct_mpl_object((struct mpl_object *)result, STRING, tok->value);
             free_token(tok);
-            return (struct ast_node *)result;
         break;
 
         case OPEN_PAREN:
             eat(parse, OPEN_PAREN);
-            struct ast_node *result = expression(parse);
+            result = expression(parse);
             free_token(tok);
             eat(parse, CLOSE_PAREN);
-            return result;
         break;
 
         case IDENTIFIER:
@@ -75,10 +72,11 @@ struct ast_node *factor(struct parser *parse) {
         default:
             fprintf(stderr, "Error: Unexpected token \"%s\" encountered\n", tok->value);
             free_token(tok);
+            result = NULL;
         break;
     }
 
-    return NULL;
+    return result;
 }
 
 struct ast_node *term(struct parser *parse) {
