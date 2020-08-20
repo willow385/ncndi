@@ -74,6 +74,8 @@ int main(int argc, char *argv[]) {
     root->destroy_children(root);
     free(root);
 
+    free_token(parse.current_token);
+
     MPL_DEBUG(fprintf(stderr, "DEBUG: Freeing variable_scope and function_scope now.\n"));
     /* don't forget to free variable_scope - this is the caller's responsibility! */
     size_t i;
