@@ -92,7 +92,9 @@ struct ast_node *factor(struct parser *parse) {
             } else if (borrow_result->type == FLOAT) {
                 borrow_result->value.float_value *= -1;
             } else {
-                fprintf(stderr, "Error: Unexpected string encountered\n");
+                fprintf(stderr, "Error: Unexpected string \"%s\" encountered\n",
+                    borrow_result->value.string_value);
+
                 result->destroy_children(result);
                 free(result);
                 result = NULL;
