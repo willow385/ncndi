@@ -83,7 +83,20 @@ struct ast_node *factor(struct parser *parse) {
         break;
 
         case SUBTRACT:
-            // TODO return negative number
+            eat(parse, SUBTRACT);
+            free_token(tok);
+            result = factor(parse);
+            struct mpl_object *borrow_result = (struct mpl_object *)result;
+            if (borrow_result->type == INT) {
+                borrow_result->value.int_value *= -1;
+            } else if (borrow_result->type == FLOAT) {
+                borrow_result->value.float_value *= -1;
+            } else {
+                fprintf(stderr, "Error: Unexpected string encountered\n");
+                result->destroy_children(result);
+                free(result);
+                result = NULL;
+            }
         break;
 
         default:
