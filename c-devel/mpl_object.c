@@ -85,12 +85,14 @@ void construct_mpl_object(
         case STRING:
             dest->value.string_value = malloc(1 + strlen(value));
             strcpy(dest->value.string_value, value);
-            break;
+        break;
+
         case INT:
             sscanf(value, "%lld", &dest->value.int_value);
-            break;
+        break;
+
         case FLOAT:
             sscanf(value, "%lf", &dest->value.float_value);
-            break;
+        break;
     }
 }

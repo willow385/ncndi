@@ -97,7 +97,7 @@ static struct mpl_object *binary_op_eval(
         default:
             result = NULL;
             fprintf(stderr, "Error: Unexpected operator \"%s\" found\n", this_bin_op->op->value);
-            break;
+        break;
     }
 
     left->destroy_children((struct ast_node *)left);
@@ -180,19 +180,21 @@ static struct mpl_object *mpl_object_to_string(struct mpl_object *object) {
     switch (object->type) {
         case STRING:
             construct_mpl_object(result, STRING, object->value.string_value);
-            break;
+        break;
+
         case FLOAT:
             result_value = malloc(1 + snprintf(NULL, 0, "%lf", object->value.float_value));
             sprintf(result_value, "%lf", object->value.float_value);
             construct_mpl_object(result, STRING, result_value);
             free(result_value);
-            break;
+        break;
+
         case INT:
             result_value = malloc(1 + snprintf(NULL, 0, "%lld", object->value.int_value));
             sprintf(result_value, "%lld", object->value.int_value);
             construct_mpl_object(result, STRING, result_value);
             free(result_value);
-            break;
+        break;
     }
 
     MPL_DEBUG(fprintf(stderr, "DEBUG:\t\tReturning new mpl_object @ %p.\n", (void *)result));

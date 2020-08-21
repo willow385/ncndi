@@ -76,13 +76,15 @@ int main(void) {
             switch (result->type) {
                 case STRING:
                     printf("Obtained \"%s\" from root->eval()\n", result->value.string_value);
-                    break;
+                break;
+
                 case FLOAT:
                     printf("Obtained %lf from root->eval()\n", result->value.float_value);
-                    break;
+                break;
+
                 case INT:
                     printf("Obtained %lld from root->eval()\n", result->value.int_value);
-                    break;
+                break;
             }
 
             result->destroy_children((struct ast_node *)result);

@@ -21,3 +21,8 @@ To get rid of object files and executables in this directory, run `./clean`.
 - `test_lexer.c`: Tokenizes an MPL program and prints the tokens to stdout.
 
 - `test_calculate.c`: Constructs an AST from an MPL expression and evaluates it.
+
+The coolest one by far is `test_calculate`. Try it out first. You don't even need to bother with
+the other programs unless you're super keen on gaining a deep understanding of NCNDI's internals;
+`test_calculate` is the most impressive and interesting one so far. It's basically just a simple
+interactive calculator.

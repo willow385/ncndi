@@ -1,0 +1,27 @@
+# This is a list of simple MPL expressions.
+# You should be able to pipe this file into
+# test_calculate and see the results of the
+# expressions, like so:
+#
+#     cat calc.txt | ./test_calculate
+#
+# I've tested test_calculate,  and although
+# it can choke on malformed input, it tends
+# to work perfectly with no memory leaks if
+# it's given well-formed expressions.
+
+2 + 2 + 2
+
+(42 * 100) + (12 / 2) + "9"
+
+"Hello, " + "world" + "!"
+
+0 <> 0
+1 <> 0
+0 <> 1
+1 <> 1
+
+(2 == 3 || "foo" != "bar") && (2 + 2 != 5)
+
+# need this to avoid an infinite loop
+exit

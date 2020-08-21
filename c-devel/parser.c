@@ -6,6 +6,7 @@
 #include "ast_node.h"
 #include "parser.h"
 
+
 int eat(struct parser *parse, enum token_type type) {
 
     MPL_DEBUG(fprintf(stderr,
@@ -25,7 +26,10 @@ int eat(struct parser *parse, enum token_type type) {
     return 1;
 }
 
+
+// TODO implement
 struct mpl_program_block *program(struct parser *parse);
+
 
 struct ast_node *factor(struct parser *parse) {
     MPL_DEBUG(fprintf(stderr,
@@ -95,6 +99,7 @@ struct ast_node *factor(struct parser *parse) {
     return result;
 }
 
+
 struct ast_node *term(struct parser *parse) {
     MPL_DEBUG(fprintf(stderr,
         "DEBUG: Calling term() on parser @ %p with current token \"%s\".\n",
@@ -124,6 +129,7 @@ struct ast_node *term(struct parser *parse) {
     return node;
 }
 
+
 struct ast_node *math_expression(struct parser *parse) {
     MPL_DEBUG(fprintf(stderr,
         "DEBUG: Calling math_expression() on parser @ %p with current token \"%s\".\n",
@@ -148,6 +154,7 @@ struct ast_node *math_expression(struct parser *parse) {
 
     return node;
 }
+
 
 #define IS_LOGICAL_OP(x)  \
     x == AND              \
@@ -178,6 +185,7 @@ struct ast_node *expression(struct parser *parse) {
 
     return node;
 }
+
 
 #define IS_RELATIONAL(x)  \
     x == LESS_THAN        \
@@ -212,4 +220,17 @@ struct ast_node *comparison(struct parser *parse) {
     return node;
 }
 
-struct mpl_program_block *parser_gen_ast(struct parser *parse);
+
+struct ast_node *parser_gen_ast(struct parser *parse) {
+    // TODO implement the rest of the language
+    parse->current_token = get_next_token(parse->lex);
+
+    if (parse->current_token->type == END_OF_FILE) {
+        free_token(parse->current_token);
+        return NULL;
+    }
+
+    struct ast_node *result = expression(parse);
+    free_token(parse->current_token);
+    return result;
+}

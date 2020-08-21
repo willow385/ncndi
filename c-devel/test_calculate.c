@@ -10,87 +10,95 @@
 int main(int argc, char *argv[]) {
 
     char *program_code;
+    char buf[1024];
+    int repl_mode = 0;
     if (argc < 2) {
-        program_code = "3 + ((3 * 15) / 5)";
+        repl_mode = 1;
+        program_code = buf;
     } else {
         program_code = argv[1];
     }
 
-    printf("Evaluating expression \"%s\".\n", program_code);
+    if (!repl_mode) {
+        printf("Evaluating expression \"%s\".\n", program_code);
+    } else {
+        printf("Simple calculator REPL written entirely in C by Dante Falzone\n");
+        printf("Supported operators: ( ) * / + - %% == != > < >= <= && || <>\n");
+        printf("Use the command \"exit\" to safely exit the REPL\n");
+    }
 
-    /* Set up objects */
-    struct lexer lex = {
-        .text = program_code,
-        .text_size = strlen(program_code),
-        .pos = 0,
-        .current_char = program_code[0]
-    };
-    struct token *current_token = get_next_token(&lex);
-    struct parser parse = {
-        .lex = &lex,
-        .current_token = current_token,
-        .just_parsed_program_block = 0
-    };
+beginning_of_loop:
+    do {
+        if (repl_mode) {
+            printf(">> ");
+            fgets(program_code, 1024, stdin);
 
-    /* Parse the code into an Abstract Syntax Tree */
-    struct ast_node *root = expression(&parse);
-
-    /* Get stuff ready to evaluate the AST */
-    size_t variable_count = 0, function_count = 0;
-    struct key_program_block_pair *function_scope = NULL;
-    struct key_object_pair *variable_scope = NULL;
-
-    /* Evaluate the AST */
-    struct mpl_object *result = root->eval(
-        root,
-        &variable_count, variable_scope,
-        &function_count, function_scope
-    );
-
-    /* Print the result */
-    if (result != NULL) {
-        switch (result->type) {
-            case STRING:
-                printf("Obtained \"%s\" from root->eval()\n", result->value.string_value);
+            if (!strcmp(program_code, "exit\n") || !strcmp(program_code, "exit\r\n"))
                 break;
-            case FLOAT:
-                printf("Obtained %lf from root->eval()\n", result->value.float_value);
-                break;
-            case INT:
-                printf("Obtained %lld from root->eval()\n", result->value.int_value);
-                break;
+
+            if (!strcmp(program_code, "\n") || !strcmp(program_code, "\r\n"))
+                goto beginning_of_loop;
         }
 
-        result->destroy_children((struct ast_node *)result);
-        free(result);
+        /* Set up objects */
+        struct lexer lex = {
+            .text = program_code,
+            .text_size = strlen(program_code),
+            .pos = 0,
+            .current_char = program_code[0]
+        };
+        struct parser parse = {
+            .lex = &lex,
+            .current_token = NULL,
+            .just_parsed_program_block = 0
+        };
 
-    } else {
+        /* Parse the code into an Abstract Syntax Tree */
+        struct ast_node *root = parser_gen_ast(&parse);
+        /* root will be NULL if no code was entered */
 
-        printf("Obtained NULL result from root->eval()\n");
+        /* Get stuff ready to evaluate the AST */
+        size_t variable_count = 0, function_count = 0;
 
-    }
+        /* Evaluate the AST */
+        struct mpl_object *result = NULL;
+        if (root != NULL) {
+            result = root->eval(
+                root,
+                &variable_count, NULL,
+                &function_count, NULL
+            );
+        }
 
-    /* Cleanup */
-    root->destroy_children(root);
-    free(root);
+        /* Print the result */
+        if (result != NULL) {
+            switch (result->type) {
+                case STRING:
+                    printf("Obtained \"%s\" from root->eval()\n", result->value.string_value);
+                break;
 
-    free_token(parse.current_token);
+                case FLOAT:
+                    printf("Obtained %lf from root->eval()\n", result->value.float_value);
+                break;
 
-    MPL_DEBUG(fprintf(stderr, "DEBUG: Freeing variable_scope and function_scope now.\n"));
-    /* don't forget to free variable_scope - this is the caller's responsibility! */
-    size_t i;
-    for (i = 0; i < variable_count; ++i) {
-        variable_scope[i].value->destroy_children((struct ast_node *)variable_scope[i].value);
-        free(variable_scope[i].value);
-    }
+                case INT:
+                    printf("Obtained %lld from root->eval()\n", result->value.int_value);
+                break;
+            }
+            result->destroy_children((struct ast_node *)result);
+            free(result);
+        } else {
+            printf("Obtained NULL result from root->eval()\n");
 
-    for (i = 0; i < function_count; ++i) {
-        function_scope[i].value->destroy_children((struct ast_node *)function_scope[i].value);
-        free(function_scope[i].value);
-    }
+        }
 
-    free(variable_scope);
-    free(function_scope);
+        /* Cleanup */
+        if (root != NULL) {
+            root->destroy_children(root);
+            free(root);
+        }
+
+    } while (repl_mode);
 
     return 0;
 

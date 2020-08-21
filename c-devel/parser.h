@@ -27,4 +27,4 @@ struct ast_node *expression(struct parser *parse);
 
 struct ast_node *comparison(struct parser *parse);
 
-struct mpl_program_block *parser_gen_ast(struct parser *parse);
+struct ast_node *parser_gen_ast(struct parser *parse);
