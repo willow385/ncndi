@@ -6,7 +6,7 @@
 #     cat calc.txt | ./test_calculate
 #
 # I've tested test_calculate,  and although
-# it can choke on malformed input, it tends
+# it can choke on malformed input, it seems
 # to work perfectly with no memory leaks if
 # it's given well-formed expressions.
 
