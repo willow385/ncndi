@@ -72,14 +72,23 @@ struct ast_node *factor(struct parser *parse) {
 
         case IDENTIFIER:
             // TODO return mpl_variable or mpl function call
+            eat(parse, IDENTIFIER);
+            result = NULL;
+            free_token(tok);
         break;
 
         case IF:
             // TODO return if-statement
+            eat(parse, IF);
+            result = NULL;
+            free_token(tok);
         break;
 
         case NOT:
             // TODO return logical negation
+            eat(parse, NOT);
+            result = NULL;
+            free_token(tok);
         break;
 
         case SUBTRACT:
