@@ -7,4 +7,5 @@ __pycache__
 test_lexer
 test_binary_op_0
 test_binary_op_1
+test_calculate
 debug.txt
