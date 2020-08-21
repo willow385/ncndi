@@ -42,3 +42,5 @@ if [ -f test_calculate ]; then
 fi
 
 echo "Done cleaning.";
+
+read
