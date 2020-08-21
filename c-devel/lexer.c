@@ -387,7 +387,7 @@ struct token *get_next_token(struct lexer *lex) {
                 construct_token(result, AND, "&&");
                 return result;
             }
-            return NULL; // TODO: implement bitwise operators?
+            return NULL;
         }
 
         if (lex->current_char == '|') {

@@ -8,6 +8,10 @@
 
 
 int eat(struct parser *parse, enum token_type type) {
+    if (parse == NULL) {
+        MPL_DEBUG(fprintf(stderr, "DEBUG: Called eat() on a NULL object; returning 2.\n"));
+        return 2;
+    }
 
     MPL_DEBUG(fprintf(stderr,
         "DEBUG: Calling eat() on parser @ %p with current token \"%s\".\n",
@@ -17,6 +21,10 @@ int eat(struct parser *parse, enum token_type type) {
     if (parse->current_token->type == type) {
         free_token(parse->current_token);
         parse->current_token = get_next_token(parse->lex);
+        if (parse->current_token == NULL) {
+            MPL_DEBUG(fprintf(stderr, "DEBUG:\t\teat() is returning 2.\n"));
+            return 2;
+        }
         MPL_DEBUG(fprintf(stderr, "DEBUG:\t\teat() is returning 0.\n"));
         return 0;
     }
@@ -32,10 +40,16 @@ struct mpl_program_block *program(struct parser *parse);
 
 
 struct ast_node *factor(struct parser *parse) {
+    if (parse == NULL || parse->current_token == NULL) {
+        MPL_DEBUG(fprintf(stderr, "DEBUG: Calling factor() on a NULL object; returning NULL.\n"));
+        return NULL;
+    }
+
     MPL_DEBUG(fprintf(stderr,
         "DEBUG: Calling factor() on parser @ %p with current token \"%s\".\n",
         (void *)parse, parse->current_token->value
     ));
+
 
     struct token *tok = malloc(sizeof(struct token));
     construct_token(tok, parse->current_token->type, parse->current_token->value);
@@ -125,6 +139,11 @@ struct ast_node *factor(struct parser *parse) {
 
 
 struct ast_node *term(struct parser *parse) {
+    if (parse == NULL || parse->current_token == NULL) {
+        MPL_DEBUG(fprintf(stderr, "DEBUG: Calling term() on a NULL object; returning NULL.\n"));
+        return NULL;
+    }
+
     MPL_DEBUG(fprintf(stderr,
         "DEBUG: Calling term() on parser @ %p with current token \"%s\".\n",
         (void *)parse, parse->current_token->value
@@ -155,6 +174,12 @@ struct ast_node *term(struct parser *parse) {
 
 
 struct ast_node *math_expression(struct parser *parse) {
+
+    if (parse == NULL || parse->current_token == NULL) {
+        MPL_DEBUG(fprintf(stderr, "DEBUG: Calling math_expression() on a NULL object; returning NULL.\n"));
+        return NULL;
+    }
+
     MPL_DEBUG(fprintf(stderr,
         "DEBUG: Calling math_expression() on parser @ %p with current token \"%s\".\n",
         (void *)parse, parse->current_token->value
@@ -186,6 +211,11 @@ struct ast_node *math_expression(struct parser *parse) {
     || x == XOR
 
 struct ast_node *expression(struct parser *parse) {
+    if (parse == NULL || parse->current_token == NULL) {
+        MPL_DEBUG(fprintf(stderr, "DEBUG: Calling expression() on a NULL object; returning NULL.\n"));
+        return NULL;
+    }
+
     MPL_DEBUG(fprintf(stderr,
         "DEBUG: Calling expression() on parser @ %p with current token \"%s\".\n",
         (void *)parse, parse->current_token->value
@@ -197,11 +227,24 @@ struct ast_node *expression(struct parser *parse) {
     while (IS_LOGICAL_OP(parse->current_token->type)) {
         tok = malloc(sizeof(struct token));
         construct_token(tok, parse->current_token->type, parse->current_token->value);
-        eat(parse, tok->type);
+        // eat() will return non-zero on error.
+        if (eat(parse, tok->type)) {
+            free_token(tok);
+            free_token(parse->current_token);
+            if (node != NULL) {
+                node->destroy_children(node);
+                free(node);
+            }
+            node = NULL;
+            break;
+        }
+
         struct ast_node *left = node;
-        node = malloc(sizeof(struct binary_op));
-        struct ast_node *right = comparison(parse);
-        construct_binary_op((struct binary_op *)node, &left, tok, &right);
+        if (node != NULL) {
+            node = malloc(sizeof(struct binary_op));
+            struct ast_node *right = comparison(parse);
+            construct_binary_op((struct binary_op *)node, &left, tok, &right);
+        }
     }
 
     MPL_DEBUG(fprintf(stderr,
@@ -220,6 +263,11 @@ struct ast_node *expression(struct parser *parse) {
     || x == GREATER_EQ
 
 struct ast_node *comparison(struct parser *parse) {
+    if (parse == NULL || parse->current_token == NULL) {
+        MPL_DEBUG(fprintf(stderr, "DEBUG: Calling comparison() on a NULL object; returning NULL.\n"));
+        return NULL;
+    }
+
     MPL_DEBUG(fprintf(stderr,
         "DEBUG: Calling comparison() on parser @ %p with current token \"%s\".\n",
         (void *)parse, parse->current_token->value
@@ -245,9 +293,13 @@ struct ast_node *comparison(struct parser *parse) {
 }
 
 
+/* parse _must_ point to a valid struct parser; else,
+   invoking this function is undefined behavior. */
 struct ast_node *parser_gen_ast(struct parser *parse) {
     // TODO implement the rest of the language
     parse->current_token = get_next_token(parse->lex);
+
+    if (parse->current_token == NULL) return NULL;
 
     if (parse->current_token->type == END_OF_FILE) {
         free_token(parse->current_token);
