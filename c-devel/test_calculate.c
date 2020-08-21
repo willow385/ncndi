@@ -55,7 +55,8 @@ beginning_of_loop:
 
         /* Parse the code into an Abstract Syntax Tree */
         struct ast_node *root = parser_gen_ast(&parse);
-        /* root will be NULL if no code was entered */
+        /* root will be NULL if comments or nothing but
+           whitespace was entered */
 
         /* Get stuff ready to evaluate the AST */
         size_t variable_count = 0, function_count = 0;
