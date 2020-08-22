@@ -8,7 +8,6 @@
 #include "parser.h"
 
 int main(int argc, char *argv[]) {
-
     char *program_code;
     char buf[1024];
     int repl_mode = 0;
@@ -40,7 +39,7 @@ beginning_of_loop:
                 goto beginning_of_loop;
         }
 
-        /* Set up objects */
+        /* Set up objects. */
         struct lexer lex = {
             .text = program_code,
             .text_size = strlen(program_code),
@@ -53,15 +52,15 @@ beginning_of_loop:
             .just_parsed_program_block = 0
         };
 
-        /* Parse the code into an Abstract Syntax Tree */
+        /* Parse the code into an Abstract Syntax Tree. */
         struct ast_node *root = parser_gen_ast(&parse);
-        /* root will be NULL if comments or nothing but
-           whitespace was entered */
+        /* If nothing but comments or nothing but whitespace
+           was entered, root will be NULL. */
 
-        /* Get stuff ready to evaluate the AST */
+        /* Get stuff ready to evaluate the AST. */
         size_t variable_count = 0, function_count = 0;
 
-        /* Evaluate the AST */
+        /* Evaluate the AST. */
         struct mpl_object *result = NULL;
         if (root != NULL) {
             result = root->eval(
@@ -71,7 +70,7 @@ beginning_of_loop:
             );
         }
 
-        /* Print the result */
+        /* Print the result. */
         if (result != NULL) {
             switch (result->type) {
                 case STRING:
@@ -90,7 +89,6 @@ beginning_of_loop:
             free(result);
         } else {
             printf("Obtained NULL result from root->eval()\n");
-
         }
 
         /* Cleanup */
