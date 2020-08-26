@@ -15,7 +15,9 @@ struct parser {
 
 int eat(struct parser *parse, enum token_type type);
 
-struct mpl_program_block *program(struct parser *parse);
+struct mpl_program_block *program_block(struct parser *parse);
+
+struct ast_node *statement(struct parser *parse);
 
 struct ast_node *factor(struct parser *parse);
 

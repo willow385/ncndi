@@ -48,12 +48,21 @@ beginning_of_loop:
         };
         struct parser parse = {
             .lex = &lex,
-            .current_token = NULL,
+            .current_token = get_next_token(&lex),
             .just_parsed_program_block = 0
         };
 
         /* Parse the code into an Abstract Syntax Tree. */
-        struct ast_node *root = parser_gen_ast(&parse);
+        struct ast_node *root;
+        if (parse.current_token == NULL) {
+            root = NULL;
+        } else if (parse.current_token->type == END_OF_FILE) {
+            free_token(parse.current_token);
+            root = NULL;
+        } else {
+            root = expression(&parse);
+        }
+
         /* If nothing but comments or nothing but whitespace
            was entered, root will be NULL. */
 
@@ -96,6 +105,8 @@ beginning_of_loop:
             root->destroy_children(root);
             free(root);
         }
+
+        free_token(parse.current_token);
 
     } while (repl_mode);
 

@@ -34,10 +34,23 @@ int eat(struct parser *parse, enum token_type type) {
     return 1;
 }
 
-
+// TODO finish implementing
 struct mpl_program_block *program_block(struct parser *parse) {
+    struct mpl_program_block *result;
     if (eat(parse, OPEN_BRACE)) return NULL;
-    // TODO
+    result = malloc(sizeof(struct mpl_program_block));
+    construct_mpl_program_block(result);
+    while (parse->current_token->type != CLOSE_BRACE) {
+        struct ast_node *node = statement(parse);
+        mpl_program_block_append_child(result, &node);
+    }
+    eat(parse, CLOSE_BRACE);
+    return result;
+}
+
+
+// TODO implement
+struct ast_node *statement(struct parser *parse) {
     return NULL;
 }
 

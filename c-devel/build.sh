@@ -12,6 +12,8 @@ echo "Building mpl_variable..."
 gcc -c -g mpl_variable.c $@
 echo "Building key_pair..."
 gcc -c -g key_pair.c $@
+echo "Building mpl_program_block..."
+gcc -c -g mpl_program_block.c $@
 echo "Building parser..."
 gcc -c -g parser.c $@
 echo "Building lexer test..."
@@ -21,6 +23,7 @@ gcc -g test_lexer.c \
     key_pair.o \
     token.o \
     parser.o \
+    mpl_program_block.o \
     lexer.o \
     mpl_object.o \
     mpl_variable.o \
@@ -33,6 +36,7 @@ gcc -g test_binary_op_0.c \
     key_pair.o \
     token.o \
     parser.o \
+    mpl_program_block.o \
     lexer.o \
     mpl_object.o \
     mpl_variable.o \
@@ -45,6 +49,7 @@ gcc -g test_binary_op_1.c \
     key_pair.o \
     token.o \
     parser.o \
+    mpl_program_block.o \
     lexer.o \
     mpl_object.o \
     mpl_variable.o \
@@ -57,6 +62,7 @@ gcc -g test_calculate.c \
     key_pair.o \
     token.o \
     parser.o \
+    mpl_program_block.o \
     lexer.o \
     mpl_object.o \
     mpl_variable.o \
