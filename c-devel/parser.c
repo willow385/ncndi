@@ -38,6 +38,7 @@ int eat(struct parser *parse, enum token_type type) {
 struct mpl_program_block *program_block(struct parser *parse) {
     if (eat(parse, OPEN_BRACE)) return NULL;
     // TODO
+    return NULL;
 }
 
 
