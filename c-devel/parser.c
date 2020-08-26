@@ -35,8 +35,10 @@ int eat(struct parser *parse, enum token_type type) {
 }
 
 
-// TODO implement
-struct mpl_program_block *program(struct parser *parse);
+struct mpl_program_block *program_block(struct parser *parse) {
+    if (eat(parse, OPEN_BRACE)) return NULL;
+    // TODO
+}
 
 
 struct ast_node *factor(struct parser *parse) {
