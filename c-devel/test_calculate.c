@@ -57,7 +57,6 @@ beginning_of_loop:
         if (parse.current_token == NULL) {
             root = NULL;
         } else if (parse.current_token->type == END_OF_FILE) {
-            free_token(parse.current_token);
             root = NULL;
         } else {
             root = expression(&parse);
