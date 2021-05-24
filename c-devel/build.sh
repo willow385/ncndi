@@ -68,4 +68,17 @@ gcc -g test_calculate.c \
     mpl_variable.o \
     -o test_calculate $@
 
+echo "Building mpl_program_block test..."
+
+gcc -g test_mpl_program_block.c \
+    binary_op.o \
+    key_pair.o \
+    token.o \
+    parser.o \
+    mpl_program_block.o \
+    lexer.o \
+    mpl_object.o \
+    mpl_variable.o \
+    -o test_mpl_program_block $@
+
 echo "Done building!"
