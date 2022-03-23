@@ -43,3 +43,7 @@ is also a void type which is only used for functions that don't return anything.
 
 Arguments to functions are always passed by value in MPL. This may change in the future, with
 either the & operator or the ref keyword being added to the language.
+
+A compiler for MPL is under construction, which when finished will produce bytecode executable
+by the TMA-16 virtual machine. For more info about the TMA-16, visit this URL:
+https://github.com/DanteFalzone0/tma-16
