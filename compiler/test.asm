@@ -9,11 +9,11 @@ jmp @__start__
 ; function foo()
 @foo:
 
-; unimplemented feature: <class 'ast_utils.Program'>
+; unimplemented feature: (return (+ x 1)) 
   pop ip
 
 ; entry point of the program
 @__start__:
 
-; unimplemented feature: <class 'ast_utils.Program'>
+; unimplemented feature: (setq i 68) (format t "~a" (+ (foo i) "\n")) (format t "~a" "Nice\n") 
   halt ; end of program

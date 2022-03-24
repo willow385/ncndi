@@ -17,10 +17,7 @@ class CodeGenerator:
       result += self._compile_node(node.body)
       result += "  pop ip\n\n"
     else:
-      if type(node) is str:
-        result += f'\n; unimplemented feature: {node}\n'
-      else:
-        result += f"\n; unimplemented feature: {type(node)}\n"
+      result += f'\n; unimplemented feature: {node}\n'
     return result
 
   def compile(self):
