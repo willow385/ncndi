@@ -2,22 +2,67 @@ import os
 from ast_utils import *
 from ast_parser import *
 
+class Register:
+  def __init__(self, mnemonic):
+    self.mnemonic = mnemonic
+
+  def __str__(self):
+    return self.mnemonic
+
+
+class RegisterBank:
+  def __init__(self):
+    self.ip_register = Register("ip")
+    self.ra = Register("ra")
+    self.rb = Register("rb")
+    self.rc = Register("rc")
+    self.rd = Register("rd")
+    self.return_register = self.ra
+
+
 class CodeGenerator:
   def __init__(self, abstract_syntax_tree: Program, var_scope, funct_scope):
     self.ast = abstract_syntax_tree
     self.variable_scope = var_scope
     self.function_scope = funct_scope
+    self.registers = RegisterBank()
+
+  @staticmethod
+  def _unimplemented(node):
+    return f'\n; unimplemented feature: {node}\n'
+
+  @staticmethod
+  def _function_sig(function_name):
+    return f"\n; function {function_name}()\n@{function_name}:\n"
+
+  def _pop_ip(self):
+    return f"  pop   {self.registers.ip_register} ; exit function\n\n"
+
+  @staticmethod
+  def _movl(register, value, comment):
+    return f"  movl  {register} {value} ; {comment}\n"
 
   def _compile_node(self, node):
     result = str()
     if type(node) is Function:
-      result += f"""\n; function {node.function_name}()
-@{node.function_name}:
-"""
+      result += self._function_sig(node.function_name)
       result += self._compile_node(node.body)
-      result += "  pop ip\n\n"
+      result += self._pop_ip()
+    elif type(node) is Program:
+      # TODO this is a quick hack
+      for child in node.children:
+        result += self._compile_node(child)
+    elif type(node) is ReturnStatement:
+      if type(node.value) is Integer:
+        # TODO store signed ints as one's complement
+        result += self._movl(
+          self.registers.return_register,
+          node.value,
+          comment=f"return {node.value}"
+        )
+        result += self._pop_ip()
     else:
-      result += f'\n; unimplemented feature: {node}\n'
+      result += self._unimplemented(node)
     return result
 
   def compile(self):

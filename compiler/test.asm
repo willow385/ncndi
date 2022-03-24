@@ -6,14 +6,25 @@ jmp @__start__
     
 ; unimplemented feature: (<built-in function readln>)
 
-; function foo()
-@foo:
+; function one()
+@one:
+  movl  ra 1 ; return 1
+  pop   ip ; exit function
 
-; unimplemented feature: (return (+ x 1)) 
-  pop ip
+
+; unimplemented feature: 
+  pop   ip ; exit function
 
 ; entry point of the program
 @__start__:
 
-; unimplemented feature: (setq i 68) (format t "~a" (+ (foo i) "\n")) (format t "~a" "Nice\n") 
+; unimplemented feature: (setq i 68)
+
+; unimplemented feature: (setq i (+ i (one)))
+
+; unimplemented feature: (format t "~a" (+ i "\n"))
+
+; unimplemented feature: (format t "~a" "Nice\n")
+
+; unimplemented feature: 
   halt ; end of program

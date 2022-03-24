@@ -1,11 +1,12 @@
 # Program to test the MPL compiler
 
-funct foo(int x) int {
-  return x + 1;
+funct one() int {
+  return 1;
 }
 
 start {
   int i = 68;
-  print foo(i) + "\n";
+  i = i + one();
+  print i + "\n";
   print "Nice\n";
 } end
