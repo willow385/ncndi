@@ -32,7 +32,7 @@ def main():
         if "--tree" in sys.argv:
             print(syntax_tree)
         ofpath = src_file_path.replace(".mpl", ".tmx")
-        assembly.assemble(of=ofpath, preserve_asm=True, gen_tmx=False)
+        assembly.assemble(of=ofpath, preserve_asm=True)
         print(f"Compiled {src_file_path}")
     except KeyError as k:
         print(f"Error: Nonexistent variable {k} referenced")

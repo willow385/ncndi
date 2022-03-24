@@ -64,10 +64,15 @@ class AssemblyCode:
     asm_file.close()
     if gen_tmx:
       print("Assembling...")
-      os.system(f"tmasm {asm_file_path} {assembler_opts}")
+      shell = str()
+      end_shell = str()
+      if os.name == "nt":
+        shell = r'C:\"Program Files"\Git\usr\bin\bash.exe -c "source ~/.bashrc ; '
+        end_shell = ' ;"'
+      os.system(f'{shell} tmasm {asm_file_path} {assembler_opts} {end_shell}')
       if not preserve_asm:
         print("Removing assembly file...")
-        os.system(f"rm {asm_file_path}")
+        os.system(f'{shell} rm {asm_file_path} {end_shell}')
       print("Finished assembling.")
     else:
       print("Assembly generated.")
