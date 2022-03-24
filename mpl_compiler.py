@@ -4,7 +4,7 @@ import os
 import sys
 
 from ast_parser import *
-# from codegen import CodeGenerator
+from codegen import CodeGenerator, AssemblyCode
 
 def main():
     text = ""
@@ -24,20 +24,16 @@ def main():
         syntax_tree = parser.parse()
         scope = {}
         funcs = {"readln": "(<built-in function readln>)"}
+        code_generator = CodeGenerator(syntax_tree, scope, funcs)
+        assembly = code_generator.compile()
         if "--dump" in sys.argv:
             print(f"Variables: {scope}")
             print(f"Functions: {funcs}")
         if "--tree" in sys.argv:
             print(syntax_tree)
-        """ TODO implement
-        code_generator = CodeGenerator(syntax_tree, scope, funcs)
-        assembly = code_generator.compile()
-        bytecode = assembly.assemble()
         ofpath = src_file_path.replace(".mpl", ".tmx")
-        bytecode.generate_executable(path=ofpath)
-        print(f"Compiled program to {ofpath}")
-        """
-        print("Compiler not yet implemented")
+        assembly.assemble(of=ofpath, preserve_asm=True, gen_tmx=False)
+        print(f"Compiled {src_file_path}")
     except KeyError as k:
         print(f"Error: Nonexistent variable {k} referenced")
     except Exception as e:
