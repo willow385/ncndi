@@ -8,10 +8,15 @@ acronym for "MPL Programming Language". "ncndi" is
 the name of this implementation of the interpreter.
 I haven't decided what that stands for yet.
 
-I am currently in the process of reimplementing the interpreter in C, because
-Python is naturally a terrible choice of language for writing an interpreter
-except for prototyping and learning purposes. You can see the progress on that
-front in the `c-devel/` directory.
+I am currently in the process of writing a compiler
+for MPL, which generates bytecode that can be
+executed by the TMA-16 virtual machine, a RISC VM
+with an instruction set and arch of my own design.
+The TMA-16 was not specifically written to be a
+target for MPL (and in fact poses many challenges
+to writing such a compiler), but I have chosen to
+target it because I know its instruction set so
+well.
 
 ## Usage
 
