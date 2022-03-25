@@ -5,8 +5,9 @@ funct one() int {
 }
 
 start {
-  int i = 68;
-  i = i + one();
-  print i + "\n";
-  print "Nice\n";
+#  int i = 68;
+#  i = i + one();
+#  print i + "\n";
+#  print "Nice\n";
+  print 48879; # 0xBEEF
 } end

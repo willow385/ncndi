@@ -3,12 +3,19 @@
 
 ; entry point of the program
 jmp @__start__
+
+; library subroutines
+#include "include/print.asm"
+#include "include/compare_strings.asm"
+#include "include/math.asm"
+#include "include/memstack.asm"
+
     
 ; unimplemented feature: (<built-in function readln>)
 
 ; function one()
 @one:
-  movl  ra 1 ; return 1
+  movl  ra   1 ; return 1
   pop   ip ; exit function
 
 
@@ -17,14 +24,14 @@ jmp @__start__
 
 ; entry point of the program
 @__start__:
-
-; unimplemented feature: (setq i 68)
-
-; unimplemented feature: (setq i (+ i (one)))
-
-; unimplemented feature: (format t "~a" (+ i "\n"))
-
-; unimplemented feature: (format t "~a" "Nice\n")
+; TODO save registers
+  movl  ra   48879 ; printing u16 48879
+  movl  rb   @__ret1 ; return address
+  push  rb ; return address goes on the stack first
+  push  ra ; u16 to print
+  jmp      @__print_u16__ ; call the subroutine
+@__ret1: ; go here after printing
+; TODO load registers
 
 ; unimplemented feature: 
   halt ; end of program

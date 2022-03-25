@@ -26,6 +26,7 @@ class CodeGenerator:
     self.variable_scope = var_scope
     self.function_scope = funct_scope
     self.registers = RegisterBank()
+    self.lowest_used_label_num = 0
 
   @staticmethod
   def _unimplemented(node):
@@ -40,7 +41,64 @@ class CodeGenerator:
 
   @staticmethod
   def _movl(register, value, comment):
-    return f"  movl  {register} {value} ; {comment}\n"
+    return f"  movl  {register}   {value} ; {comment}\n"
+
+  @staticmethod
+  def _push(register, comment):
+    return f"  push  {register} ; {comment}\n"
+
+  @staticmethod
+  def _pop(register, comment):
+    return f"  pop   {register} ; {comment}\n"
+
+  @staticmethod
+  def _jmp(address, comment):
+    return f"  jmp      {address} ; {comment}\n"
+
+  def _save_registers(self):
+    return "; TODO save registers\n"
+
+  def _load_saved_registers(self):
+    return "; TODO load registers\n"
+
+  def _print_statement(self, value):
+    result = str()
+    if type(value) is Integer:
+      result += self._save_registers()
+      result += self._movl(
+        self.registers.ra,
+        value.value,
+        f"printing u16 {value.value}"
+      )
+      i = 0
+      return_label = "__ret"
+      while i <= self.lowest_used_label_num:
+        i += 1
+      self.lowest_used_label_num = i
+      return_label = f"@{return_label}{i}"
+      result += self._movl(
+        self.registers.rb,
+        return_label,
+        "return address"
+      )
+      result += self._push(
+        self.registers.rb,
+        "return address goes on the stack first"
+      )
+      result += self._push(
+        self.registers.ra,
+        "u16 to print"
+      )
+      result += self._jmp("@__print_u16__", "call the subroutine")
+      result += f"{return_label}: ; go here after printing\n"
+      result += self._load_saved_registers()
+      return result
+    else:
+      return self._unimplemented(value)
+
+  def _push_local(self, value):
+    # TODO implement
+    pass
 
   def _compile_node(self, node):
     result = str()
@@ -61,6 +119,8 @@ class CodeGenerator:
           comment=f"return {node.value}"
         )
         result += self._pop_ip()
+    elif type(node) is PrintStatement:
+        result += self._print_statement(node.arg)
     else:
       result += self._unimplemented(node)
     return result
@@ -72,6 +132,13 @@ class CodeGenerator:
 
 ; entry point of the program
 jmp @__start__
+
+; library subroutines
+#include "include/print.asm"
+#include "include/compare_strings.asm"
+#include "include/math.asm"
+#include "include/memstack.asm"
+
     """
 
     main_section = Program()
