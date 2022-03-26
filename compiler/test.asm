@@ -10,6 +10,8 @@ jmp @__start__
 #include "include/math.asm"
 #include "include/memstack.asm"
 
+#define MEM_STACK_SPACE__ 0x1000
+#define HEAP_SPACE__ 0x8000
     
 ; unimplemented feature: (<built-in function readln>)
 
@@ -35,3 +37,14 @@ jmp @__start__
 
 ; unimplemented feature: 
   halt ; end of program
+;
+; in-memory stack (not to be confused with the "hardware stack", aka the cache)
+@__mem_stack_ptr___:
+  pb    @__mem_stack__
+@__mem_stack__:
+  alloc MEM_STACK_SPACE__
+
+; heap starts here
+@__heap__:
+  alloc HEAP_SPACE__
+    

@@ -139,6 +139,8 @@ jmp @__start__
 #include "include/math.asm"
 #include "include/memstack.asm"
 
+#define MEM_STACK_SPACE__ 0x1000
+#define HEAP_SPACE__ 0x8000
     """
 
     main_section = Program()
@@ -156,6 +158,17 @@ jmp @__start__
 """
     assembly.code += self._compile_node(main_section)
     assembly.code += "  halt ; end of program\n"
+    assembly.code += """;
+; in-memory stack (not to be confused with the "hardware stack", aka the cache)
+@__mem_stack_ptr___:
+  pb    @__mem_stack__
+@__mem_stack__:
+  alloc MEM_STACK_SPACE__
+
+; heap starts here
+@__heap__:
+  alloc HEAP_SPACE__
+    """
 
     return assembly
 
