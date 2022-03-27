@@ -12,34 +12,55 @@ jmp @__start__
 
 #define MEM_STACK_SPACE__ 0x1000
 #define HEAP_SPACE__ 0x8000
-    
+
+
 ; unimplemented feature: (<built-in function readln>)
 
 ; function one()
 @one:
-  movl  ra   1 ; return 1
-  pop   ip ; exit function
+    movl  ra   1 ; return 1
+    pop   ip ; exit function
 
 
 ; unimplemented feature: 
-  pop   ip ; exit function
+    pop   ip ; exit function
 
 ; entry point of the program
 @__start__:
-; TODO save registers
-  movl  ra   48879 ; printing u16 48879
-  movl  rb   @__ret1 ; return address
-  push  rb ; return address goes on the stack first
-  push  ra ; u16 to print
-  jmp      @__print_u16__ ; call the subroutine
-@__ret1: ; go here after printing
-; TODO load registers
+; save the registers
+    write ra  @__temp_val_0__
+    write rb  @__temp_val_1__
+    write rc  @__temp_val_2__
+    write rd  @__temp_val_3__
+    ; registers have been saved
+    movl  ra   48879 ; printing u16 48879
+    movl  rb   @__ret5 ; return address
+    push  rb ; return address goes on the stack first
+    push  ra ; u16 to print
+    jmp      @__print_u16__ ; call the subroutine
+@__ret5: ; go here after printing
+; load the saved register values
+    read  ra  @__temp_val_0__
+    read  rb  @__temp_val_1__
+    read  rc  @__temp_val_2__
+    read  rd  @__temp_val_3__
+    ; all registers should now be restored
 
 ; unimplemented feature: 
-  halt ; end of program
+    halt ; end of program
 ;
+; addresses reserved for temporarily storing values
+@__temp_val_0__:
+  alloc 2
+@__temp_val_1__:
+  alloc 2
+@__temp_val_2__:
+  alloc 2
+@__temp_val_3__:
+  alloc 2
+
 ; in-memory stack (not to be confused with the "hardware stack", aka the cache)
-@__mem_stack_ptr___:
+@__mem_stack_ptr__:
   pb    @__mem_stack__
 @__mem_stack__:
   alloc MEM_STACK_SPACE__
@@ -47,4 +68,3 @@ jmp @__start__
 ; heap starts here
 @__heap__:
   alloc HEAP_SPACE__
-    

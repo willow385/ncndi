@@ -37,29 +37,54 @@ class CodeGenerator:
     return f"\n; function {function_name}()\n@{function_name}:\n"
 
   def _pop_ip(self):
-    return f"  pop   {self.registers.ip_register} ; exit function\n\n"
+    return f"    pop   {self.registers.ip_register} ; exit function\n\n"
 
   @staticmethod
   def _movl(register, value, comment):
-    return f"  movl  {register}   {value} ; {comment}\n"
+    return f"    movl  {register}   {value} ; {comment}\n"
 
   @staticmethod
   def _push(register, comment):
-    return f"  push  {register} ; {comment}\n"
+    return f"    push  {register} ; {comment}\n"
 
   @staticmethod
   def _pop(register, comment):
-    return f"  pop   {register} ; {comment}\n"
+    return f"    pop   {register} ; {comment}\n"
 
   @staticmethod
   def _jmp(address, comment):
-    return f"  jmp      {address} ; {comment}\n"
+    return f"    jmp      {address} ; {comment}\n"
+
+  def _get_ret_label(self):
+    i = 0
+    return_label = "__ret"
+    while i <= self.lowest_used_label_num:
+      i += 1
+    self.lowest_used_label_num = i
+    return_label = f"@{return_label}{i}"
+    return return_label
 
   def _save_registers(self):
-    return "; TODO save registers\n"
+    return_labels = [self._get_ret_label() for _ in range(4)]
+    result = f"""; save the registers
+    write ra  @__temp_val_0__
+    write rb  @__temp_val_1__
+    write rc  @__temp_val_2__
+    write rd  @__temp_val_3__
+    ; registers have been saved
+"""
+    return result
 
   def _load_saved_registers(self):
-    return "; TODO load registers\n"
+    return_labels = [self._get_ret_label() for _ in range(4)]
+    result = f"""; load the saved register values
+    read  ra  @__temp_val_0__
+    read  rb  @__temp_val_1__
+    read  rc  @__temp_val_2__
+    read  rd  @__temp_val_3__
+    ; all registers should now be restored
+"""
+    return result
 
   def _print_statement(self, value):
     result = str()
@@ -70,12 +95,7 @@ class CodeGenerator:
         value.value,
         f"printing u16 {value.value}"
       )
-      i = 0
-      return_label = "__ret"
-      while i <= self.lowest_used_label_num:
-        i += 1
-      self.lowest_used_label_num = i
-      return_label = f"@{return_label}{i}"
+      return_label = self._get_ret_label()
       result += self._movl(
         self.registers.rb,
         return_label,
@@ -141,7 +161,8 @@ jmp @__start__
 
 #define MEM_STACK_SPACE__ 0x1000
 #define HEAP_SPACE__ 0x8000
-    """
+
+"""
 
     main_section = Program()
     for node in self.ast.children:
@@ -157,10 +178,20 @@ jmp @__start__
 @__start__:
 """
     assembly.code += self._compile_node(main_section)
-    assembly.code += "  halt ; end of program\n"
+    assembly.code += "    halt ; end of program\n"
     assembly.code += """;
+; addresses reserved for temporarily storing values
+@__temp_val_0__:
+  alloc 2
+@__temp_val_1__:
+  alloc 2
+@__temp_val_2__:
+  alloc 2
+@__temp_val_3__:
+  alloc 2
+
 ; in-memory stack (not to be confused with the "hardware stack", aka the cache)
-@__mem_stack_ptr___:
+@__mem_stack_ptr__:
   pb    @__mem_stack__
 @__mem_stack__:
   alloc MEM_STACK_SPACE__
@@ -168,8 +199,7 @@ jmp @__start__
 ; heap starts here
 @__heap__:
   alloc HEAP_SPACE__
-    """
-
+"""
     return assembly
 
 
@@ -178,6 +208,7 @@ class AssemblyCode:
     self.code = str()
 
   # `of` is the path to which we write our code
+  # TODO make less hacky
   def assemble(self, of: str, preserve_asm=False, gen_tmx=True, assembler_opts=""):
     asm_file_path = of.replace(".tmx", ".asm")
     print("Writing assembly file...")
